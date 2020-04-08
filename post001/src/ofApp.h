@@ -4,8 +4,13 @@
 #include <iostream>
 #include <memory>
 
+namespace soo
+{
 class FramesExporter;
 using FramesExporterPtr = std::unique_ptr<FramesExporter>;
+
+//struct Particle;
+//using ParticlePtr = std::shared_ptr<Particle>;
 
 class FramesExporter
 {
@@ -60,6 +65,26 @@ private:
     }
 };
 
+struct Particle
+{
+    float radius;
+    float speed;
+    ofVec2f centre;
+    ofVec2f direction;
+    ofColor color;
+
+    Particle() = default;
+
+    void
+    setRandomDirection()
+    {
+        float x = ofRandom(-1, 1);
+        float y = ofRandom(-1, 1);
+        direction = speed * (ofVec2f(x, y)).normalize();
+    }
+};
+} // namespace soo
+
 class ofApp : public ofBaseApp
 {
 public:
@@ -79,5 +104,11 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
 
-    FramesExporterPtr framesExporter;
+    soo::FramesExporterPtr framesExporter;
+
+    // Main circle
+    soo::Particle circle;
+
+    // Particles
+    std::vector<soo::Particle> particles;
 };
