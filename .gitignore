@@ -1,0 +1,17 @@
+# C++ stuff
+build*/
+
+# Qt stuff
+*.user
+
+# OF project
+addons.make
+config.make
+Makefile
+*.qbs
+obj/
+*/bin/*
+!*/bin/data
+
+*/bin/data/frames
+*/bin/data/*.mp4
