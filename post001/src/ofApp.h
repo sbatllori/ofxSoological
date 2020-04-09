@@ -9,9 +9,6 @@ namespace soo
 class FramesExporter;
 using FramesExporterPtr = std::unique_ptr<FramesExporter>;
 
-//struct Particle;
-//using ParticlePtr = std::shared_ptr<Particle>;
-
 class FramesExporter
 {
 private:

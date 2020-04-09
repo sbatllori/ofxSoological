@@ -14,14 +14,14 @@ ofApp::setup()
     ofSetCircleResolution(72);
 
     // Define main circle
-    circle.radius = 200;
+    circle.radius = 400;
     circle.centre = ofVec2f(ofGetWindowWidth() / 2, ofGetWindowHeight() / 2);
 
     // Define particles
     auto numParticles = 1000;
     particles.resize(numParticles);
 
-    auto particleRadius = 5;
+    auto particleRadius = 10;
     auto particleSpeed = 3;
     std::vector<int> colorPalette{0x8DF4A4, 0x67E4AA, 0x72D6BF, 0x7EC6CC, 0x86B3D3, 0x849DD6, 0x7D87D9, 0x7C74DA,
                                   0x8067D8, 0x6D4FD8, 0xA1F798, 0xA0E792, 0xC3D59F, 0xDAC0A7, 0xE2A9AF, 0xE090B9,
@@ -86,7 +86,7 @@ ofApp::draw()
     // Draw main circle
     ofNoFill();
     ofSetColor(200);
-    ofSetLineWidth(1);
+    ofSetLineWidth(2);
     ofDrawCircle(circle.centre, circle.radius);
 
     // Draw particles
