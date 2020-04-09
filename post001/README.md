@@ -6,4 +6,4 @@ Simple animation where a set of particles move linearly inside a circle.
 <img src="doc/color.png" width="350">
 
 ### Geometry Rules
-<img src="doc/geometry.png" width="350"> <img src="doc/simple_geometry.png" width="350">
+<img src="doc/geometry.png" width="350">
