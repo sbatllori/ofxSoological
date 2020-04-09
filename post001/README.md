@@ -2,10 +2,6 @@
 
 Simple animation where a set of particles move linearly inside a circle.
 
-### Regular Output
-<img src="doc/color.png" width="350">
-This is a frame of the regular output.
-
-### Geometry Rules
-<img src="doc/geometry.png" width="350">
-This is a frame showing the geometric rules behind the animation.
+### Output
+<img src="doc/color.png" width="48%"> <img src="doc/geometry.png" width="48%">  
+First image is showing a frame of the regular output, while second image is representing the geometric rules behind the animation (particle border and moving direction).  
