@@ -1,4 +1,4 @@
-# Post 001: Particles inside a circle
+# Post 001: Particles Inside a Circle
 
 Simple animation where a set of particles move linearly inside a circle.
 
