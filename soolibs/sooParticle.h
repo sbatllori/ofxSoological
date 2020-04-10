@@ -4,6 +4,7 @@
 
 namespace soo
 {
+
 struct Particle
 {
     float radius;
@@ -14,12 +15,7 @@ struct Particle
 
     Particle() = default;
 
-    void
-    setRandomDirection()
-    {
-        float x = ofRandom(-1, 1);
-        float y = ofRandom(-1, 1);
-        direction = speed * (ofVec2f(x, y)).normalize();
-    }
+    void setRandomDirection();
 };
+
 } // namespace soo
