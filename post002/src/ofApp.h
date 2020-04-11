@@ -1,8 +1,10 @@
 #pragma once
 
 #include "ofMain.h"
+#include "sooFramesExporter.h"
 #include "sooParticle.h"
 
+// TODO move this to soolibs
 namespace soo
 {
 
@@ -20,7 +22,6 @@ struct Shape
     ofRectangle
     getBoundingBox()
     {
-        // TODO careful. with the 0-element
         return path.getOutline()[0].getBoundingBox();
     }
 
@@ -28,8 +29,6 @@ struct Shape
     getVertices()
     {
         std::vector<ofVec2f> vertices;
-
-        // TODO careful. with the 0-element
         for(auto& v : path.getOutline()[0].getVertices())
         {
             vertices.push_back(ofVec2f(v.x, v.y));
@@ -53,6 +52,18 @@ struct Shape
     }
 };
 
+struct Line
+{
+    ofPath path;
+    Particle origin;
+    float stepLen;
+    float angle;
+    int sign = 1;
+    bool done = false;
+
+    Line() = default;
+};
+
 } // namespace soo
 
 class ofApp : public ofBaseApp
@@ -63,27 +74,22 @@ public:
     void update();
     void draw();
 
-    void keyPressed(int key);
-    void keyReleased(int key);
-    void mouseMoved(int x, int y);
-    void mouseDragged(int x, int y, int button);
-    void mousePressed(int x, int y, int button);
-    void mouseReleased(int x, int y, int button);
-    void mouseEntered(int x, int y);
-    void mouseExited(int x, int y);
-    void windowResized(int w, int h);
-    void dragEvent(ofDragInfo dragInfo);
-    void gotMessage(ofMessage msg);
+    // Frames Exporter
+    soo::FramesExporterPtr framesExporter;
 
+    // Character
     const uint32_t character = '2';
     const string fontName = "FreeSans.ttf";
     ofTrueTypeFont font;
 
+    // Character shape
     std::unique_ptr<soo::Shape> shape;
     ofPolyline shapeBottom, shapeEnd;
-    soo::Particle origin;
-    ofPath line;
-    int sign = 1;
-    float angle = 60;
-    ofVec2f lastUsedDir;
+
+    // Lines
+    std::vector<soo::Line> lines;
+
+    // Kidline
+    soo::Line kidLine;
+    bool renderKidLine = false;
 };

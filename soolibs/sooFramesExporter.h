@@ -8,6 +8,7 @@ namespace soo
 class FramesExporter;
 using FramesExporterPtr = std::unique_ptr<FramesExporter>;
 
+// TODO allow to specify starting + ending time, not just ending
 class FramesExporter
 {
 private:

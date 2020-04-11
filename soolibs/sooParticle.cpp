@@ -3,6 +3,7 @@
 namespace soo
 {
 
+// TODO enter seed by param!
 void
 Particle::setRandomDirection()
 {

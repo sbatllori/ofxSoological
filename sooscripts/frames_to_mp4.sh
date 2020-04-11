@@ -18,7 +18,7 @@ echo "[SOO INFO] Will export gif to: "$OUTPUT
 ffmpeg \
 -i $FRAMES/f%08d.png \
 -r 30 \
--crf 24 \
+-crf 13 \
 -c:v libx264 \
 -pix_fmt yuv420p \
 $OUTPUT

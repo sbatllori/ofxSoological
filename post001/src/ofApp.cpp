@@ -3,7 +3,7 @@
 void
 ofApp::setup()
 {
-    // Setup fragment exporter
+    // Setup fames exporter
     framesExporter = soo::FramesExporterPtr(new soo::FramesExporter(25));
     framesExporter->setActive(false);
 
