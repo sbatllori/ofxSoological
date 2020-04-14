@@ -4,18 +4,21 @@
 
 namespace soo
 {
-
+template <class Properties>
 struct Particle
 {
-    float radius;
-    float speed;
-    ofVec2f centre;
+    ofVec2f position;
     ofVec2f direction;
-    ofColor color;
+    Properties properties;
 
     Particle() = default;
 
-    void setRandomDirection();
+    void setRandomDirection(const float _speed = 1.f)
+    {
+        float x = ofRandom(-1, 1);
+        float y = ofRandom(-1, 1);
+        direction = _speed * (ofVec2f(x, y)).normalize();
+    }
 };
 
 } // namespace soo

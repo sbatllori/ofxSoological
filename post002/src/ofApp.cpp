@@ -48,11 +48,10 @@ ofApp::setup()
             ofVec2f originPosition;
             originPosition.x = ofRandom(v2.x, v1.x);
             originPosition.y = v1.y;
-            line.origin.centre = originPosition; // TODO refactor in Particle
-            line.origin.speed = 1; // TODO refactor in Particle
+            line.origin.position = originPosition;
             line.origin.setRandomDirection();
 
-            line.path.moveTo(line.origin.centre);
+            line.path.moveTo(line.origin.position);
             line.path.setStrokeColor(ofColor(0, 0, 0, 50));
             line.path.setStrokeWidth(2);
             line.path.setFilled(false);
@@ -63,8 +62,7 @@ ofApp::setup()
     else
     {
         kidLine.stepLen = 5;
-        kidLine.origin.centre = shape->getVertices()[124];
-        kidLine.origin.speed = 1;
+        kidLine.origin.position = shape->getVertices()[124];
         kidLine.origin.setRandomDirection();
         kidLine.path.setStrokeColor(ofColor(200, 100, 100, 100));
         kidLine.path.setStrokeWidth(10);
@@ -86,7 +84,7 @@ ofApp::update()
             // Check if the line reached the end of the shape
             for(auto& endVertex : shapeEnd)
             {
-                if(line.origin.centre.distance(endVertex) < line.stepLen)
+                if(line.origin.position.distance(endVertex) < line.stepLen)
                     line.done = true;
             }
 
@@ -94,13 +92,13 @@ ofApp::update()
             if(!line.done)
             {
 
-                ofVec2f nextPosition = line.origin.centre + line.stepLen * line.origin.direction;
+                ofVec2f nextPosition = line.origin.position + line.stepLen * line.origin.direction;
 
                 // If the next step is inside the shape, move forward
                 if(shape->inside(nextPosition.x, nextPosition.y))
                 {
-                    line.origin.centre = nextPosition;
-                    line.path.lineTo(line.origin.centre.x, line.origin.centre.y);
+                    line.origin.position = nextPosition;
+                    line.path.lineTo(line.origin.position.x, line.origin.position.y);
                 }
                 // Otherwise, change direction
                 else
@@ -129,15 +127,15 @@ ofApp::update()
     else
     {
         // Kidline
-        ofVec2f next = kidLine.origin.centre;
+        ofVec2f next = kidLine.origin.position;
         do
         {
-            kidLine.origin.centre = next;
+            kidLine.origin.position = next;
             next += kidLine.stepLen * kidLine.origin.direction;
 
         } while(shape->inside(next.x, next.y));
 
-        kidLine.path.lineTo(kidLine.origin.centre.x, kidLine.origin.centre.y);
+        kidLine.path.lineTo(kidLine.origin.position.x, kidLine.origin.position.y);
         kidLine.origin.setRandomDirection();
     }
 }

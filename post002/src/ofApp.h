@@ -7,6 +7,8 @@
 // TODO move this to soolibs
 namespace soo
 {
+struct Properties
+{};
 
 struct Shape
 {
@@ -55,7 +57,7 @@ struct Shape
 struct Line
 {
     ofPath path;
-    Particle origin;
+    Particle<Properties> origin;
     float stepLen;
     float angle;
     int sign = 1;

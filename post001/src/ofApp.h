@@ -4,6 +4,16 @@
 #include "sooFramesExporter.h"
 #include "sooParticle.h"
 
+namespace soo
+{
+struct Properties
+{
+    ofColor color;
+    float radius = 10.f; // constant radius for particles
+    float speed = 3.f; // constant speed for particles
+};
+} // namespace soo
+
 class ofApp : public ofBaseApp
 {
 public:
@@ -14,8 +24,8 @@ public:
     soo::FramesExporterPtr framesExporter;
 
     // Main circle
-    soo::Particle circle;
+    soo::Particle<soo::Properties> circle;
 
     // Particles
-    std::vector<soo::Particle> particles;
+    std::vector<soo::Particle<soo::Properties>> particles;
 };
