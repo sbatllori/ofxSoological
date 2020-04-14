@@ -3,9 +3,9 @@
 void
 ofApp::setup()
 {
-    // Setup fames exporter
-    framesExporter = soo::FramesExporterPtr(new soo::FramesExporter(25));
-    framesExporter->setActive(false);
+    // Setup frames exporter
+    framesExporter.setStartAndEnd(0.1f, 25);
+    framesExporter.setActive(false);
 
     // Setup constant canvas parameters
     ofSetFrameRate(30);
@@ -53,7 +53,7 @@ ofApp::setup()
 void
 ofApp::update()
 {
-    framesExporter->update(ofGetElapsedTimeMillis());
+    framesExporter.updateByTime(ofGetElapsedTimeMillis());
 
     for(auto& particle : particles)
     {

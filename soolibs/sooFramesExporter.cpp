@@ -3,9 +3,18 @@
 namespace soo
 {
 
-FramesExporter::FramesExporter(int _duration)
-    : duration(_duration)
-{}
+void
+FramesExporter::setStartAndEnd(const float _start, const float _end)
+{
+    start = _start;
+    end = _end;
+}
+
+void
+FramesExporter::setEnd(const float _end)
+{
+    end = _end;
+}
 
 void
 FramesExporter::setActive(bool _active)
@@ -14,22 +23,39 @@ FramesExporter::setActive(bool _active)
 }
 
 void
-FramesExporter::update(int elapsedTimeMillis)
+FramesExporter::updateByTime(const float _elapsedTimeMillis)
+{
+    update(1000 * start, 1000 * end, _elapsedTimeMillis, "s");
+}
+
+void
+FramesExporter::updateByFrames(const float _currentFrameNum)
+{
+    update(start, end, _currentFrameNum, "frames");
+}
+
+void
+FramesExporter::update(const float _start,
+                       const float _end,
+                       const float _current,
+                       const std::string _units)
 {
     if(active)
     {
-        if(elapsedTimeMillis > epsilon && elapsedTimeMillis < 1000 * duration + epsilon)
+        if(_current > _start && _current < _end)
         {
             if(saveImageCounter == 0)
-                std::cout << "[SOO INFO]\tStarting with frame exporting [" << duration << "s]\n";
+                std::cout << "[SOO INFO]\tStarting with frame exporting [" << _end - _start << " " << _units << "]\n";
 
             ofSaveFrame();
         }
         else
         {
             if(showDoneInfo)
+            {
                 std::cout << "[SOO INFO]\tDone with frame exporting.\n";
-            showDoneInfo = false;
+                showDoneInfo = false;
+            }
         }
     }
 }

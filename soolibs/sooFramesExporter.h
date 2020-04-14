@@ -5,26 +5,30 @@
 namespace soo
 {
 
-class FramesExporter;
-using FramesExporterPtr = std::unique_ptr<FramesExporter>;
-
-// TODO allow to specify starting + ending time, not just ending
 class FramesExporter
 {
 private:
-    int duration;
-    int epsilon = 100;
+    float start = 0; // time [s] or number of frames
+    float end = 500; // time [s] or number of frames
     int saveImageCounter = 0;
     bool showDoneInfo = true;
     bool active = false;
 
 public:
-    FramesExporter(int _duration);
-    void setActive(bool _active);
+    FramesExporter() = default;
 
-    void update(int elapsedTimeMillis);
+    void setStartAndEnd(const float _start, const float _end);
+    void setEnd(const float _end);
+    void setActive(const bool _active);
+
+    void updateByTime(const float _elapsedTimeMillis);
+    void updateByFrames(const float _currentFrameNum);
 
 private:
+    void update(const float _start,
+                const float _end,
+                const float _current,
+                const std::string _units);
     void ofSaveFrame();
 };
 

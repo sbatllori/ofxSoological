@@ -77,7 +77,7 @@ public:
     void draw();
 
     // Frames Exporter
-    soo::FramesExporterPtr framesExporter;
+    soo::FramesExporter framesExporter;
 
     // Character
     const uint32_t character = '2';

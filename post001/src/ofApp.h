@@ -21,7 +21,7 @@ public:
     void update();
     void draw();
 
-    soo::FramesExporterPtr framesExporter;
+    soo::FramesExporter framesExporter;
 
     // Main circle
     soo::Particle<soo::Properties> circle;

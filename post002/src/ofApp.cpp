@@ -5,8 +5,8 @@ void
 ofApp::setup()
 {
     // Setup frames exporter
-    framesExporter = soo::FramesExporterPtr(new soo::FramesExporter(50));
-    framesExporter->setActive(false);
+    framesExporter.setStartAndEnd(0.1f, 50);
+    framesExporter.setActive(false);
 
     // Canvas settings
     ofBackground(255);
@@ -74,7 +74,7 @@ ofApp::setup()
 void
 ofApp::update()
 {
-    framesExporter->update(ofGetElapsedTimeMillis());
+    framesExporter.updateByTime(ofGetElapsedTimeMillis());
 
     if(!renderKidLine)
     {
