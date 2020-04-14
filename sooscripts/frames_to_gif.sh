@@ -2,10 +2,12 @@
 
 echo "[SOO INFO] This script needs to be run from the POSTXXX folder."
 
-FRAMES_LOOP=bin/data/frames_loop
-OUTPUT=bin/data/loop.gif
+DATA=bin/data
+FRAMES=$DATA/frames
+OUTPUT=$DATA/output.gif
 
-echo "[SOO INFO] Will read frames from: "$FRAMES_LOOP
+echo "[SOO INFO] Will read frames from: "$FRAMES
 echo "[SOO INFO] Will export gif to: "$OUTPUT
 
-ffmpeg -i $FRAMES_LOOP/f%08d.png $OUTPUT
+ffmpeg -i $FRAMES/f%08d.png -vf palettegen $DATA/palette.png
+ffmpeg -i $FRAMES/f%08d.png -i $DATA/palette.png -lavfi paletteuse $OUTPUT

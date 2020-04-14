@@ -38,7 +38,7 @@ ofApp::setup()
         auto v1 = shape->getVertices()[124];
         auto v2 = shape->getVertices()[125];
 
-        int numLines = 200;
+        int numLines = 300;
         lines.resize(numLines);
         for(int i = 0; i < numLines; i++)
         {

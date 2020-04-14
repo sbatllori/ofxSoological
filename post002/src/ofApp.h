@@ -46,7 +46,7 @@ struct Shape
     toCenter()
     {
         auto bbox = getBoundingBox();
-        float x = ofGetWindowWidth() / 2 - bbox.width / 2;
+        float x = ofGetWindowWidth() / 2 - bbox.width / 2 - 50;
         float y = ofGetWindowHeight() / 2 + bbox.height / 2;
         path.translate(ofVec2f(x, y));
     }
