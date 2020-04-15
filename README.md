@@ -7,7 +7,7 @@ This is a personal project to learn how to code art with [openframeworks](https:
 
 | Post | Preview | Title | Category | Keywords|
 |:----:|:-------:|:-----:|:--------:|:-------:|
-|2|<img src="post002/doc/output.png" width="60px">|[Lines Inside a Shape](post002/README.md)|Simple geometric rules in 2D|`2D` `ofPath` `uniform linear motion`
+|2|<img src="post002/doc/output.png" width="60px">|[Lines Inside a Shape](post002/README.md)|Simple geometric rules in 2D|`2D` `ofPath` `ofPolyline` `uniform linear motion`
 |1|<img src="post001/doc/color.png" width="60px">|[Particles Inside a Circle](post001/README.md)|Simple geometric rules in 2D|`2D` `circle` `uniform linear motion`
 
 ## Repo Organisation
