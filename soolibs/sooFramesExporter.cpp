@@ -49,7 +49,7 @@ FramesExporter::update(const float _start,
 
             ofSaveFrame();
         }
-        else
+        else if(_current >= _end)
         {
             if(showDoneInfo)
             {
