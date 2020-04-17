@@ -1,6 +1,8 @@
 #pragma once
 
 #include "ofMain.h"
+#include "sooFramesExporter.h"
+#include "sooParticle.h"
 
 namespace soo
 {
@@ -46,8 +48,8 @@ private:
     setDefaultPathDrawingConfig()
     {
         path.setFilled(true);
-        path.setFillColor(ofColor(255));
-        path.setStrokeColor(ofColor(0, 0, 0, 255));
+        path.setFillColor(ofColor::white);
+        path.setStrokeColor(ofColor::black);
         path.setStrokeWidth(2);
         path.setCurveResolution(72);
     }
@@ -68,6 +70,11 @@ private:
     }
 };
 } // namespace soo
+
+struct Properties
+{
+    float radius;
+};
 
 using DeformedCirclePtr = std::shared_ptr<soo::DeformedCircle>;
 using Shape = std::vector<DeformedCirclePtr>;
@@ -92,5 +99,15 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
 
+    soo::FramesExporter framesExporter;
+
+    // Drawing
     std::vector<Shape> shapes;
+    Shape stone;
+    std::vector<soo::Particle<Properties>> stars;
+
+    // Text
+    const string text = "  CUANDO ME INSPIRÁIS TODAS\nA LA VEZ, NUNCA QUIERO ELEGIR.";
+    const string fontName = "Fishfingers.ttf";
+    ofTrueTypeFont font;
 };
