@@ -7,6 +7,7 @@ This is a personal project to learn how to code art with [openframeworks](https:
 
 | Post | Preview | Title | Category | Keywords|
 |:----:|:-------:|:-----:|:--------:|:-------:|
+|4|<img src="post004/doc/output.png" width="60px">|[Drawing with Deformed Circles](post004/README.md)|Geometric shapes.|`2D` `ofPath` `deformed circles`
 |3|<img src="post003/doc/end.png" width="60px">|[Color Grid](post003/README.md)|Basic color changes.|`2D` `ofColor` `grid` `mosaic`
 |2|<img src="post002/doc/output.png" width="60px">|[Lines Inside a Shape](post002/README.md)|Simple geometric rules in 2D|`2D` `ofPath` `ofPolyline` `uniform linear motion`
 |1|<img src="post001/doc/color.png" width="60px">|[Particles Inside a Circle](post001/README.md)|Simple geometric rules in 2D|`2D` `circle` `uniform linear motion`
