@@ -15,8 +15,8 @@ This is a personal project to learn how to code art with [openframeworks](https:
 ## Repo Organisation
 
 The repo is organized in the following way:
-- Each ***post****** folder contains the source code of a regular openframeworks app, namely the implementation of `ofApp.h` and `ofApp.cpp`.
-- Folder ***soolibs*** contains my own libraries defining common utilities used across the different posts.
-- Folder ***sooscripts*** contains non C++ scripts used to perfom external actions, e.g. gif generator.
+- Each **post** folder contains the source code of a regular openframeworks app, namely the implementation of `ofApp.h` and `ofApp.cpp`.
+- Folder **soolibs** contains my own libraries defining common utilities used across the different posts.
+- Folder **sooscripts** contains non C++ scripts used to perfom external actions, e.g. generating a video from a set of frames.
 
 
