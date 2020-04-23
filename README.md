@@ -7,11 +7,11 @@ This is a personal project to learn how to code art with [openframeworks](https:
 
 | Post | Preview | Title | Category | Keywords|
 |:----:|:-------:|:-----:|:--------:|:-------:|
-|5|<img src="post005/doc/output.png" width="60px">|[Deforming Line Intersections](post005/README.md)|2D geometric shapes|`2D` `ofPath` `ofPolyline` `bezier` `ofPolyline intersection`
-|4|<img src="post004/doc/output.png" width="60px">|[Drawing with Deformed Circles](post004/README.md)|2D geometric shapes|`2D` `ofPath` `ofPolyline` `curve` `deformed circles`
-|3|<img src="post003/doc/end.png" width="60px">|[Color Grid](post003/README.md)|Basic color changes|`2D` `ofColor` `grid` `mosaic`
-|2|<img src="post002/doc/output.png" width="60px">|[Lines Inside a Shape](post002/README.md)|2D geometric rules|`2D` `ofPath` `ofPolyline` `line` `uniform linear motion`
-|1|<img src="post001/doc/color.png" width="60px">|[Particles Inside a Circle](post001/README.md)|2D geometric rules|`2D` `circle` `uniform linear motion`
+|5|<img src="post005/doc/output.png" width="80px">|[Deforming Line Intersections](post005/README.md)|2D geometric shapes|`2D` `ofPath` `ofPolyline` `bezier` `ofPolyline intersection`
+|4|<img src="post004/doc/output.png" width="80px">|[Drawing with Deformed Circles](post004/README.md)|2D geometric shapes|`2D` `ofPath` `ofPolyline` `curve` `deformed circles`
+|3|<img src="post003/doc/end.png" width="80px">|[Color Grid](post003/README.md)|Basic color changes|`2D` `ofColor` `grid` `mosaic`
+|2|<img src="post002/doc/output.png" width="80px">|[Lines Inside a Shape](post002/README.md)|2D geometric rules|`2D` `ofPath` `ofPolyline` `line` `uniform linear motion`
+|1|<img src="post001/doc/color.png" width="80px">|[Particles Inside a Circle](post001/README.md)|2D geometric rules|`2D` `circle` `uniform linear motion`
 
 ## Repo Organisation
 
