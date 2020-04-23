@@ -1,6 +1,6 @@
-# Post 005: TODO
+# Post 005: Deforming Line Intersections
 
-TODO
+Simple composition of horizontal lines moving vertically, a shape of a '5' moving horizontally, and the lines reacting to the intersection with the border of the '5'.
 
 ### Output
 <img src="doc/output.png" width="48%">
