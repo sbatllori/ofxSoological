@@ -7,6 +7,7 @@ This is a personal project to learn how to code art with [openframeworks](https:
 
 | Post | Preview | Title | Category | Keywords|
 |:----:|:-------:|:-----:|:--------:|:-------:|
+|6|<img src="post006/doc/dc_15.png" width="80px">|[Static Dragon Curve](post006/README.md)|Fractals|`2D` `ofNode` `recursivity` `fractal`
 |5|<img src="post005/doc/output.png" width="80px">|[Deforming Line Intersections](post005/README.md)|2D geometric shapes|`2D` `ofPath` `ofPolyline` `bezier` `ofPolyline intersection`
 |4|<img src="post004/doc/output.png" width="80px">|[Drawing with Deformed Circles](post004/README.md)|2D geometric shapes|`2D` `ofPath` `ofPolyline` `curve` `deformed circles`
 |3|<img src="post003/doc/end.png" width="80px">|[Color Grid](post003/README.md)|Basic color changes|`2D` `ofColor` `grid` `mosaic`

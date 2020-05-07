@@ -42,7 +42,7 @@ FramesExporter::update(const float _start,
 {
     if(active)
     {
-        if(_current > _start && _current < _end)
+        if(_current > _start && _current <= _end)
         {
             if(saveImageCounter == 0)
                 std::cout << "[SOO INFO]\tStarting with frame exporting [" << _end - _start << " " << _units << "]\n";

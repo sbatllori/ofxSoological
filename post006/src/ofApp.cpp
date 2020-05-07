@@ -4,91 +4,29 @@
 void
 ofApp::setup()
 {
+    unsigned int it = 10;
+    framesExporter.setStartAndEnd(2, 3);
+    framesExporter.setActive(false);
 
     ofSetFrameRate(30);
     ofSetBackgroundColor(255);
     ofSetColor(0);
-    ofSetLineWidth(2);
+    ofSetLineWidth(1.5);
 
-    dragonCurve.generate(12);
+    dragonCurve = std::make_shared<soo::DragonCurve>(5);
+    dragonCurve->generateRecursive(it);
 }
 
 //--------------------------------------------------------------
 void
 ofApp::update()
-{}
+{
+    framesExporter.updateByFrames(ofGetFrameNum());
+}
 
 //--------------------------------------------------------------
 void
 ofApp::draw()
 {
-
-    ofPushMatrix();
-    {
-        ofRectangle bbox = dragonCurve.line.getBoundingBox();
-        float x = ofGetWidth() / 2 - (bbox.x + bbox.width / 2);
-        float y = ofGetHeight() / 2 - (bbox.y + bbox.height / 2);
-        ofTranslate(x, y);
-
-        //        ofNoFill();
-        //        ofDrawRectangle(bbox);
-
-        dragonCurve.line.draw();
-    }
-    ofPopMatrix();
+    dragonCurve->drawStatic();
 }
-
-//--------------------------------------------------------------
-void
-ofApp::keyPressed(int key)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::keyReleased(int key)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mouseMoved(int x, int y)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mouseDragged(int x, int y, int button)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mousePressed(int x, int y, int button)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mouseReleased(int x, int y, int button)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mouseEntered(int x, int y)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mouseExited(int x, int y)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::windowResized(int w, int h)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::gotMessage(ofMessage msg)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::dragEvent(ofDragInfo dragInfo)
-{}

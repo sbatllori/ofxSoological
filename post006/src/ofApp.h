@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "sooFramesExporter.h"
 
 namespace soo
 {
@@ -9,18 +10,55 @@ using Nodes = std::vector<Node>;
 
 class DragonCurve
 {
-public:
-    ofPolyline line;
+private:
     Nodes nodes;
-    float length = 10;
-    float deg = 90;
+    float length, angle;
 
 public:
+    ofPolyline line;
+
+public:
+    DragonCurve(const float _length = 10, const float _angle = 90)
+        : length(_length)
+        , angle(_angle)
+    {}
+
     void
-    generate(unsigned int iterations)
+    generateRecursive(unsigned int it)
     {
-        for(int it = 0; it < iterations; it++)
-            computeNextIteration();
+        computeNextIteration();
+        if(it == 0)
+            return;
+        generateRecursive(it - 1);
+    }
+
+    void
+    drawStatic()
+    {
+        ofPushMatrix();
+        {
+            ofRectangle bbox = line.getBoundingBox();
+
+            // Define scaling parameters
+            float margin = 50;
+            float W = ofGetWidth() - 2 * margin;
+            float H = ofGetHeight() - 2 * margin;
+            float scaleFactor;
+            if(bbox.width > bbox.height)
+                scaleFactor = W / bbox.width;
+            else
+                scaleFactor = H / bbox.height;
+
+            // Define translation parameters
+            float x = ofGetWidth() / 2 - scaleFactor * (bbox.x + bbox.width / 2);
+            float y = ofGetHeight() / 2 - scaleFactor * (bbox.y + bbox.height / 2);
+
+            ofTranslate(x, y);
+            ofScale(scaleFactor);
+
+            line.draw();
+        }
+        ofPopMatrix();
     }
 
 private:
@@ -57,7 +95,7 @@ private:
                 copyNodes.push_back(node);
             }
 
-            root->rotateDeg(deg, {0, 0, 1});
+            root->rotateDeg(angle, {0, 0, 1});
 
             for(size_t i = 0; i < copyNodes.size(); i++)
             {
@@ -77,19 +115,6 @@ public:
     void update();
     void draw();
 
-    void keyPressed(int key);
-    void keyReleased(int key);
-    void mouseMoved(int x, int y);
-    void mouseDragged(int x, int y, int button);
-    void mousePressed(int x, int y, int button);
-    void mouseReleased(int x, int y, int button);
-    void mouseEntered(int x, int y);
-    void mouseExited(int x, int y);
-    void windowResized(int w, int h);
-    void dragEvent(ofDragInfo dragInfo);
-    void gotMessage(ofMessage msg);
-
-    //    ofPolyline line;
-    unsigned long iterations;
-    soo::DragonCurve dragonCurve;
+    soo::FramesExporter framesExporter;
+    std::shared_ptr<soo::DragonCurve> dragonCurve;
 };
