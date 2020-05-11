@@ -20,15 +20,15 @@ ofApp::setup()
     charPoly = charPoly.getResampledBySpacing(1);
 
     seven.contour = charPoly;
-    seven.color1 = ofColor::white;
-    seven.color2 = ofColor(ofColor::cadetBlue + 20);
-    seven.v1 = ofVec2f(0, 15.0);
-    seven.v2 = ofVec2f(50, 0);
-    seven.v3 = ofVec2f(0, -15.0);
-    seven.numTriangles = 50;
-    seven.minOffset = 10;
-    seven.maxOffset = 20;
-    seven.alpha = 50;
+    seven.brush.color1 = ofColor::white;
+    seven.brush.color2 = ofColor(ofColor::cadetBlue + 20);
+    seven.brush.v1 = ofVec2f(0, 15.0);
+    seven.brush.v2 = ofVec2f(50, 0);
+    seven.brush.v3 = ofVec2f(0, -15.0);
+    seven.brush.numTriangles = 50;
+    seven.brush.minOffset = 10;
+    seven.brush.maxOffset = 20;
+    seven.brush.alpha = 50;
 
     // Add some hairy shapes
     initRandomShapes();
@@ -55,10 +55,10 @@ ofApp::draw()
     // Drawing when the mouse is pressed
     if(ofGetMousePressed(OF_MOUSE_BUTTON_LEFT))
     {
-        seven.drawStar();
+        seven.drawRandom();
 
         for(auto& shape : shapes)
-            shape.drawStar();
+            shape.drawRandom();
     }
 
     if(ofGetMousePressed(OF_MOUSE_BUTTON_RIGHT))
@@ -113,15 +113,15 @@ ofApp::initRandomShapes()
 
         soo::HairyShape circle;
         circle.contour = circlePoly;
-        circle.color1 = ofColor(0); // black
-        circle.color2 = ofColor(ofRandom(5, 40)); // slightly lighter
-        circle.v1 = ofVec2f(0, 0.15 * radius);
-        circle.v2 = ofVec2f(radius, 0);
-        circle.v3 = ofVec2f(0, -0.15 * radius);
-        circle.numTriangles = 5;
-        circle.minOffset = 0;
-        circle.maxOffset = 15;
-        circle.alpha = 50;
+        circle.brush.color1 = ofColor(0); // black
+        circle.brush.color2 = ofColor(ofRandom(5, 40)); // slightly lighter
+        circle.brush.v1 = ofVec2f(0, 0.15 * radius);
+        circle.brush.v2 = ofVec2f(radius, 0);
+        circle.brush.v3 = ofVec2f(0, -0.15 * radius);
+        circle.brush.numTriangles = 5;
+        circle.brush.minOffset = 0;
+        circle.brush.maxOffset = 15;
+        circle.brush.alpha = 50;
         shapes.push_back(circle);
     }
 }
