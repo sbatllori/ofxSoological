@@ -4,7 +4,7 @@
 #include "sooFramesExporter.h"
 #include "sooParticle.h"
 
-// TODO(refactor): move this to soolibs if similar structures are needed
+// TODO move this to soolibs if similar structures are needed
 namespace soo
 {
 struct Properties
@@ -26,12 +26,7 @@ struct Line
 
 class ofApp : public ofBaseApp
 {
-
-public:
-    void setup();
-    void update();
-    void draw();
-
+private:
     // Frames Exporter
     soo::FramesExporter framesExporter;
 
@@ -50,4 +45,9 @@ public:
     // Kidline
     soo::Line kidLine;
     bool renderKidLine = false;
+
+public:
+    void setup();
+    void update();
+    void draw();
 };

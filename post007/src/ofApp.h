@@ -10,8 +10,7 @@ struct HairyShape
     ofPolyline contour;
     TrianglesOutBrush brush;
 
-    void
-    drawRandom()
+    void drawRandom()
     {
         ofVec2f p = contour[ofRandom(contour.size())];
         brush.draw(p);
@@ -21,15 +20,7 @@ struct HairyShape
 
 class ofApp : public ofBaseApp
 {
-
-public:
-    void setup();
-    void update();
-    void draw();
-
-    void keyPressed(int key);
-    void initRandomShapes();
-
+private:
     // Character
     const uint32_t character = '7';
     const string fontName = "FreeSans.ttf";
@@ -39,4 +30,14 @@ public:
     // Hairy shapes
     soo::HairyShape seven;
     std::vector<soo::HairyShape> shapes;
+
+public:
+    void setup();
+    void update();
+    void draw();
+
+    void keyPressed(int key);
+
+private:
+    void initRandomShapes();
 };

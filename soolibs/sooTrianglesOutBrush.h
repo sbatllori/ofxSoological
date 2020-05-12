@@ -2,7 +2,8 @@
 
 #include "sooBrush.h"
 
-namespace soo {
+namespace soo
+{
 class TrianglesOutBrush : Brush
 {
 public:
@@ -16,4 +17,4 @@ public:
 public:
     void draw(const ofVec2f& p);
 };
-}
+} // namespace soo

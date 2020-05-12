@@ -5,7 +5,11 @@
 int
 main()
 {
-    unsigned int instaSquareDim = 1080; // 600 or 1080
-    ofSetupOpenGL(instaSquareDim, instaSquareDim, OF_WINDOW);
+    int dim = 1080;
+    ofSetupOpenGL(dim, dim, OF_WINDOW); // <-------- setup the GL context
+
+    // this kicks off the running of my app
+    // can be OF_WINDOW or OF_FULLSCREEN
+    // pass in width and height too:
     ofRunApp(new ofApp());
 }

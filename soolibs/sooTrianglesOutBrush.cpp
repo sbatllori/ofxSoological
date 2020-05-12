@@ -2,7 +2,8 @@
 
 namespace soo
 {
-void TrianglesOutBrush::draw(const ofVec2f& p)
+void
+TrianglesOutBrush::draw(const ofVec2f& p)
 {
     for(int t = 0; t < numTriangles; t++)
     {
@@ -34,4 +35,4 @@ void TrianglesOutBrush::draw(const ofVec2f& p)
         ofDrawTriangle(p1, p2, p3);
     }
 }
-}
+} // namespace soo

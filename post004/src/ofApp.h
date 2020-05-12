@@ -18,12 +18,7 @@ using Rocks = std::vector<Rock>;
 
 class ofApp : public ofBaseApp
 {
-
-public:
-    void setup();
-    void update();
-    void draw();
-
+private:
     // Frames exporter
     soo::FramesExporter framesExporter;
 
@@ -37,4 +32,9 @@ public:
     Stars stars;
     Rocks ground;
     Rock flyingRock, fire;
+
+public:
+    void setup();
+    void update();
+    void draw();
 };

@@ -25,10 +25,7 @@ public:
     void updateByFrames(const float _currentFrameNum);
 
 private:
-    void update(const float _start,
-                const float _end,
-                const float _current,
-                const std::string _units);
+    void update(const float _start, const float _end, const float _current, const std::string _units);
     void ofSaveFrame();
 };
 

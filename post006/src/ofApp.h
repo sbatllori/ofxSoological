@@ -23,8 +23,7 @@ public:
         , angle(_angle)
     {}
 
-    void
-    generateRecursive(unsigned int it)
+    void generateRecursive(unsigned int it)
     {
         computeNextIteration();
         if(it == 0)
@@ -32,8 +31,7 @@ public:
         generateRecursive(it - 1);
     }
 
-    void
-    drawStatic()
+    void drawStatic()
     {
         ofPushMatrix();
         {
@@ -62,8 +60,7 @@ public:
     }
 
 private:
-    void
-    computeNextIteration()
+    void computeNextIteration()
     {
         if(nodes.empty())
         {
@@ -109,12 +106,12 @@ private:
 
 class ofApp : public ofBaseApp
 {
+private:
+    soo::FramesExporter framesExporter;
+    std::shared_ptr<soo::DragonCurve> dragonCurve;
 
 public:
     void setup();
     void update();
     void draw();
-
-    soo::FramesExporter framesExporter;
-    std::shared_ptr<soo::DragonCurve> dragonCurve;
 };

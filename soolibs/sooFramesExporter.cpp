@@ -35,10 +35,7 @@ FramesExporter::updateByFrames(const float _currentFrameNum)
 }
 
 void
-FramesExporter::update(const float _start,
-                       const float _end,
-                       const float _current,
-                       const std::string _units)
+FramesExporter::update(const float _start, const float _end, const float _current, const std::string _units)
 {
     if(active)
     {

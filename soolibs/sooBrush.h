@@ -2,7 +2,8 @@
 
 #include "ofMain.h"
 
-namespace soo {
+namespace soo
+{
 class Brush
 {
 public:
@@ -11,4 +12,4 @@ public:
 
     virtual void draw(const ofVec2f& p) = 0;
 };
-}
+} // namespace soo

@@ -29,8 +29,7 @@ public:
         update(other);
     }
 
-    void
-    moveY(const float step, const float marginUp, const float marginDown, const ofPolyline& other)
+    void moveY(const float step, const float marginUp, const float marginDown, const ofPolyline& other)
     {
         // Handle extreme cases
         // a) moving down
@@ -55,8 +54,7 @@ public:
     }
 
 private:
-    void
-    findIntersectionPoints(const ofPolyline& other)
+    void findIntersectionPoints(const ofPolyline& other)
     {
         // Consider the line segment inside the other's bounding box
         ofRectangle bbox = other.getBoundingBox();
@@ -80,8 +78,7 @@ private:
         }
     }
 
-    void
-    update(const ofPolyline& other)
+    void update(const ofPolyline& other)
     {
         path.clear();
         findIntersectionPoints(other);
@@ -113,12 +110,7 @@ private:
 
 class ofApp : public ofBaseApp
 {
-
-public:
-    void setup();
-    void update();
-    void draw();
-
+private:
     // Frames Exporter
     soo::FramesExporter framesExporter;
 
@@ -135,4 +127,9 @@ public:
     size_t numLines;
     float wMargin, hMargin;
     std::vector<std::shared_ptr<soo::BezierLine>> lines;
+
+public:
+    void setup();
+    void update();
+    void draw();
 };
