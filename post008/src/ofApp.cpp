@@ -4,27 +4,36 @@
 void
 ofApp::setup()
 {
+    // Frames exporter
+    framesExporter.setEnd(1500);
+    framesExporter.setActive(false);
+
+    // Load image
     image.load(imagePath);
     w = image.getWidth();
     h = image.getHeight();
 
+    // Canvas settings
     ofSetWindowShape(w, h);
     ofSetBackgroundAuto(false);
     ofBackground(255);
     ofSetFrameRate(30);
     ofSetCircleResolution(72);
 
+    // Brushes definition
     int numBrushes = 250;
     brushes.resize(numBrushes);
     for(int i = 0; i < numBrushes; i++)
     {
-        soo::Particle<BrushProperties> brush;
+        Brush brush;
+
+        // Brush falling from the top of the canvas vertically
         brush.direction = {0.0, 1.0};
         brush.position.x = ofRandomWidth();
         brush.position.y = 0;
         brush.properties.active = true;
 
-        // 10% of the brushes can be bigger
+        // 10% of the brushes can be bigger than the rest
         if(ofRandom(100) < 10)
         {
             brush.properties.size = ofRandom(5, 30);
@@ -33,7 +42,6 @@ ofApp::setup()
         }
         else
         {
-
             brush.properties.size = ofRandom(5, 10);
             brush.properties.speed = ofRandom(0.1, 2);
             brush.properties.alpha = 10;
@@ -47,22 +55,17 @@ ofApp::setup()
 void
 ofApp::update()
 {
+    framesExporter.updateByFrames(ofGetFrameNum());
+
     for(auto& brush : brushes)
     {
-        ofVec2f nextPosition =
-            brush.position + brush.properties.speed * brush.direction + ofRandom(-1, 1) * ofNoise(brush.position);
-        bool outside = nextPosition.x < 0 || nextPosition.x > w || nextPosition.y < 0 || nextPosition.y > h;
+        // Define the next position of the brush, according to its speed and adding a bit of noise to simulate the drops
+        brush.position += brush.properties.speed * brush.direction + ofRandom(-1, 1) * ofNoise(brush.position);
+
+        // Deactivate the brush if it reached the end of the canvas
+        bool outside = brush.position.x < 0 || brush.position.x > w || brush.position.y < 0 || brush.position.y > h;
         if(outside)
             brush.properties.active = false;
-
-        //        while(outside)
-        //        {
-        //            brush.direction.rotate(ofRandom(360));
-        //            nextPosition = brush.position + step * (brush.direction + ofNoise(brush.position));
-        //            outside = nextPosition.x < 0 || nextPosition.x > w || nextPosition.y < 0 || nextPosition.y > h;
-        //        }
-
-        brush.position = nextPosition;
     }
 }
 
@@ -70,6 +73,7 @@ ofApp::update()
 void
 ofApp::draw()
 {
+    // Each brush draws a circle with the correspondent image pixel color
     for(auto& brush : brushes)
     {
         if(brush.properties.active)

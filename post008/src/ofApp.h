@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "sooFramesExporter.h"
 #include "sooParticle.h"
 
 struct BrushProperties
@@ -11,13 +12,18 @@ struct BrushProperties
     bool active;
 };
 
+using Brush = soo::Particle<BrushProperties>;
+using Brushes = std::vector<Brush>;
+
 class ofApp : public ofBaseApp
 {
 public:
     int w, h;
     string imagePath = "MaddalenaDoni.jpg";
     ofImage image;
-    std::vector<soo::Particle<BrushProperties>> brushes;
+    Brushes brushes;
+
+    soo::FramesExporter framesExporter;
 
 public:
     void setup();
