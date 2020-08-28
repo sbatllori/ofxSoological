@@ -4,6 +4,9 @@
 #define erase(scene, mask) 			scene * (1. - mask)
 #define add(scene, object, color)	erase(scene,object) + object*color
 
+// Available modes: 1-2
+#define MODE                        2
+
 in vec4 vposition;
 out vec4 fcolor;
 
@@ -23,68 +26,68 @@ vec2 mcu(       // (movimiento circular uniforme)
     float t0    // initial movement time
 );
 
-// Colors
-vec4 getColorFromTexture(vec2 p);
-
-
 void main()
 {
     // Get the current pixel position
     vec2 p = vposition.xy;
 
-//    vec4 col0 = getColorFromTexture(p);
-//    vec4 col1 = getColorFromTexture(p.yx*1.5);
-//    vec3 mixedCol = mix(col0.bgr, col1.gbr - vec3(.2), 0.5);
-
+    // Init the scene
     vec3 scene;
 
-    // Set background color
     vec3 bgColor = vec3(0.9);
-    scene = add(scene, bgColor - scene, 0.0);
+    scene = add(scene, bgColor - scene, 0);
 
+    // Add circular layers of circles moving around
+    vec2 cLayers = vec2(width/2, height/2); // center of the circular layers
+    int nLayers = 20;                       // number of layers
+    float rCircles = 5;                     // radius of the circles moving around
+    float theta = 2.;                       // factor to define the speed of the moving circles
+    float speedFactor = 0.1;                // factor to define the speed of the moving circles
+    float speed = speedFactor * theta;      // speed of the moving circles
 
-    // ------------------------------
-    // Add circles on circular layers
-
-    // Static parameters
-    vec2 cLayers = vec2(width/2, height/2); // centroid
-
-//    scene = add(scene, dCircle(p, mcu(cLayers, 12*20, radians(30.), 0.0), 70), vec3(0.05));
-//    scene = add(scene, dCircle(p, mcu(cLayers, 12*20, radians(-30.), 0.0), 40), bgColor);
-
-
-    int nLayers = 20;
-    float rCircles = 5;
-
+    // Define each circular layer
     for(int i = 0; i < nLayers; i++)
     {
-        float rLayer = 12*i;
-        int nCircles = 5*i + 1;
+        float rLayer = 12*i;    // radius of the current circular layer
+        int nCircles = 5*i + 1; // number of circles on the current layer
 
+        if(i % 2 == 0)
+            speed = -1. * abs(speed);
+        else
+            speed *= -1.;
+
+        // Define each moving circle of the current layer
         for(int k=0; k < nCircles; k++)
         {
-//            vec2 cCircle;
-//            cCircle.x = cLayers.x + rLayer * cos(2*PI*k / nCircles);
-//            cCircle.y = cLayers.y + rLayer * sin(2*PI*k / nCircles);
+            // Define different renderings
+            float t0;
+            vec2 c;
+            vec3 color;
 
-            float speed = 1./16.*radians(30.);
-            if(i % 2 == 0)
+            if(MODE == 1)
             {
-                speed *= -1;
+                t0 = 1./speedFactor*PI*k/nCircles;
+                c = mcu(cLayers, rLayer, speed, t0);
+
+                vec4 col0 = texture(tex0, c);
+                vec4 col1 = texture(tex0, p.yx*1.5);
+                color = mix(col0.bgr, col1.gbr - vec3(.2), 0.5);
             }
 
-            float t0_1 = radians(1.0*nCircles/(k+1));
-            float t0_2 = 16*3.82*PI*k/nCircles;
-            vec2 c = mcu(cLayers, rLayer, speed, t0_2);
+            else if(MODE == 2)
+            {
+                t0 = radians(20.0 * nCircles / (k + 1));
+                c = mcu(cLayers, rLayer, -radians(10.), t0);
 
-            vec4 col0 = getColorFromTexture(c);
-            vec4 col1 = getColorFromTexture(p.yx*1.5);
-            vec3 mixedCol = mix(col0.bgr, col1.gbr - vec3(.2), 0.5);
+                color = texture(tex0, c).rgb;
+            }
 
-            scene = add(scene, dCircle(p, c, rCircles), mixedCol);
+            // Add the current circle to the current layer
+            scene = add(scene, dCircle(p, c, rCircles), color);
         }
     }
-    // ------------------------------
+
+    // Set the pixel color
     fcolor = vec4(scene, 1.0);
 }
 
@@ -102,12 +105,5 @@ vec2 mcu(vec2 x0, float r, float theta, float t0=0)
     float t = time;
 
     x = vec2(r*cos(theta*(t+t0)), r*sin(theta*(t+t0))) + x0;
-
     return x;
-}
-
-// Colors
-vec4 getColorFromTexture(vec2 p)
-{
-    return texture(tex0, p);
 }
