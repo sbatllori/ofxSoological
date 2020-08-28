@@ -4,6 +4,10 @@
 void
 ofApp::setup()
 {
+    // Frames exporter
+    framesExporter.setEnd(700);
+    framesExporter.setActive(false);
+
     // Load image
     image.load(imagePath);
     w = image.getWidth() / 6;
@@ -24,7 +28,9 @@ ofApp::setup()
 //--------------------------------------------------------------
 void
 ofApp::update()
-{}
+{
+    framesExporter.updateByFrames(ofGetFrameNum());
+}
 
 //--------------------------------------------------------------
 void

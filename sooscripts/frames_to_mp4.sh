@@ -6,7 +6,7 @@ FRAMES=bin/data/frames
 OUTPUT=bin/data/output.mp4
 
 echo "[SOO INFO] Will read frames from: "$FRAMES
-echo "[SOO INFO] Will export gif to: "$OUTPUT
+echo "[SOO INFO] Will export mp4 to: "$OUTPUT
 
 
 # ffmpeg -i bin/data/frames/f%08d.png -c:a aac -b:a 256k -ar 44100 -c:v libx264 -pix_fmt yuv420p -preset faster -tune stillimage -shortest bin/data/output.mp4
@@ -18,7 +18,10 @@ echo "[SOO INFO] Will export gif to: "$OUTPUT
 ffmpeg \
 -i $FRAMES/f%08d.png \
 -r 30 \
--crf 25 \
+-crf 9 \
 -c:v libx264 \
 -pix_fmt yuv420p \
 $OUTPUT
+
+# -filter:v "setpts=3*PTS" \
+# -filter:v ":minterpolate='mi_mode=mci:mc_mode=aobmc:vsbmc=1:fps=120'" \

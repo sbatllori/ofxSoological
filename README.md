@@ -7,6 +7,7 @@ This is a personal project to learn how to code art with [openframeworks](https:
 
 | Post | Preview | Title | Category | Keywords|
 |:----:|:-------:|:-----:|:--------:|:-------:|
+|10|<img src="post010/doc/output_light.png" width="80px">|[GPU Dancing Dots](post010/README.md)|Fragment shader art|`shaders` `fragment shader` `2D texture` `uniform circular motion`
 |8|<img src="post008/doc/output.png" width="80px">|[Watercolor Drop Simulation](post008/README.md)|2D physical simulations|`2D` `dynamic brush` `painting simulation` `watercolors`
 |7|<img src="post007/doc/output1.png" width="80px">|[Hairy Sticky Shapes](post007/README.md)|2D geometric shapes|`2D` `ofPolyline` `triangle brush`
 |6|<img src="post006/doc/dc_15.png" width="80px">|[Static Dragon Curve](post006/README.md)|Fractals|`2D` `ofNode` `recursivity` `fractal`
@@ -22,5 +23,3 @@ The repo is organised in the following way:
 - Each **post** folder contains the source code of a regular openframeworks app, namely the implementation of `ofApp.h` and `ofApp.cpp`.
 - Folder **soolibs** contains my own libraries defining common utilities used across the different posts.
 - Folder **sooscripts** contains non C++ scripts used to perfom external actions, e.g. generating a video from a set of frames.
-
-

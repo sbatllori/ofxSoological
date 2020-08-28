@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "sooFramesExporter.h"
 
 class ofApp : public ofBaseApp
 {
@@ -12,6 +13,9 @@ public:
 
     // Shaders
     ofShader shader;
+
+    // Frames Exporter
+    soo::FramesExporter framesExporter;
 
 public:
     void setup();
