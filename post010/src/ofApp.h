@@ -7,7 +7,7 @@ class ofApp : public ofBaseApp
 public:
     // Image
     int w, h;
-    string imagePath = "DSC04368.jpg";
+    string imagePath = "DSC05554.jpg";
     ofImage image;
 
     // Shaders

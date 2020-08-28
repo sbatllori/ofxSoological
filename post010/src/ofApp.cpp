@@ -11,6 +11,10 @@ ofApp::setup()
     image.resize(w, h);
 
     // Canvas settings
+    if(w > h)
+        w = h;
+    else
+        h = w;
     ofSetWindowShape(w, h);
 
     // Load shaders
@@ -29,6 +33,9 @@ ofApp::draw()
     ofBackground(255);
 
     shader.begin();
+    shader.setUniform1f("time", ofGetElapsedTimef());
+    shader.setUniform1f("width", w);
+    shader.setUniform1f("height", h);
     image.draw(0, 0);
     shader.end();
 }
@@ -36,7 +43,13 @@ ofApp::draw()
 //--------------------------------------------------------------
 void
 ofApp::keyPressed(int key)
-{}
+{
+    if(key == 's')
+    {
+        glReadBuffer(GL_FRONT); // HACK: only needed on windows, when using ofSetAutoBackground(false)
+        ofSaveScreen("savedScreenshot_" + ofGetTimestampString() + ".png");
+    }
+}
 
 //--------------------------------------------------------------
 void

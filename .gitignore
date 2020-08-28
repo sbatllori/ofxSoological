@@ -10,4 +10,13 @@ config.make
 Makefile
 *.qbs
 obj/
-bin/
+#bin/
+
+!bin/
+
+bin/*
+!bin/data/
+
+bin/data/*
+!bin/data/shaders/
+
