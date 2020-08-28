@@ -10,13 +10,10 @@ config.make
 Makefile
 *.qbs
 obj/
-#bin/
 
-!bin/
-
-bin/*
-!bin/data/
-
-bin/data/*
-!bin/data/shaders/
+# Ignore all in bin but shaders
+*/bin/*
+!*/bin/data/
+*/bin/data/*
+!*/bin/data/shaders/
 
