@@ -16,9 +16,11 @@ ofApp::setup()
     ofSetWindowShape(w, h);
 
     // Load model
-    mesh.load("one.ply");
+    meshL.load("one.ply");
+    meshR.load("one.ply");
+    rotation = 0;
     cam.setTarget({0, 0, 0});
-    cam.setDistance(10);
+    cam.setDistance(8);
 
     // Load shaders
     shader.load("shaders/shader");
@@ -29,30 +31,38 @@ void
 ofApp::update()
 {
     framesExporter.updateByFrames(ofGetFrameNum());
+
+    rotation += 0.01;
 }
 
 //--------------------------------------------------------------
 void
 ofApp::draw()
 {
-    ofEnableDepthTest();
-
     backgroundImage.draw(0, 0);
 
+    ofEnableDepthTest();
     shader.begin();
     //    shader.setUniform1f("time", ofGetElapsedTimef());
 
     cam.begin();
     ofPushMatrix();
     {
-        //        ofRotateYDeg(180);
-        mesh.draw();
+        ofTranslate({-2, 0});
+        ofRotateYDeg(rotation);
+        meshL.draw();
+    }
+    ofPopMatrix();
+    ofPushMatrix();
+    {
+        ofTranslate({2, 0});
+        ofRotateYDeg(-rotation);
+        meshR.draw();
     }
     ofPopMatrix();
     cam.end();
 
     shader.end();
-
     ofDisableDepthTest();
 }
 

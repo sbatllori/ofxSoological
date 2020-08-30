@@ -11,7 +11,8 @@ public:
     ofImage backgroundImage;
 
     // 3D scene
-    ofMesh mesh;
+    float rotation;
+    ofMesh meshL, meshR;
     ofEasyCam cam;
 
     // Shaders
