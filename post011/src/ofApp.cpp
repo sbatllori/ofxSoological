@@ -8,22 +8,36 @@ ofApp::setup()
     framesExporter.setEnd(700);
     framesExporter.setActive(false);
 
-    // Background
-    backgroundImage.load("DSC05554.jpg");
-    auto w = backgroundImage.getWidth() / 6;
-    auto h = backgroundImage.getHeight() / 6;
-    backgroundImage.resize(w, h);
+    // Setup background
+    // - Load the background image
+    backgroundImage.load("background.jpg");
+
+    // - Get the image dimensions
+    w = backgroundImage.getWidth();
+    h = backgroundImage.getHeight();
+
+    // - Define a plane where to project the background image
+    backgroundPlane.set(w, h, 10, 10);
+    backgroundPlane.mapTexCoords(0, 0, w, h);
+
+    // - Set the window dimensions to the background image dimensions
     ofSetWindowShape(w, h);
 
-    // Load model
+    // Setup 3D scene
+    // - Load the meshes '1'
     meshL.load("one.ply");
     meshR.load("one.ply");
-    rotation = 0;
+
+    // - Initialize the rotation parameter
+    meshRotation = 0;
+
+    // - Setup the camera pointing to the meshes
     cam.setTarget({0, 0, 0});
-    cam.setDistance(8);
+    cam.setDistance(8.35);
 
     // Load shaders
-    shader.load("shaders/shader");
+    backgroundShader.load("shaders/background_image");
+    plasticShader.load("shaders/pierrextardif_plastic");
 }
 
 //--------------------------------------------------------------
@@ -32,37 +46,61 @@ ofApp::update()
 {
     framesExporter.updateByFrames(ofGetFrameNum());
 
-    rotation += 0.01;
+    // Update the rotation parameter to rotate the meshes
+    meshRotation += 0.01;
 }
 
 //--------------------------------------------------------------
 void
 ofApp::draw()
 {
-    backgroundImage.draw(0, 0);
+    // Background shader
+    // - Bind the background image as a texture
+    backgroundImage.getTexture().bind();
+    backgroundShader.begin();
 
+    // - Send uniform data to the shader
+    backgroundShader.setUniform1f("height", h);
+
+    // - Draw the plane
+    ofPushMatrix();
+    {
+        ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);
+        backgroundPlane.draw();
+    }
+    ofPopMatrix();
+
+    backgroundShader.end();
+    backgroundImage.getTexture().unbind();
+
+    // Plastinc shader
     ofEnableDepthTest();
-    shader.begin();
-    //    shader.setUniform1f("time", ofGetElapsedTimef());
+    plasticShader.begin();
 
+    // - Send uniform data to the shader
+    plasticShader.setUniform2f("u_resImg", ofGetWidth(), ofGetHeight());
+    plasticShader.setUniform1f("u_time", 5 * ofGetElapsedTimef());
+    plasticShader.setUniform2f("u_offset", glm::vec2(0, 0));
+
+    // - Draw the meshes
     cam.begin();
     ofPushMatrix();
     {
         ofTranslate({-2, 0});
-        ofRotateYDeg(rotation);
+        ofRotateYDeg(meshRotation);
         meshL.draw();
     }
     ofPopMatrix();
     ofPushMatrix();
     {
         ofTranslate({2, 0});
-        ofRotateYDeg(-rotation);
+        ofRotateYDeg(-meshRotation);
         meshR.draw();
     }
     ofPopMatrix();
     cam.end();
 
-    shader.end();
+    plasticShader.end();
     ofDisableDepthTest();
 }
 

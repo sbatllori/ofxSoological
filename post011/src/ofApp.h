@@ -1,22 +1,22 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxAssimpModelLoader.h"
 #include "sooFramesExporter.h"
 
 class ofApp : public ofBaseApp
 {
 public:
     // Background
+    float w, h;
     ofImage backgroundImage;
+    ofPlanePrimitive backgroundPlane;
+    ofShader backgroundShader;
 
     // 3D scene
-    float rotation;
-    ofMesh meshL, meshR;
     ofEasyCam cam;
-
-    // Shaders
-    ofShader shader;
+    float meshRotation;
+    ofMesh meshL, meshR;
+    ofShader plasticShader;
 
     // Frames Exporter
     soo::FramesExporter framesExporter;
