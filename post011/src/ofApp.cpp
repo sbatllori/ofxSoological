@@ -4,18 +4,14 @@
 void
 ofApp::setup()
 {
-    // Frames exporter
-    framesExporter.setEnd(700);
-    framesExporter.setActive(false);
-
     // Setup background
     // - Load the background image
     backgroundImage.load("background.jpg");
 
     // - Get the image dimensions
-    w = backgroundImage.getWidth();
-    h = backgroundImage.getHeight();
-    //    backgroundImage.resize(w, h);
+    w = 0.85 * backgroundImage.getWidth();
+    h = 0.85 * backgroundImage.getHeight();
+    backgroundImage.resize(w, h);
 
     // - Define a plane where to project the background image
     backgroundPlane.set(w, h, 10, 10);
@@ -46,11 +42,9 @@ ofApp::setup()
 void
 ofApp::update()
 {
-    framesExporter.updateByFrames(ofGetFrameNum());
-
     // Update the rotation parameter to rotate the meshes
     if(rotateMesh)
-        meshRotation += 0.035;
+        meshRotation += 0.032;
 }
 
 //--------------------------------------------------------------
@@ -91,6 +85,7 @@ ofApp::draw()
     {
         ofTranslate({-2, 0});
         ofRotateYDeg(meshRotation);
+        ofScale(1.0, 1.3);
         meshL.draw();
     }
     ofPopMatrix();
@@ -98,6 +93,7 @@ ofApp::draw()
     {
         ofTranslate({2, 0});
         ofRotateYDeg(-meshRotation);
+        ofScale(1.0, 1.3);
         meshR.draw();
     }
     ofPopMatrix();

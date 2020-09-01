@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ofMain.h"
-#include "sooFramesExporter.h"
 
 class ofApp : public ofBaseApp
 {
@@ -18,9 +17,6 @@ public:
     float meshRotation;
     ofMesh meshL, meshR;
     ofShader plasticShader;
-
-    // Frames Exporter
-    soo::FramesExporter framesExporter;
 
 public:
     void setup();
