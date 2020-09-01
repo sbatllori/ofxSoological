@@ -17,9 +17,10 @@ echo "[SOO INFO] Will export mp4 to: "$OUTPUT
 # -crf: quality (0 = best)
 ffmpeg \
 -i $FRAMES/f%08d.png \
--r 30 \
--crf 9 \
+-r 60 \
+-crf 1 \
 -c:v libx264 \
+-filter:v "setpts=4*PTS" \
 -pix_fmt yuv420p \
 $OUTPUT
 

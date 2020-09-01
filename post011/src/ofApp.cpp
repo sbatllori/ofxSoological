@@ -4,14 +4,19 @@
 void
 ofApp::setup()
 {
+    // Frames exporter
+    framesExporter.setEnd(100);
+    framesExporter.setActive(false);
+    ofSetFrameRate(60);
+
     // Setup background
     // - Load the background image
     backgroundImage.load("background.jpg");
 
     // - Get the image dimensions
-    w = 0.85 * backgroundImage.getWidth();
-    h = 0.85 * backgroundImage.getHeight();
-    backgroundImage.resize(w, h);
+    w = backgroundImage.getWidth();
+    h = backgroundImage.getHeight();
+    //    backgroundImage.resize(w, h);
 
     // - Define a plane where to project the background image
     backgroundPlane.set(w, h, 10, 10);
@@ -25,13 +30,12 @@ ofApp::setup()
     meshL.load("one.ply");
     meshR.load("one.ply");
 
-    // - Initialize the rotation parameter
-    rotateMesh = false;
-    meshRotation = 0;
+    // - Initialize the mesh rotation
+    rotateMesh = true;
 
     // - Setup the camera pointing to the meshes
     cam.setTarget({0, 0, 0});
-    cam.setDistance(8.35);
+    cam.setDistance(8.35f);
 
     // Load shaders
     backgroundShader.load("shaders/background_image");
@@ -42,9 +46,13 @@ ofApp::setup()
 void
 ofApp::update()
 {
+    framesExporter.updateByFrames(ofGetFrameNum());
+
     // Update the rotation parameter to rotate the meshes
     if(rotateMesh)
-        meshRotation += 0.032;
+        meshRotationSpeed = 0.03f;
+    else
+        meshRotationSpeed = 0.f;
 }
 
 //--------------------------------------------------------------
@@ -84,7 +92,7 @@ ofApp::draw()
     ofPushMatrix();
     {
         ofTranslate({-2, 0});
-        ofRotateYDeg(meshRotation);
+        ofRotateYDeg(-meshRotationSpeed * ofGetElapsedTimeMillis());
         ofScale(1.0, 1.3);
         meshL.draw();
     }
@@ -92,7 +100,7 @@ ofApp::draw()
     ofPushMatrix();
     {
         ofTranslate({2, 0});
-        ofRotateYDeg(-meshRotation);
+        ofRotateYDeg(meshRotationSpeed * ofGetElapsedTimeMillis());
         ofScale(1.0, 1.3);
         meshR.draw();
     }

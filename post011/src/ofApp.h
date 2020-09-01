@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "sooFramesExporter.h"
 
 class ofApp : public ofBaseApp
 {
@@ -14,9 +15,12 @@ public:
     // 3D scene
     ofEasyCam cam;
     bool rotateMesh;
-    float meshRotation;
+    float meshRotationSpeed;
     ofMesh meshL, meshR;
     ofShader plasticShader;
+
+    // Frames Exporter
+    soo::FramesExporter framesExporter;
 
 public:
     void setup();
