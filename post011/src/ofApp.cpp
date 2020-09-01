@@ -15,6 +15,7 @@ ofApp::setup()
     // - Get the image dimensions
     w = backgroundImage.getWidth();
     h = backgroundImage.getHeight();
+    //    backgroundImage.resize(w, h);
 
     // - Define a plane where to project the background image
     backgroundPlane.set(w, h, 10, 10);
@@ -29,6 +30,7 @@ ofApp::setup()
     meshR.load("one.ply");
 
     // - Initialize the rotation parameter
+    rotateMesh = false;
     meshRotation = 0;
 
     // - Setup the camera pointing to the meshes
@@ -47,7 +49,8 @@ ofApp::update()
     framesExporter.updateByFrames(ofGetFrameNum());
 
     // Update the rotation parameter to rotate the meshes
-    meshRotation += 0.01;
+    if(rotateMesh)
+        meshRotation += 0.035;
 }
 
 //--------------------------------------------------------------
@@ -113,6 +116,9 @@ ofApp::keyPressed(int key)
         glReadBuffer(GL_FRONT); // HACK: only needed on windows, when using ofSetAutoBackground(false)
         ofSaveScreen("savedScreenshot_" + ofGetTimestampString() + ".png");
     }
+
+    if(key == 'r')
+        rotateMesh = !rotateMesh;
 }
 
 //--------------------------------------------------------------

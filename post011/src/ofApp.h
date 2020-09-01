@@ -14,6 +14,7 @@ public:
 
     // 3D scene
     ofEasyCam cam;
+    bool rotateMesh;
     float meshRotation;
     ofMesh meshL, meshR;
     ofShader plasticShader;
