@@ -7,7 +7,7 @@ This is a personal project to learn how to code art with [openframeworks](https:
 
 | Post | Preview | Title | Category | Keywords|
 |:----:|:-------:|:-----:|:--------:|:-------:|
-|11|<img src="post011/doc/output.png" width="80px">|[Mixed Composition with Textures](post010/README.md)|Fragment shader art|`shaders` `fragment shader` `2D texture` `3D model loading` `ofxPlasticTexture`
+|11|<img src="post011/doc/output.png" width="80px">|[Mixed Composition with Textures](post011/README.md)|Fragment shader art|`shaders` `fragment shader` `2D texture` `3D model loading` `ofxPlasticTexture`
 |10|<img src="post010/doc/output_light.png" width="80px">|[GPU Dancing Dots](post010/README.md)|Fragment shader art|`shaders` `fragment shader` `2D texture` `uniform circular motion`
 |8|<img src="post008/doc/output.png" width="80px">|[Watercolor Drop Simulation](post008/README.md)|2D physical simulations|`2D` `dynamic brush` `painting simulation` `watercolors`
 |7|<img src="post007/doc/output1.png" width="80px">|[Hairy Sticky Shapes](post007/README.md)|2D geometric shapes|`2D` `ofPolyline` `triangle brush`
