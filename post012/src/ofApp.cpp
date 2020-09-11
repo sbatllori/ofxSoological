@@ -3,13 +3,47 @@
 void
 ofApp::addParticle()
 {
-    // TODO
+    auto particle = soo::Particle<soo::Properties>();
+
+    // Set the initial position. The initial position is a point inside the mask.
+    float x, y;
+    bool in_mask;
+    do
+    {
+        // Get random points from the interior of the mask bounding box
+        x = ofRandom(maskBbox.x, maskBbox.x + maskBbox.width);
+        y = ofRandom(maskBbox.y, maskBbox.y + maskBbox.height);
+
+        // Check if the point is in the mask (white part)
+        in_mask = mask.getColor(x, y) == ofColor::white;
+
+    } while(!in_mask);
+    particle.position = ofVec2f(x, y);
+
+    // Set the particle color. The color is the pixel color of the background image in the initial particle's position
+    particle.properties.color = background.getColor(x, y);
+
+    // Set the particle direction. The direction points up with a bit of horizontal noise.
+    particle.direction = ofVec2f(ofRandom(-0.1f, 0.1f), 1.).getNormalized();
+    //    particle.direction.normalize();
+
+    // Set the other particle properties
+    particle.properties.radius = 10.f;
+    particle.properties.speed = ofRandom(0.05f, 0.5f);
+
+    // Add the particle to the list
+    particles.push_back(particle);
 }
 
 void
 ofApp::updateParticle(Particle& particle)
 {
-    // TODO
+    // Move up with a bit of noise
+    ofVec2f noise;
+    noise.x = ofRandom(-1, 1) * ofNoise(particle.position);
+    noise.y = ofRandom(-1, 1) * ofNoise(particle.position);
+
+    particle.position -= particle.properties.speed * (particle.direction + noise);
 }
 
 //--------------------------------------------------------------
@@ -20,49 +54,22 @@ ofApp::setup()
     framesExporter.setEnd(700);
     framesExporter.setActive(false);
 
-    // Load images
+    // Canvas settings
+    ofSetBackgroundAuto(false);
+    ofBackground(255);
+    ofSetFrameRate(30);
+    ofSetCircleResolution(72);
+
+    // Load images and define the bounding box for the mask
     background.load(imagePath);
     mask.load(maskPath);
+    maskBbox.set(100, 600, ofGetWidth() - 200, 380);
 
-    // Define the bounding box for the loaded mask (white part)
-    bbox.set(100, 600, ofGetWidth() - 200, 380);
-
-    // Initialize the particles
-    numParticles = 50;
+    // Add particles
+    numParticles = 500;
     particles.resize(numParticles);
-
     for(unsigned long i = 0; i < numParticles; i++)
-    {
-        auto particle = soo::Particle<soo::Properties>();
-
-        // The initial position needs to be a point in the mask (white part)
-        float x, y;
-        bool in_mask;
-        do
-        {
-            // Get random points from the interior of the mask bounding box
-            x = ofRandom(bbox.x, bbox.x + bbox.width);
-            y = ofRandom(bbox.y, bbox.y + bbox.height);
-
-            // Check if the point is in the mask (white part)
-            in_mask = mask.getColor(x, y) == ofColor::white;
-
-        } while(!in_mask);
-        particle.properties.origin = ofVec2f(x, y);
-        particle.position = ofVec2f(x, y);
-
-        // Set the directionto be up with a bit of noise
-        particle.direction = ofVec2f(ofRandom(-0.1f, 0.1f), 1.);
-        particle.direction.normalize();
-
-        // Set the particle properties
-        particle.properties.color = background.getColor(x, y);
-        particle.properties.radius = 10.f;
-        particle.properties.speed = ofRandom(0.05f, 0.4f);
-
-        // Add particle
-        particles[i] = particle;
-    }
+        addParticle();
 }
 
 //--------------------------------------------------------------
@@ -72,34 +79,23 @@ ofApp::update()
     framesExporter.updateByFrames(ofGetFrameNum());
 
     for(auto& particle : particles)
-    {
-        particle.position -=
-            particle.properties.speed * (particle.direction + ofRandom(-1, 1) * ofNoise(particle.position));
-
-        if(particle.position.y <= 0.f)
-        {
-            particle.position = particle.properties.origin;
-            particle.properties.speed = ofRandom(0.05f, 0.4f);
-        }
-    }
+        updateParticle(particle);
 }
 
 //--------------------------------------------------------------
 void
 ofApp::draw()
 {
-    ofSetColor(255);
-    background.draw(0, 0);
-
-    //    ofNoFill();
-    //    ofSetLineWidth(5);
-    //    ofDrawRectangle(bbox);
+    if(ofGetFrameNum() < 10)
+    {
+        ofSetColor(255);
+        background.draw(0, 0);
+    }
 
     for(auto& particle : particles)
     {
-        // Draw colors
         ofNoFill();
-        ofSetColor(particle.properties.color);
+        ofSetColor(particle.properties.color, 10);
         ofDrawCircle(particle.position, particle.properties.radius);
     }
 }

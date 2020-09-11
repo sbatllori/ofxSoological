@@ -11,7 +11,6 @@ struct Properties
     ofColor color;
     float radius;
     float speed;
-    ofVec2f origin;
 };
 } // namespace soo
 
@@ -21,12 +20,11 @@ class ofApp : public ofBaseApp
 {
 public:
     // Images
-    int w, h;
     string imagePath = "012_background.jpg", maskPath = "012_mask.jpg";
     ofImage background, mask;
 
     // Particles
-    ofRectangle bbox;
+    ofRectangle maskBbox;
     unsigned long numParticles;
     std::vector<Particle> particles;
 
@@ -51,6 +49,18 @@ public:
     void gotMessage(ofMessage msg);
 
 private:
+    /**
+     * @brief Initializes a new particle and adds it to the list of particles.
+     *
+     * The particles are initialized inside the loaded mask, with the pixel color of the loaded background image in
+     * that initial position, and with a vertical up direction with a bit of noise so that they move to the top of
+     * the screen.
+     */
     void addParticle();
+
+    /**
+     * @brief Updates the position of a given particle.
+     * @param particle Particle& particle to update
+     */
     void updateParticle(Particle& particle);
 };
