@@ -51,7 +51,7 @@ void
 ofApp::setup()
 {
     // Frames exporter
-    framesExporter.setEnd(700);
+    framesExporter.setEnd(2000);
     framesExporter.setActive(false);
 
     // Canvas settings

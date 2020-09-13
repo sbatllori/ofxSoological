@@ -7,9 +7,10 @@ This is a personal project to learn how to code art with [openframeworks](https:
 
 | Post | Preview | Title | Category | Keywords|
 |:----:|:-------:|:-----:|:--------:|:-------:|
+|12|<img src="post012/doc/output.png" width="80px">|[Image Color Emission](post012/README.md)|2D physical simulations|`2D` `dynamic brush` `uniform linear motion` `ofImage` `binary mask`
 |11|<img src="post011/doc/output.png" width="80px">|[Mixed Composition with Textures](post011/README.md)|Fragment shader art|`shaders` `fragment shader` `2D texture` `3D model loading` `ofxPlasticTexture`
 |10|<img src="post010/doc/output_light.png" width="80px">|[GPU Dancing Dots](post010/README.md)|Fragment shader art|`shaders` `fragment shader` `2D texture` `uniform circular motion`
-|8|<img src="post008/doc/output.png" width="80px">|[Watercolor Drop Simulation](post008/README.md)|2D physical simulations|`2D` `dynamic brush` `painting simulation` `watercolors`
+|8|<img src="post008/doc/output.png" width="80px">|[Watercolor Drop Simulation](post008/README.md)|2D physical simulations|`2D` `dynamic brush` `painting simulation` `watercolors` `uniform linear motion`
 |7|<img src="post007/doc/output1.png" width="80px">|[Hairy Sticky Shapes](post007/README.md)|2D geometric shapes|`2D` `ofPolyline` `triangle brush`
 |6|<img src="post006/doc/dc_15.png" width="80px">|[Static Dragon Curve](post006/README.md)|Fractals|`2D` `ofNode` `recursivity` `fractal`
 |5|<img src="post005/doc/output.png" width="80px">|[Deforming Line Intersections](post005/README.md)|2D geometric shapes|`2D` `ofPath` `ofPolyline` `bezier` `ofPolyline intersection`
