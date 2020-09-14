@@ -6,34 +6,38 @@ ofApp::setup()
 {
     // Canvas settings
     ofBackground(255);
-    ofSetFrameRate(60);
+    ofSetFrameRate(30);
     ofSetCircleResolution(72);
 
     // Background settings
     bgX = 0;
-    currentColor = myBlue;
+    bgColor = myPink;
 
     // Character settings
     ofTrueTypeFont::setGlobalDpi(72);
-    font.load(fontName, 550, true, true);
+    font.load(fontName, 650, true, true);
+    fontColor = ofColor::white;
 
     deg = 0;
-    rotate = false;
+    rotate = true;
 }
 
 //--------------------------------------------------------------
 void
 ofApp::update()
 {
-    bgX++;
+    bgX += 5;
     if(bgX == ofGetWidth())
     {
         bgX = 0;
-        switchCurrentColor();
+        switchBgColor();
     }
 
     if(rotate)
         deg++;
+
+    if(ofRandom(100) < 5)
+        switchBgColor();
 }
 
 //--------------------------------------------------------------
@@ -44,16 +48,19 @@ ofApp::draw()
     auto h = ofGetHeight();
 
     ofFill();
-    ofSetColor(currentColor);
+    ofSetColor(bgColor);
+    ofColor picoColor, tresColor;
 
     // Draw the background
     if(bgX < w / 2)
     {
-        switchCurrentColor();
+        switchBgColor();
         ofDrawRectangle(0, 0, w / 2, h);
+        (bgColor == myBlue) ? picoColor = ofColor::white : picoColor = ofColor::black;
 
-        switchCurrentColor();
+        switchBgColor();
         ofDrawRectangle(w / 2, 0, w / 2, h);
+        (bgColor == myBlue) ? tresColor = ofColor::white : tresColor = ofColor::black;
 
         ofDrawRectangle(0, 0, bgX, h);
     }
@@ -61,22 +68,24 @@ ofApp::draw()
     {
         ofDrawRectangle(0, 0, w / 2, h);
         ofDrawRectangle(w / 2, 0, w / 2, h);
+        (bgColor == myBlue) ? picoColor = ofColor::white : picoColor = ofColor::black;
+        (bgColor == myBlue) ? tresColor = ofColor::white : tresColor = ofColor::black;
 
-        switchCurrentColor();
+        switchBgColor();
         ofDrawRectangle(w / 2, 0, bgX - w / 2, h);
-        switchCurrentColor();
+        switchBgColor();
     }
 
     // Draw the characters
-    ofSetColor(255);
-
-    int d = 60;
+    int d = 80;
     ofPushMatrix();
     {
         ofRectangle bbox = font.getStringBoundingBox("<", 0, 0);
         ofTranslate(w / 2 - bbox.width / 2 - d, h / 2);
-        ofRotateZDeg(0.4f * deg);
-        font.drawString("<", -bbox.width / 2, bbox.height / 2 + 35);
+        ofRotateZDeg(deg);
+
+        ofSetColor(picoColor);
+        font.drawString("<", -bbox.width / 2, bbox.height / 2);
     }
     ofPopMatrix();
 
@@ -84,6 +93,8 @@ ofApp::draw()
     {
         ofRectangle bbox = font.getStringBoundingBox("3", 0, 0);
         ofTranslate(w / 2 + d, h / 2 + bbox.height / 2);
+
+        ofSetColor(tresColor);
         font.drawString("3", 0, 0);
     }
     ofPopMatrix();

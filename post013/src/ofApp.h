@@ -8,15 +8,16 @@ private:
     // Background
     int bgX;
 
-    ofColor currentColor;
+    ofColor bgColor;
     const ofColor myBlue = ofColor(112, 198, 255); //ofColor(163, 218, 255);
     const ofColor myPink = ofColor(255, 135, 221); //ofColor(255, 199, 239);
 
     // Characters
     int deg;
     bool rotate;
+    ofColor fontColor;
     ofTrueTypeFont font;
-    const string fontName = "FreeSans.ttf";
+    const string fontName = "orange juice 2.0.ttf";
 
 public:
     void setup();
@@ -36,9 +37,9 @@ public:
     void gotMessage(ofMessage msg);
 
 private:
-    void switchCurrentColor()
+    void switchBgColor()
     {
-        (currentColor == myBlue) ? currentColor = myPink : currentColor = myBlue;
-        ofSetColor(currentColor);
+        (bgColor == myBlue) ? bgColor = myPink : bgColor = myBlue;
+        ofSetColor(bgColor);
     }
 };
