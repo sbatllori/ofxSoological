@@ -5,11 +5,18 @@
 class ofApp : public ofBaseApp
 {
 private:
+    // Background
     int bgX;
 
     ofColor currentColor;
-    ofColor myBlue = ofColor(163, 218, 255);
-    ofColor myPink = ofColor(255, 199, 239);
+    const ofColor myBlue = ofColor(112, 198, 255); //ofColor(163, 218, 255);
+    const ofColor myPink = ofColor(255, 135, 221); //ofColor(255, 199, 239);
+
+    // Characters
+    int deg;
+    bool rotate;
+    ofTrueTypeFont font;
+    const string fontName = "FreeSans.ttf";
 
 public:
     void setup();
@@ -31,11 +38,7 @@ public:
 private:
     void switchCurrentColor()
     {
-        if(currentColor == myBlue)
-            currentColor = myPink;
-        else
-            currentColor = myBlue;
-
+        (currentColor == myBlue) ? currentColor = myPink : currentColor = myBlue;
         ofSetColor(currentColor);
     }
 };
