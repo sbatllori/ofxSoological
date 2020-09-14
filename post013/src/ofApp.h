@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "sooFramesExporter.h"
 
 class ofApp : public ofBaseApp
 {
@@ -18,6 +19,9 @@ private:
     ofColor fontColor;
     ofTrueTypeFont font;
     const string fontName = "orange juice 2.0.ttf";
+
+    // Frames Exporter
+    soo::FramesExporter framesExporter;
 
 public:
     void setup();

@@ -4,6 +4,10 @@
 void
 ofApp::setup()
 {
+    // Frames exporter
+    framesExporter.setEnd(900);
+    framesExporter.setActive(false);
+
     // Canvas settings
     ofBackground(255);
     ofSetFrameRate(30);
@@ -26,6 +30,8 @@ ofApp::setup()
 void
 ofApp::update()
 {
+    framesExporter.updateByFrames(ofGetFrameNum());
+
     bgX += 5;
     if(bgX == ofGetWidth())
     {
@@ -77,7 +83,7 @@ ofApp::draw()
     }
 
     // Draw the characters
-    int d = 80;
+    int d = 90;
     ofPushMatrix();
     {
         ofRectangle bbox = font.getStringBoundingBox("<", 0, 0);

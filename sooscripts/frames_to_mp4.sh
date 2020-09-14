@@ -18,8 +18,7 @@ echo "[SOO INFO] Will export mp4 to: "$OUTPUT
 ffmpeg \
 -i $FRAMES/f%08d.png \
 -r 30 \
--crf 18 \
--filter:v "setpts=0.75*PTS" \
+-crf 1 \
 -c:v libx264 \
 -pix_fmt yuv420p \
 $OUTPUT
