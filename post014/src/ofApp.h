@@ -13,8 +13,9 @@ private:
     // Frames Exporter
     soo::FramesExporter framesExporter;
 
-    //    soo::Dandelion dandelion;
-    const int external_margin_ = 30;
+    const int kExternalMargin = 30;
+    const int kNCellsPerAxe = 5;
+    const int kDifferentDandelionIdx = 8;
     DandelionPattern dandelion_list_;
 
 public:

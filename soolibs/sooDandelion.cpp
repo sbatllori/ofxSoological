@@ -79,16 +79,12 @@ void
 Dandelion::drawBoundingBox()
 {
     if(showBbox)
-    {
-        ofNoFill();
         ofDrawRectangle(bbox);
-    }
 }
 
 void
 Dandelion::drawCircle()
 {
-    ofNoFill();
     ofDrawCircle(circleCenter, circleRadius);
 }
 
@@ -98,7 +94,6 @@ Dandelion::drawEllipse()
     ofPushMatrix();
     ofTranslate(ellipseCenter);
     ofRotateZDeg(45.f);
-    ofFill();
     ofDrawEllipse(0, 0, ellipseDimensions.x, ellipseDimensions.y);
     ofPopMatrix();
 }
@@ -108,7 +103,7 @@ Dandelion::drawLines()
 {
     for(auto& line : lines)
     {
-        auto start = ofVec3f(ellipseCenter.x, ellipseCenter.y, 0.f);
+        auto start = ofVec3f(line.position.x, line.position.y, 0.f);
         auto end = start + line.properties.length * ofVec3f(line.direction.x, line.direction.y, 0.f);
 
         if(line.properties.isArrow)
@@ -122,9 +117,13 @@ Dandelion::drawLines()
 void
 Dandelion::draw()
 {
+    ofNoFill();
     drawBoundingBox();
     drawCircle();
+
+    ofFill();
     drawEllipse();
+
     drawLines();
 }
 

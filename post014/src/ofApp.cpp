@@ -9,24 +9,24 @@ ofApp::setup()
     framesExporter.setActive(false);
 
     // Canvas settings
-    ofBackground(255);
     ofSetFrameRate(30);
     ofSetCircleResolution(72);
 
-    //    dandelion.generate(ofVec2f(300), 400);
-
-    int n_cells_per_axe = 4;
-    auto w = (ofGetWidth() - external_margin_) / n_cells_per_axe;
-    auto h = (ofGetHeight() - external_margin_) / n_cells_per_axe;
-    for(int i = 0; i < w * n_cells_per_axe; i += w)
+    // Define the dandelion pattern
+    auto w = (ofGetWidth() - kExternalMargin) / kNCellsPerAxe;
+    auto h = (ofGetHeight() - kExternalMargin) / kNCellsPerAxe;
+    for(int i = 0; i < w * kNCellsPerAxe; i += w)
     {
-        for(int j = 0; j < h * n_cells_per_axe; j += h)
+        for(int j = 0; j < h * kNCellsPerAxe; j += h)
         {
             auto dandelion = std::make_shared<soo::Dandelion>();
-            dandelion->generate(ofVec2f(i, j), w - external_margin_);
+            dandelion->generate(ofVec2f(i, j), w - kExternalMargin);
             dandelion_list_.push_back(dandelion);
         }
     }
+
+    // Treat a dandelion differently
+    dandelion_list_[kDifferentDandelionIdx]->hideBoundingBox();
 }
 
 //--------------------------------------------------------------
@@ -40,22 +40,37 @@ ofApp::update()
 void
 ofApp::draw()
 {
-    ofSetColor(0);
+    ofBackground(255, 200, 0);
 
     ofPushMatrix();
-    ofTranslate(external_margin_, external_margin_);
-    for(auto& dandelion : dandelion_list_)
     {
+        ofTranslate(kExternalMargin, kExternalMargin);
 
-        ofSetLineWidth(5);
-        dandelion->drawBoundingBox();
+        int count = 0;
+        for(auto& dandelion : dandelion_list_)
+        {
+            ofSetLineWidth(5);
 
-        ofSetLineWidth(2);
-        dandelion->drawLines();
+            ofFill();
+            ofSetColor(255);
+            dandelion->drawBoundingBox();
 
-        ofSetLineWidth(3);
-        dandelion->drawCircle();
-        dandelion->drawEllipse();
+            ofNoFill();
+            ofSetColor(0);
+            if(count == kDifferentDandelionIdx)
+                ofSetColor(255);
+            dandelion->drawBoundingBox();
+
+            ofSetLineWidth(2);
+            dandelion->drawLines();
+
+            ofSetLineWidth(3);
+            dandelion->drawCircle();
+            ofFill();
+            dandelion->drawEllipse();
+
+            count++;
+        }
     }
     ofPopMatrix();
 }
