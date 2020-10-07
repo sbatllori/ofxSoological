@@ -12,13 +12,8 @@ ofApp::setup()
     ofBackground(255);
     ofSetFrameRate(30);
     ofSetCircleResolution(72);
-    ofSetLineWidth(4);
 
-    dandelion.center = ofVec2f(0, 0);
-    dandelion.radius = 200;
-    dandelion.ellipseCenter = ofVec2f(-30, 50);
-    dandelion.ellipseDimensions = ofVec2f(130, 90);
-    dandelion.initRandomLines(20, 70);
+    dandelion.generate(ofVec2f(300), 400);
 }
 
 //--------------------------------------------------------------
@@ -32,12 +27,17 @@ ofApp::update()
 void
 ofApp::draw()
 {
-    ofPushMatrix();
-    {
-        ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);
-        dandelion.draw();
-    }
-    ofPopMatrix();
+    ofSetColor(0);
+
+    ofSetLineWidth(5);
+    dandelion.drawBoundingBox();
+
+    ofSetLineWidth(2);
+    dandelion.drawLines();
+
+    ofSetLineWidth(3);
+    dandelion.drawCircle();
+    dandelion.drawEllipse();
 }
 
 //--------------------------------------------------------------
