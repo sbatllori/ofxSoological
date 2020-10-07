@@ -5,13 +5,17 @@
 #include "sooFramesExporter.h"
 #include "sooParticle.h"
 
+using DandelionPattern = std::vector<std::shared_ptr<soo::Dandelion>>;
+
 class ofApp : public ofBaseApp
 {
 private:
     // Frames Exporter
     soo::FramesExporter framesExporter;
 
-    soo::Dandelion dandelion;
+    //    soo::Dandelion dandelion;
+    const int external_margin_ = 30;
+    DandelionPattern dandelion_list_;
 
 public:
     void setup();

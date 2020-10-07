@@ -13,7 +13,20 @@ ofApp::setup()
     ofSetFrameRate(30);
     ofSetCircleResolution(72);
 
-    dandelion.generate(ofVec2f(300), 400);
+    //    dandelion.generate(ofVec2f(300), 400);
+
+    int n_cells_per_axe = 4;
+    auto w = (ofGetWidth() - external_margin_) / n_cells_per_axe;
+    auto h = (ofGetHeight() - external_margin_) / n_cells_per_axe;
+    for(int i = 0; i < w * n_cells_per_axe; i += w)
+    {
+        for(int j = 0; j < h * n_cells_per_axe; j += h)
+        {
+            auto dandelion = std::make_shared<soo::Dandelion>();
+            dandelion->generate(ofVec2f(i, j), w - external_margin_);
+            dandelion_list_.push_back(dandelion);
+        }
+    }
 }
 
 //--------------------------------------------------------------
@@ -29,15 +42,22 @@ ofApp::draw()
 {
     ofSetColor(0);
 
-    ofSetLineWidth(5);
-    dandelion.drawBoundingBox();
+    ofPushMatrix();
+    ofTranslate(external_margin_, external_margin_);
+    for(auto& dandelion : dandelion_list_)
+    {
 
-    ofSetLineWidth(2);
-    dandelion.drawLines();
+        ofSetLineWidth(5);
+        dandelion->drawBoundingBox();
 
-    ofSetLineWidth(3);
-    dandelion.drawCircle();
-    dandelion.drawEllipse();
+        ofSetLineWidth(2);
+        dandelion->drawLines();
+
+        ofSetLineWidth(3);
+        dandelion->drawCircle();
+        dandelion->drawEllipse();
+    }
+    ofPopMatrix();
 }
 
 //--------------------------------------------------------------
