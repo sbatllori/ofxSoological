@@ -16,7 +16,5 @@ The design has been inspired by the logo of the dancing show "Dandelion" by
 Carla Battaini.
 
 ### Output
-<img src="doc/2.png" width="48%">
-<img src="doc/3.png" width="48%">  
-<img src="doc/1.png" width="48%">
-<img src="doc/5.png" width="48%">  
+<img src="doc/2.png" width="48%">  <img src="doc/3.png" width="48%">  
+<img src="doc/1.png" width="48%">  <img src="doc/5.png" width="48%">  
