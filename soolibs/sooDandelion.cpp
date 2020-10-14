@@ -129,6 +129,7 @@ Dandelion::drawBoundingBox(float x, float y)
     drawBoundingBox();
     ofPopMatrix();
 }
+
 void
 Dandelion::drawCircle(float x, float y)
 {
@@ -137,6 +138,7 @@ Dandelion::drawCircle(float x, float y)
     drawCircle();
     ofPopMatrix();
 }
+
 void
 Dandelion::drawTrunk(float x, float y)
 {
@@ -145,6 +147,7 @@ Dandelion::drawTrunk(float x, float y)
     drawTrunk();
     ofPopMatrix();
 }
+
 void
 Dandelion::drawEllipse(float x, float y)
 {
@@ -153,6 +156,7 @@ Dandelion::drawEllipse(float x, float y)
     drawEllipse();
     ofPopMatrix();
 }
+
 void
 Dandelion::drawLines(float x, float y)
 {
@@ -177,7 +181,10 @@ Dandelion::hideBoundingBox()
 ofVec2f
 Dandelion::getCenter()
 {
-    return circleCenter;
+    ofVec2f center;
+    center.x = bbox.x + bbox.width / 2;
+    center.y = bbox.y + bbox.height / 2;
+    return center;
 }
 
 }; // namespace soo

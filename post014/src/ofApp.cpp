@@ -34,7 +34,7 @@ ofApp::setup()
         particle.position.x = ofRandomWidth();
         particle.position.y = ofRandomHeight();
         particle.properties.radius = ofRandom(.01f, .5f);
-        particle.properties.alpha = ofRandom(10, 60);
+        particle.properties.alpha = ofRandom(10, 50);
 
         black_noise_[i] = particle;
     }
@@ -46,7 +46,7 @@ ofApp::setup()
         particle.position.x = ofRandomWidth();
         particle.position.y = ofRandomHeight();
         particle.properties.radius = ofRandom(.01f, .5f);
-        particle.properties.alpha = ofRandom(10, 200);
+        particle.properties.alpha = ofRandom(10, 100);
 
         white_noise_[i] = particle;
     }
@@ -98,44 +98,42 @@ ofApp::draw()
                     ofSetLineWidth(4);
                     dandelion.drawTrunk();
                 }
+                else
+                {
+                    ofPushMatrix();
+                    {
+                        ofVec2f pivot;
+                        pivot.x = dandelion.getCenter().x;
+                        pivot.y = dandelion.getCenter().y;
+
+                        ofTranslate(pivot);
+                        ofRotateZDeg(270);
+
+                        ofSetColor(0);
+
+                        ofSetLineWidth(2);
+                        dandelion.drawLines(-pivot.x, -pivot.y);
+
+                        ofFill();
+                        ofSetLineWidth(2);
+                        dandelion.drawEllipse(-pivot.x, -pivot.y);
+
+                        ofNoFill();
+                        ofSetLineWidth(4);
+                        dandelion.drawCircle(-pivot.x, -pivot.y);
+
+                        ofSetLineWidth(4);
+                        dandelion.drawTrunk(-pivot.x, -pivot.y);
+
+                        // ofSetColor(255, 200, 0);
+                        ofNoFill();
+                        ofSetLineWidth(3);
+                        dandelion.drawBoundingBox(-pivot.x, -pivot.y);
+                    }
+                    ofPopMatrix();
+                }
                 count++;
             }
-
-            // Draw the different dandelion
-            auto& dandelion = dandelion_list_[kDifferentDandelionIdx];
-
-            ofPushMatrix();
-            {
-                ofVec2f pivot;
-                pivot.x = dandelion.getCenter().x + 0.5f * kExternalMargin - 2;
-                pivot.y = dandelion.getCenter().y - 0.5f * kExternalMargin + 2;
-
-                ofTranslate(pivot);
-                ofRotateZDeg(270);
-
-                ofSetColor(0);
-
-                ofSetLineWidth(2);
-                dandelion.drawLines(-pivot.x, -pivot.y);
-
-                ofFill();
-                ofSetLineWidth(2);
-                dandelion.drawEllipse(-pivot.x, -pivot.y);
-
-                ofNoFill();
-                ofSetLineWidth(4);
-                dandelion.drawCircle(-pivot.x, -pivot.y);
-
-                ofSetLineWidth(4);
-                dandelion.drawTrunk(-pivot.x, -pivot.y);
-
-                //                ofSetColor(255, 200, 0);
-
-                ofNoFill();
-                ofSetLineWidth(3);
-                dandelion.drawBoundingBox(-pivot.x, -pivot.y);
-            }
-            ofPopMatrix();
         }
         ofPopMatrix();
 
