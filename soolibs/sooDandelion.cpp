@@ -89,6 +89,13 @@ Dandelion::drawCircle()
 }
 
 void
+Dandelion::drawTrunk()
+{
+    ofVec2f bboxBottomLeftCorner = ofVec2f(bbox.x, bbox.y + bbox.height);
+    ofDrawLine(bboxBottomLeftCorner, ellipseCenter);
+}
+
+void
 Dandelion::drawEllipse()
 {
     ofPushMatrix();
@@ -115,16 +122,44 @@ Dandelion::drawLines()
 }
 
 void
-Dandelion::draw()
+Dandelion::drawBoundingBox(float x, float y)
 {
-    ofNoFill();
+    ofPushMatrix();
+    ofTranslate(x, y);
     drawBoundingBox();
+    ofPopMatrix();
+}
+void
+Dandelion::drawCircle(float x, float y)
+{
+    ofPushMatrix();
+    ofTranslate(x, y);
     drawCircle();
-
-    ofFill();
+    ofPopMatrix();
+}
+void
+Dandelion::drawTrunk(float x, float y)
+{
+    ofPushMatrix();
+    ofTranslate(x, y);
+    drawTrunk();
+    ofPopMatrix();
+}
+void
+Dandelion::drawEllipse(float x, float y)
+{
+    ofPushMatrix();
+    ofTranslate(x, y);
     drawEllipse();
-
+    ofPopMatrix();
+}
+void
+Dandelion::drawLines(float x, float y)
+{
+    ofPushMatrix();
+    ofTranslate(x, y);
     drawLines();
+    ofPopMatrix();
 }
 
 void
@@ -137,6 +172,12 @@ void
 Dandelion::hideBoundingBox()
 {
     showBbox = false;
+}
+
+ofVec2f
+Dandelion::getCenter()
+{
+    return circleCenter;
 }
 
 }; // namespace soo

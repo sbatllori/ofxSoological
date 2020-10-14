@@ -41,12 +41,20 @@ public:
 
     void drawBoundingBox();
     void drawCircle();
+    void drawTrunk();
     void drawEllipse();
     void drawLines();
-    void draw();
+
+    void drawBoundingBox(float x, float y);
+    void drawCircle(float x, float y);
+    void drawTrunk(float x, float y);
+    void drawEllipse(float x, float y);
+    void drawLines(float x, float y);
 
     void showBoundingBox();
     void hideBoundingBox();
+
+    ofVec2f getCenter();
 
 }; // Dandelion
 }; // namespace soo
