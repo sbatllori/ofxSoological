@@ -4,23 +4,19 @@
 void
 ofApp::setup()
 {
-    // Frames exporter
-    framesExporter.setEnd(900);
-    framesExporter.setActive(false);
-
     // Canvas settings
     ofSetFrameRate(30);
     ofSetCircleResolution(72);
     ofSetBackgroundAuto(false);
 
     // Define the dandelion grid
-    auto w = (ofGetWidth() - kExternalMargin) / kNCellsPerAxe;
-    auto h = (ofGetHeight() - kExternalMargin) / kNCellsPerAxe;
-    for(int i = 0; i < w * kNCellsPerAxe; i += w)
-        for(int j = 0; j < h * kNCellsPerAxe; j += h)
+    auto w = (ofGetWidth() - 2.f * kExternalMargin - (kNCellsPerAxe - 1) * kInternalMargin) / kNCellsPerAxe;
+    auto h = (ofGetHeight() - 2.f * kExternalMargin - (kNCellsPerAxe - 1) * kInternalMargin) / kNCellsPerAxe;
+    for(int i = 0; i < kNCellsPerAxe; i++)
+        for(int j = 0; j < kNCellsPerAxe; j++)
         {
             soo::Dandelion dandelion;
-            dandelion.generate(ofVec2f(i, j), w - kExternalMargin);
+            dandelion.generate(ofVec2f(i * (w + kInternalMargin), j * (h + kInternalMargin)), w);
             dandelion_list_.push_back(dandelion);
         }
 
@@ -55,9 +51,7 @@ ofApp::setup()
 //--------------------------------------------------------------
 void
 ofApp::update()
-{
-    framesExporter.updateByFrames(ofGetFrameNum());
-}
+{}
 
 //--------------------------------------------------------------
 void
@@ -70,9 +64,9 @@ ofApp::draw()
         // Draw the dandelion grid, centered on the canvas
         ofPushMatrix();
         {
-            ofTranslate(kExternalMargin, kExternalMargin);
+            ofTranslate(ofVec2f(kExternalMargin));
 
-            // Draw all the dandelions equal, but one
+            // Draw all the dandelions equal, but the scpecified one
             int count = 0;
             for(auto& dandelion : dandelion_list_)
             {
@@ -109,26 +103,57 @@ ofApp::draw()
                         ofTranslate(pivot);
                         ofRotateZDeg(270);
 
-                        ofSetColor(0);
+                        if(light_mode_)
+                        {
+                            ofSetColor(0);
 
-                        ofSetLineWidth(2);
-                        dandelion.drawLines(-pivot.x, -pivot.y);
+                            ofSetLineWidth(2);
+                            dandelion.drawLines(-pivot.x, -pivot.y);
 
-                        ofFill();
-                        ofSetLineWidth(2);
-                        dandelion.drawEllipse(-pivot.x, -pivot.y);
+                            ofFill();
+                            ofSetLineWidth(2);
+                            dandelion.drawEllipse(-pivot.x, -pivot.y);
 
-                        ofNoFill();
-                        ofSetLineWidth(4);
-                        dandelion.drawCircle(-pivot.x, -pivot.y);
+                            ofNoFill();
+                            ofSetLineWidth(4);
+                            dandelion.drawCircle(-pivot.x, -pivot.y);
 
-                        ofSetLineWidth(4);
-                        dandelion.drawTrunk(-pivot.x, -pivot.y);
+                            ofSetLineWidth(4);
+                            dandelion.drawTrunk(-pivot.x, -pivot.y);
 
-                        // ofSetColor(255, 200, 0);
-                        ofNoFill();
-                        ofSetLineWidth(3);
-                        dandelion.drawBoundingBox(-pivot.x, -pivot.y);
+                            // ofSetColor(255, 200, 0);
+                            ofNoFill();
+                            ofSetLineWidth(3);
+                            dandelion.drawBoundingBox(-pivot.x, -pivot.y);
+                        }
+                        else
+                        {
+                            ofSetColor(0);
+                            ofFill();
+                            ofSetLineWidth(3);
+                            dandelion.drawBoundingBox(-pivot.x, -pivot.y);
+
+                            ofSetColor(255);
+
+                            ofSetLineWidth(2);
+                            dandelion.drawLines(-pivot.x, -pivot.y);
+
+                            ofFill();
+                            ofSetLineWidth(2);
+                            dandelion.drawEllipse(-pivot.x, -pivot.y);
+
+                            ofNoFill();
+                            ofSetLineWidth(4);
+                            dandelion.drawCircle(-pivot.x, -pivot.y);
+
+                            ofSetLineWidth(4);
+                            dandelion.drawTrunk(-pivot.x, -pivot.y);
+
+                            ofSetColor(255, 200, 0);
+                            ofNoFill();
+                            ofSetLineWidth(3);
+                            dandelion.drawBoundingBox(-pivot.x, -pivot.y);
+                        }
                     }
                     ofPopMatrix();
                 }

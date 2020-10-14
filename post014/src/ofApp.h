@@ -2,7 +2,6 @@
 
 #include "ofMain.h"
 #include "sooDandelion.h"
-#include "sooFramesExporter.h"
 #include "sooParticle.h"
 
 namespace soo
@@ -19,18 +18,17 @@ using NoiseParticle = soo::Particle<soo::NoiseProperties>;
 class ofApp : public ofBaseApp
 {
 private:
-    // Frames Exporter
-    soo::FramesExporter framesExporter;
-
     // Dandelion Grid
-    const int kExternalMargin = 25;
-    const int kNCellsPerAxe = 4;
-    const int kDifferentDandelionIdx = 6;
+    constexpr static int kExternalMargin = 200;
+    constexpr static int kInternalMargin = 50;
+    constexpr static int kNCellsPerAxe = 1;
+    constexpr static int kDifferentDandelionIdx = -1;
+    bool light_mode_ = true;
     std::vector<soo::Dandelion> dandelion_list_;
 
     // General Noise
-    const float kBlackNoiseAmount = 0.7f;
-    const float kWhiteNoiseAmount = 0.3f;
+    constexpr static float kBlackNoiseAmount = 0.7f;
+    constexpr static float kWhiteNoiseAmount = 0.3f;
     std::vector<NoiseParticle> black_noise_;
     std::vector<NoiseParticle> white_noise_;
 
