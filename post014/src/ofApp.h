@@ -5,7 +5,16 @@
 #include "sooFramesExporter.h"
 #include "sooParticle.h"
 
-using DandelionPattern = std::vector<std::shared_ptr<soo::Dandelion>>;
+namespace soo
+{
+struct NoiseProperties
+{
+    float radius;
+    float alpha;
+};
+} // namespace soo
+
+using NoiseParticle = soo::Particle<soo::NoiseProperties>;
 
 class ofApp : public ofBaseApp
 {
@@ -13,10 +22,17 @@ private:
     // Frames Exporter
     soo::FramesExporter framesExporter;
 
-    const int kExternalMargin = 30;
-    const int kNCellsPerAxe = 5;
-    const int kDifferentDandelionIdx = 8;
-    DandelionPattern dandelion_list_;
+    // Dandelion Grid
+    const int kExternalMargin = 25;
+    const int kNCellsPerAxe = 4;
+    const int kDifferentDandelionIdx = 6;
+    std::vector<soo::Dandelion> dandelion_list_;
+
+    // General Noise
+    const float kBlackNoiseAmount = 0.7f;
+    const float kWhiteNoiseAmount = 0.3f;
+    std::vector<NoiseParticle> black_noise_;
+    std::vector<NoiseParticle> white_noise_;
 
 public:
     void setup();
