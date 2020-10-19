@@ -35,11 +35,7 @@ void ofApp::test_Particle_Constructor_position() {
 
   ofVec2f position(2.f, 5.f);
   soo::Particle<Properties> particle(position);
-  soo_assert(particle.position() == position, unit_test,
-             "Wrong position: (" + std::to_string(particle.position().x) +
-                 ", " + std::to_string(particle.position().y) + ")" +
-                 "; Expected: (" + std::to_string(position.x) + ", " +
-                 std::to_string(position.y) + ")");
+  soo_assert(particle.position() == position, unit_test);
   soo_passed(unit_test);
 }
 
@@ -49,16 +45,8 @@ void ofApp::test_Particle_Constructor_position_direction() {
   ofVec2f position(2.f, 5.f);
   ofVec2f direction(4.f, 5.f);
   soo::Particle<Properties> particle(position, direction);
-  soo_assert(particle.position() == position, unit_test,
-             "Wrong position: (" + std::to_string(particle.position().x) +
-                 ", " + std::to_string(particle.position().y) + ")" +
-                 "; Expected: (" + std::to_string(position.x) + ", " +
-                 std::to_string(position.y) + ")");
-  soo_assert(particle.direction() == direction.getNormalized(), unit_test,
-             "Wrong direction: (" + std::to_string(particle.direction().x) +
-                 ", " + std::to_string(particle.direction().y) + ")" +
-                 "; Expected: (" + std::to_string(direction.getNormalized().x) +
-                 ", " + std::to_string(direction.getNormalized().y) + ")");
+  soo_assert(particle.position() == position, unit_test);
+  soo_assert(particle.direction() == direction.getNormalized(), unit_test);
   soo_passed(unit_test);
 }
 
@@ -67,11 +55,7 @@ void ofApp::test_Particle_SetRandomDirection() {
 
   soo::Particle<Properties> particle({0.f, 0.f});
   particle.SetRandomDirection();
-  soo_assert(
-      particle.direction() == particle.direction().getNormalized(), unit_test,
-      "Wrong direction: (" + std::to_string(particle.direction().x) + ", " +
-          std::to_string(particle.direction().y) + ")" + "; Expected: (" +
-          std::to_string(particle.direction().getNormalized().x) + ", " +
-          std::to_string(particle.direction().getNormalized().y) + ")");
+  soo_assert(particle.direction() == particle.direction().getNormalized(),
+             unit_test);
   soo_passed(unit_test);
 }
