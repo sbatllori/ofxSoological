@@ -3,6 +3,7 @@
 #include "ofMain.h"
 
 namespace soo {
+
 template <class Properties>
 class Particle {
  public:
