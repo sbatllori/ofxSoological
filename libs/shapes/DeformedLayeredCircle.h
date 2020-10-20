@@ -12,8 +12,7 @@ class DeformedLayeredCircle {
 
   const ofVec2f& center() const { return center_; }
   const std::vector<ofPath>& layers() const { return layers_; }
-
-  std::vector<ofPath>& GetLayersToModify() { return layers_; }
+  std::vector<ofPath>& layers_mutable() { return layers_; }
 
  private:
   ofPath GenerateLayer(const std::vector<float>& radii);
