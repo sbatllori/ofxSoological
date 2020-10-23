@@ -1,5 +1,6 @@
 #include "ofApp.h"
 #include "Particle.h"
+#include "brushes/TrianglesOutBrush.h"
 #include "shapes/DeformedLayeredCircle.h"
 #include "shapes/Triangle.h"
 
@@ -24,7 +25,7 @@ void soo_run(bool run, const std::string& unit_test) {
   if (run) {
     out = "\033[;32m--- running --- " + unit_test + "\033[0m\n";
   } else {
-    out = "\033[;31m--- did not run --- " + unit_test + "\033[0m\n";
+    out = "\033[;33m--- did not run --- " + unit_test + "\033[0m\n";
   }
   std::cout << out;
 }
@@ -47,7 +48,8 @@ void ofApp::run_unit_tests() {
 void ofApp::draw() {
   if (ofGetFrameNum() == 10) {
     draw_DeformedLayeredCircle(false);
-    draw_Triangle(true);
+    draw_Triangle(false);
+    draw_TrianglesOutBrush(true);
   }
 }
 
@@ -168,25 +170,25 @@ void ofApp::test_TriangleVertices_Generate_from_vertices() {
 
   {
     soo::TriangleVertices triangle_vertices;
-    ofVec2f v1{-10, 0}, v2{0, 10}, v3{10, 0};
-    bool generated = triangle_vertices.Generate(v1, v2, v3);
+    ofVec2f A{0, 10}, B{20, 0}, C{0, -10};
+    bool generated = triangle_vertices.Generate(A, B, C);
     soo_assert(generated, unit_test, "Not generated with correct vertices.");
-    soo_assert(triangle_vertices.v1_ == v1, unit_test);
-    soo_assert(triangle_vertices.v2_ == v2, unit_test);
-    soo_assert(triangle_vertices.v3_ == v3, unit_test);
+    soo_assert(triangle_vertices.A_ == A, unit_test);
+    soo_assert(triangle_vertices.B_ == B, unit_test);
+    soo_assert(triangle_vertices.C_ == C, unit_test);
   }
 
   {
     soo::TriangleVertices triangle_vertices;
-    ofVec2f v1{-10, 0}, v2{-10, 0}, v3{10, 0};
-    bool generated = triangle_vertices.Generate(v1, v2, v3);
+    ofVec2f A{0, 10}, B{20, 0}, C{0, 10};
+    bool generated = triangle_vertices.Generate(A, B, C);
     soo_assert(!generated, unit_test, "Generated with incorrect vertices.");
   }
 
   {
     soo::TriangleVertices triangle_vertices;
-    ofVec2f v1{-10, 0}, v2{-10, 0}, v3{-10, 0};
-    bool generated = triangle_vertices.Generate(v1, v2, v3);
+    ofVec2f A{-10, 0}, B{-10, 0}, C{-10, 0};
+    bool generated = triangle_vertices.Generate(A, B, C);
     soo_assert(!generated, unit_test, "Generated with incorrect vertices.");
   }
 
@@ -198,41 +200,28 @@ void ofApp::test_TriangleVertices_Generate_from_edge_lengths() {
 
   {
     soo::TriangleVertices triangle_vertices;
-    float edge_length_1 = 3;  // triangle base
-    float edge_length_2 = 4;
-    float edge_length_3 = 5;
-    bool generated =
-        triangle_vertices.Generate(edge_length_1, edge_length_2, edge_length_3);
+    bool generated = triangle_vertices.Generate(5, 4, 3);
     soo_assert(generated, unit_test, "Not generated with correct edges.");
-
-    soo_assert(triangle_vertices.v2_ == ofVec2f{-1.5, 0}, unit_test,
-               "Wrong v2: " + std::to_string(triangle_vertices.v2_.x) + ", " +
-                   std::to_string(triangle_vertices.v2_.y));
-    soo_assert(triangle_vertices.v3_ == ofVec2f{1.5, 0}, unit_test,
-               "Wrong v3: " + std::to_string(triangle_vertices.v3_.x) + ", " +
-                   std::to_string(triangle_vertices.v3_.y));
-    soo_assert(triangle_vertices.v1_ == ofVec2f{1.5, 4}, unit_test,
-               "Wrong v2: " + std::to_string(triangle_vertices.v1_.x) + ", " +
-                   std::to_string(triangle_vertices.v1_.y));
+    soo_assert(triangle_vertices.A_ == ofVec2f{0, 2}, unit_test,
+               "Wrong A: " + std::to_string(triangle_vertices.A_.x) + ", " +
+                   std::to_string(triangle_vertices.A_.y));
+    soo_assert(triangle_vertices.B_ == ofVec2f{3, 2}, unit_test,
+               "Wrong B: " + std::to_string(triangle_vertices.B_.x) + ", " +
+                   std::to_string(triangle_vertices.B_.y));
+    soo_assert(triangle_vertices.C_ == ofVec2f{0, -2}, unit_test,
+               "Wrong C: " + std::to_string(triangle_vertices.C_.x) + ", " +
+                   std::to_string(triangle_vertices.C_.y));
   }
 
   {
     soo::TriangleVertices triangle_vertices;
-    float edge_length_1 = 1;  // triangle base
-    float edge_length_2 = 1;
-    float edge_length_3 = 2;
-    bool generated =
-        triangle_vertices.Generate(edge_length_1, edge_length_2, edge_length_3);
+    bool generated = triangle_vertices.Generate(2, 1, 1);
     soo_assert(!generated, unit_test, "Generated with incorrect edge lengths.");
   }
 
   {
     soo::TriangleVertices triangle_vertices;
-    float edge_length_1 = -3;  // triangle base
-    float edge_length_2 = 4;
-    float edge_length_3 = 5;
-    bool generated =
-        triangle_vertices.Generate(edge_length_1, edge_length_2, edge_length_3);
+    bool generated = triangle_vertices.Generate(5, -3, 4);
     soo_assert(!generated, unit_test, "Generated with incorrect edge lengths.");
   }
   soo_passed(unit_test);
@@ -242,17 +231,11 @@ void ofApp::test_Triangle_Constructor() {
   std::string unit_test = "test_Triangle_Constructor";
 
   soo::TriangleVertices triangle_vertices;
-  float edge_length_1 = 3;  // triangle base
-  float edge_length_2 = 4;
-  float edge_length_3 = 5;
-  bool generated =
-      triangle_vertices.Generate(edge_length_1, edge_length_2, edge_length_3);
-
-  if (generated) {
+  if (triangle_vertices.Generate(5, 4, 3)) {
     soo::Triangle triangle(triangle_vertices);
-    soo_assert(triangle.v2() == ofVec2f{-1.5, 0}, unit_test);
-    soo_assert(triangle.v3() == ofVec2f{1.5, 0}, unit_test);
-    soo_assert(triangle.v1() == ofVec2f{1.5, 4}, unit_test);
+    soo_assert(triangle.A() == triangle_vertices.A_, unit_test);
+    soo_assert(triangle.B() == triangle_vertices.B_, unit_test);
+    soo_assert(triangle.C() == triangle_vertices.C_, unit_test);
 
   } else {
     soo_assert(false, unit_test);
@@ -265,22 +248,40 @@ void ofApp::draw_Triangle(bool run) {
 
   if (run) {
     soo::TriangleVertices triangle_vertices;
-    float edge_length_1 = 3;  // triangle base
-    float edge_length_2 = 4;
-    float edge_length_3 = 5;
-    bool generated =
-        triangle_vertices.Generate(edge_length_1, edge_length_2, edge_length_3);
-
-    if (generated) {
+    if (triangle_vertices.Generate(5, 4, 3)) {
       soo::Triangle triangle(triangle_vertices);
 
       ofPushMatrix();
       {
         ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);
         ofScale(50);
-        ofDrawTriangle(triangle.v1(), triangle.v2(), triangle.v3());
+        ofDrawTriangle(triangle.B(), triangle.C(), triangle.A());
       }
       ofPopMatrix();
+    } else {
+      soo_assert(false, unit_test);
+    }
+  }
+
+  soo_run(run, unit_test);
+}
+
+//--------------------------------------------------------------
+// TrianglesOutBrush
+//--------------------------------------------------------------
+
+void ofApp::draw_TrianglesOutBrush(bool run) {
+  std::string unit_test = "draw_TrianglesOutBrush";
+
+  if (run) {
+    soo::TriangleVertices triangle_vertices;
+    if (triangle_vertices.Generate(50, 30, 50)) {
+      soo::Triangle triangle(triangle_vertices);
+      soo::TrianglesOutBrush brush(triangle, 500, 0, 100, ofColor::cyan,
+                                   ofColor::magenta, 70);
+
+      brush.draw({ofGetWidth() / 2.f, ofGetHeight() / 2.f});
+
     } else {
       soo_assert(false, unit_test);
     }

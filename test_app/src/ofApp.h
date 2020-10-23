@@ -24,4 +24,6 @@ class ofApp : public ofBaseApp {
   void test_TriangleVertices_Generate_from_edge_lengths();
   void test_Triangle_Constructor();
   void draw_Triangle(bool run);
+
+  void draw_TrianglesOutBrush(bool run);
 };
