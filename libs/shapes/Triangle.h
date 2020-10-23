@@ -6,28 +6,28 @@ namespace soo {
 
 class TriangleVertices {
  public:
-  ofVec2f v1_;
-  ofVec2f v2_;
-  ofVec2f v3_;
+  ofVec2f A_;
+  ofVec2f B_;
+  ofVec2f C_;
 
   TriangleVertices() = default;
-  bool Generate(const ofVec2f v1, const ofVec2f v2, const ofVec2f v3);
-  bool Generate(const float edge_length_1, const float edge_length_2,
-                const float edge_length_3);
+  bool Generate(const ofVec2f& A, const ofVec2f& B, const ofVec2f& C);
+  bool Generate(const float edge_a_length, const float edge_b_length,
+                const float edge_c_length);
 
  private:
-  bool TriangleInequalityTheorem(const float edge_length_1,
-                                 const float edge_length_2,
-                                 const float edge_length_3);
+  bool TriangleInequalityTheorem(const float edge_a_length,
+                                 const float edge_b_length,
+                                 const float edge_c_length);
 };
 
 class Triangle {
  public:
   Triangle(const TriangleVertices& vertices) : vertices_(vertices) {}
 
-  const ofVec2f v1() const { return vertices_.v1_; }
-  const ofVec2f v2() const { return vertices_.v2_; }
-  const ofVec2f v3() const { return vertices_.v3_; }
+  const ofVec2f A() const { return vertices_.A_; }
+  const ofVec2f B() const { return vertices_.B_; }
+  const ofVec2f C() const { return vertices_.C_; }
 
  private:
   TriangleVertices vertices_;
