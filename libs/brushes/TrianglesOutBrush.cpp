@@ -1,7 +1,7 @@
 #include "TrianglesOutBrush.h"
 
 namespace soo {
-void TrianglesOutBrush::draw(const ofVec2f& center) {
+void TrianglesOutBrush::draw(const ofVec2f& center) const {
   for (int _{0}; _ < num_triangles_; _++) {
     // Copy the reference triangle coordinates
     ofVec2f A(reference_triangle_.A());

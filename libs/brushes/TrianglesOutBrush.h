@@ -19,28 +19,7 @@ class TrianglesOutBrush : Brush {
         target_color_(target_color),
         alpha_(alpha) {}
 
-  void set_reference_triangle(const Triangle& reference_triangle) {
-    reference_triangle_ = reference_triangle;
-  }
-
-  void set_num_triangles(const int num_triangles) {
-    num_triangles_ = num_triangles;
-  }
-
-  void set_offsets_to_center(const int min_offset_to_center,
-                             const int max_offset_to_center) {
-    min_offset_to_center_ = min_offset_to_center;
-    max_offset_to_center_ = max_offset_to_center;
-  }
-
-  void set_colors(const ofColor& color, const ofColor& target_color,
-                  const int alpha) {
-    color_ = color;
-    target_color_ = target_color;
-    alpha_ = alpha;
-  }
-
-  void draw(const ofVec2f& center);
+  void draw(const ofVec2f& center) const;
 
  private:
   Triangle reference_triangle_;
