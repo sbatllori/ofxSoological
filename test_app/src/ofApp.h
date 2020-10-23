@@ -7,6 +7,7 @@ class ofApp : public ofBaseApp {
   void run_unit_tests();
   void setup() {
     ofSetBackgroundAuto(false);
+    ofSetCircleResolution(72);
     ofBackground(255);
     ofSetColor(0);
   }
@@ -26,4 +27,6 @@ class ofApp : public ofBaseApp {
   void draw_Triangle(bool run);
 
   void draw_TrianglesOutBrush(bool run);
+
+  void draw_Dandelion(bool run);
 };

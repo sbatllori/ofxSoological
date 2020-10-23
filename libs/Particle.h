@@ -17,7 +17,8 @@ class Particle {
 
   const ofVec2f& position() const { return position_; }
   const ofVec2f& direction() const { return direction_; }
-  const Properties& properties() const { return properties(); }
+  const Properties& properties() const { return properties_; }
+  Properties& properties_mutable() { return properties_; }
 
  private:
   ofVec2f position_;

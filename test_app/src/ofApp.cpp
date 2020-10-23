@@ -1,6 +1,7 @@
 #include "ofApp.h"
 #include "Particle.h"
 #include "brushes/TrianglesOutBrush.h"
+#include "shapes/Dandelion.h"
 #include "shapes/DeformedLayeredCircle.h"
 #include "shapes/Triangle.h"
 
@@ -50,6 +51,7 @@ void ofApp::draw() {
     draw_DeformedLayeredCircle(false);
     draw_Triangle(false);
     draw_TrianglesOutBrush(true);
+    draw_Dandelion(true);
   }
 }
 
@@ -269,7 +271,6 @@ void ofApp::draw_Triangle(bool run) {
 //--------------------------------------------------------------
 // TrianglesOutBrush
 //--------------------------------------------------------------
-
 void ofApp::draw_TrianglesOutBrush(bool run) {
   std::string unit_test = "draw_TrianglesOutBrush";
 
@@ -285,6 +286,37 @@ void ofApp::draw_TrianglesOutBrush(bool run) {
     } else {
       soo_assert(false, unit_test);
     }
+  }
+
+  soo_run(run, unit_test);
+}
+
+//--------------------------------------------------------------
+// Dandelion
+//--------------------------------------------------------------
+void ofApp::draw_Dandelion(bool run) {
+  std::string unit_test = "draw_Dandelion";
+
+  if (run) {
+    soo::Dandelion dandelion(ofVec2f{0.f, 0.f}, 400.f);
+
+    float x = ofGetWidth() / 2 - dandelion.center().x;
+    float y = ofGetHeight() / 2 - dandelion.center().y;
+
+    ofNoFill();
+    ofSetColor(0);
+    ofSetLineWidth(2);
+
+    dandelion.DrawBbox(x, y);
+    dandelion.DrawCircle(x, y);
+    dandelion.DrawTrunk(x, y);
+    dandelion.DrawLines(x, y);
+
+    ofFill();
+    dandelion.DrawEllipse(x, y);
+
+  } else {
+    soo_assert(false, unit_test);
   }
 
   soo_run(run, unit_test);
