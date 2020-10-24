@@ -1,5 +1,4 @@
 #include "ofApp.h"
-#include "Particle.h"
 #include "brushes/TrianglesOutBrush.h"
 #include "shapes/Dandelion.h"
 #include "shapes/DeformedLayeredCircle.h"
@@ -34,10 +33,6 @@ void soo_run(bool run, const std::string& unit_test) {
 
 //--------------------------------------------------------------
 void ofApp::run_unit_tests() {
-  test_Particle_Constructor_position();
-  test_Particle_Constructor_position_direction();
-  test_Particle_SetRandomDirection();
-
   test_DeformedLayeredCircle_Constructor();
 
   test_TriangleVertices_Generate_from_vertices();
@@ -50,7 +45,7 @@ void ofApp::draw() {
   if (ofGetFrameNum() == 10) {
     draw_DeformedLayeredCircle(false);
     draw_Triangle(false);
-    draw_TrianglesOutBrush(true);
+    draw_TrianglesOutBrush(false);
     draw_Dandelion(true);
   }
 }
@@ -58,44 +53,6 @@ void ofApp::draw() {
 //--------------------------------------------------------------
 // UNIT TESTS
 //--------------------------------------------------------------
-struct Properties {};
-
-//--------------------------------------------------------------
-// Particle
-//--------------------------------------------------------------
-void ofApp::test_Particle_Constructor_position() {
-  std::string unit_test = "test_Particle_Constructor_position";
-
-  ofVec2f position(2.f, 5.f);
-  soo::Particle<Properties> particle(position);
-
-  soo_assert(particle.position() == position, unit_test);
-  soo_passed(unit_test);
-}
-
-void ofApp::test_Particle_Constructor_position_direction() {
-  std::string unit_test = "test_Particle_Constructor_position_direction";
-
-  ofVec2f position(2.f, 5.f);
-  ofVec2f direction(4.f, 5.f);
-  soo::Particle<Properties> particle(position, direction);
-
-  soo_assert(particle.position() == position, unit_test);
-  soo_assert(particle.direction() == direction.getNormalized(), unit_test);
-  soo_passed(unit_test);
-}
-
-void ofApp::test_Particle_SetRandomDirection() {
-  std::string unit_test = "test_Particle_SetRandomDirection";
-
-  soo::Particle<Properties> particle({0.f, 0.f});
-  particle.SetRandomDirection();
-
-  soo_assert(particle.direction() == particle.direction().getNormalized(),
-             unit_test);
-  soo_passed(unit_test);
-}
-
 //--------------------------------------------------------------
 // DeformedLayerCircle
 //--------------------------------------------------------------

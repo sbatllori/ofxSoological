@@ -14,10 +14,6 @@ class ofApp : public ofBaseApp {
   void draw();
 
  private:
-  void test_Particle_Constructor_position();
-  void test_Particle_Constructor_position_direction();
-  void test_Particle_SetRandomDirection();
-
   void test_DeformedLayeredCircle_Constructor();
   void draw_DeformedLayeredCircle(bool run);
 

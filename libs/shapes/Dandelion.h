@@ -1,17 +1,17 @@
 #pragma once
 
-#include "Particle.h"
 #include "ofMain.h"
 
 namespace soo {
 
 namespace dandelion {
 
-struct LineProperties {
+struct Line {
+  ofVec2f origin_;
+  ofVec2f direction_;
   float length_;
   bool is_arrow_;
 };
-using Line = Particle<LineProperties>;
 
 }  // namespace dandelion
 

@@ -1,4 +1,5 @@
 #include "Dandelion.h"
+#include "soo_vectors.h"
 
 namespace soo {
 
@@ -34,27 +35,27 @@ Dandelion::Dandelion(ofVec2f bbox_top_left_corner, float bbox_edge_length) {
   lines.reserve(num_lines);
 
   for (unsigned long i{0}; i < num_lines; i++) {
-    dandelion::Line line(ellipse_center_);
-    line.SetRandomDirection();
+    dandelion::Line line;
+    line.origin_ = ellipse_center_;
+    line.direction_ = vectors::GetRandomUnitVec2();
 
-    const float x = line.direction().x;
-    const float y = line.direction().y;
+    const float x = line.direction_.x;
+    const float y = line.direction_.y;
     constexpr float min_factor = 0.5f;
     float max_factor = min_factor;
     (x >= 0.f && y < 0.f) ? max_factor = 1.7f : false;    // 1st q
     (x < 0.f && y < 0.f) ? max_factor = 1.25f : false;    // 2nd q
     (x < 0.f && y >= 0.f) ? max_factor = 1.1f : false;    // 3rd q
     (x >= 0.f && y >= 0.f) ? max_factor = 1.25f : false;  // 4th q
-    line.properties_mutable().length_ =
-        circle_radius_ * ofRandom(min_factor, max_factor);
+    line.length_ = circle_radius_ * ofRandom(min_factor, max_factor);
 
-    bool longest_lines =
-        line.properties().length_ > .9f * circle_radius_ * max_factor;
+    bool longest_lines = line.length_ > .9f * circle_radius_ * max_factor;
     bool up_to_75_percent = ofRandom(100) < 75;
     bool up_to_10_percent = ofRandom(100) < 10;
-    line.properties_mutable().is_arrow_ =
-        ((longest_lines && up_to_75_percent) || up_to_10_percent) ? true
-                                                                  : false;
+    line.is_arrow_ = ((longest_lines && up_to_75_percent) || up_to_10_percent)
+                         ? true
+                         : false;
+
     lines.push_back(line);
   }
 }
@@ -97,13 +98,12 @@ void Dandelion::DrawLines(float x, float y) const {
   ofTranslate(x, y);
 
   for (auto& line : lines) {
-    ofVec3f direction{line.direction().x, line.direction().y, 0.f};
-    ofVec3f start{line.position().x, line.position().y, 0.f};
-    ofVec3f end = start + line.properties().length_ * direction;
+    ofVec3f direction{line.direction_.x, line.direction_.y, 0.f};
+    ofVec3f start{line.origin_.x, line.origin_.y, 0.f};
+    ofVec3f end = start + line.length_ * direction;
 
-    line.properties().is_arrow_
-        ? ofDrawArrow(start, end, 0.04f * circle_radius_)
-        : ofDrawLine(start, end);
+    line.is_arrow_ ? ofDrawArrow(start, end, 0.04f * circle_radius_)
+                   : ofDrawLine(start, end);
   }
 
   ofPopMatrix();
