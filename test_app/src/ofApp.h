@@ -25,4 +25,8 @@ class ofApp : public ofBaseApp {
   void draw_TrianglesOutBrush(bool run);
 
   void draw_Dandelion(bool run);
+
+  void test_Motion_UniformLinear();
+
+  void test_Inside_InCircle();
 };

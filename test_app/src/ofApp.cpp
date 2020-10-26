@@ -3,6 +3,8 @@
 #include "shapes/Dandelion.h"
 #include "shapes/DeformedLayeredCircle.h"
 #include "shapes/Triangle.h"
+#include "soo_inside.h"
+#include "soo_motion.h"
 
 namespace {
 void soo_assert(bool statement, const std::string& unit_test,
@@ -38,6 +40,9 @@ void ofApp::run_unit_tests() {
   test_TriangleVertices_Generate_from_vertices();
   test_TriangleVertices_Generate_from_edge_lengths();
   test_Triangle_Constructor();
+
+  test_Motion_UniformLinear();
+  test_Inside_InCircle();
 }
 
 //--------------------------------------------------------------
@@ -46,7 +51,7 @@ void ofApp::draw() {
     draw_DeformedLayeredCircle(false);
     draw_Triangle(false);
     draw_TrianglesOutBrush(false);
-    draw_Dandelion(true);
+    draw_Dandelion(false);
   }
 }
 
@@ -271,10 +276,49 @@ void ofApp::draw_Dandelion(bool run) {
 
     ofFill();
     dandelion.DrawEllipse(x, y);
-
-  } else {
-    soo_assert(false, unit_test);
   }
 
   soo_run(run, unit_test);
+}
+
+//--------------------------------------------------------------
+// soo_motion
+//--------------------------------------------------------------
+void ofApp::test_Motion_UniformLinear() {
+  std::string unit_test = "test_Motion_UniformLinear";
+
+  const ofVec2f position_0{0.f, 0.f};
+  const ofVec2f direction{1.f, 0.f};
+  const float speed = 1.f;
+
+  ofVec2f position = position_0;
+
+  for (int i{1}; i < 10; i++) {
+    position = soo::motion::UniformLinear(position, direction, speed);
+
+    soo_assert(fabs(position.x - (position_0.x + i * direction.x)) <
+                   std::numeric_limits<float>::epsilon(),
+               unit_test);
+    soo_assert(fabs(position.y - (position_0.y + i * direction.y)) <
+                   std::numeric_limits<float>::epsilon(),
+               unit_test);
+  }
+
+  soo_passed(unit_test);
+}
+
+//--------------------------------------------------------------
+// soo_inside
+//--------------------------------------------------------------
+void ofApp::test_Inside_InCircle() {
+  std::string unit_test = "test_Inside_InCircle";
+
+  soo_assert(soo::inside::InCircle(ofVec2f{0, 0}, ofVec2f{0, 0}, 10), unit_test,
+             "Inside");
+  soo_assert(!soo::inside::InCircle(ofVec2f{0, 2}, ofVec2f{0, 0}, 1), unit_test,
+             "Outside");
+  soo_assert(!soo::inside::InCircle(ofVec2f{0, 1}, ofVec2f{0, 0}, 1), unit_test,
+             "Boundary");
+
+  soo_passed(unit_test);
 }
