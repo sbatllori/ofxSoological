@@ -1,8 +1,11 @@
+#pragma once
+
 #include "ofMain.h"
 
 namespace soo {
 namespace vectors {
-ofVec2f GetRandomUnitVec2() {
+
+inline ofVec2f GetRandomUnitVec2() {
   return ofVec2f{ofRandom(-1.f, 1.f), ofRandom(-1.f, 1.f)}.normalize();
 }
 }  // namespace vectors
