@@ -1,100 +1,103 @@
 #include "ofApp.h"
+#include "soo_export.h"
+#include "soo_inside.h"
+#include "soo_motion.h"
+#include "soo_vectors.h"
 
-void
-ofApp::setup()
-{
-    // Setup frames exporter
-    framesExporter.setStartAndEnd(0.1f, 25);
-    framesExporter.setActive(false);
+void ofApp::setup() {
+  // Setup constant canvas parameters
+  ofSetFrameRate(30);
+  ofBackground(0);
+  ofSetCircleResolution(72);
 
-    // Setup constant canvas parameters
-    ofSetFrameRate(30);
-    ofBackground(0);
-    ofSetCircleResolution(72);
+  // Define main circle
+  main_circle_.radius_ = 400;
+  main_circle_.center_ = ofVec2f{ofGetWidth() / 2.f, ofGetHeight() / 2.f};
 
-    // Define main circle
-    circle.properties.radius = 400;
-    circle.position = ofVec2f(ofGetWindowWidth() / 2, ofGetWindowHeight() / 2);
+  // Define particles
+  constexpr unsigned long num_particles = 1000;
+  particles_.reserve(num_particles);
 
-    // Define particles
-    unsigned long numParticles = 1000;
-    particles.resize(numParticles);
+  std::generate_n(std::back_inserter(particles_), num_particles, [this]() {
+    Particle particle;
 
-    for(unsigned long i = 0; i < numParticles; i++)
-    {
-        // Define new particle
-        auto particle = soo::Particle<soo::Properties>();
+    // Initiate the particle in a square inside the main circle
+    float inBoundary = 0.5f * main_circle_.radius_;
+    particle.center_.x =
+        main_circle_.center_.x + ofRandom(-inBoundary, inBoundary);
+    particle.center_.y =
+        main_circle_.center_.y + ofRandom(-inBoundary, inBoundary);
 
-        // Set random center inside the circle
-        float inBoundary = 0.5f * circle.properties.radius;
-        auto x = circle.position.x + ofRandom(-inBoundary, inBoundary);
-        auto y = circle.position.y + ofRandom(-inBoundary, inBoundary);
-        particle.position = ofVec2f(x, y);
+    // Assign a random direction to it
+    particle.direction_ = soo::vectors::GetRandomUnitVec2();
 
-        // Set random direction
-        particle.setRandomDirection(particle.properties.speed);
+    // Assign a random color from the color palette to it
+    const auto color_idx =
+        static_cast<unsigned long>(ofRandom(color_palette.size()));
+    particle.color_.setHex(color_palette[color_idx]);
 
-        // Set random color from the color palette
-        ofColor particleColor;
-        particleColor.setHex(colorPalette[static_cast<unsigned long>(ofRandom(colorPalette.size()))]);
-        particle.properties.color = particleColor;
-
-        // Add particle
-        particles[i] = particle;
-    }
+    return particle;
+  });
 }
 
-void
-ofApp::update()
-{
-    framesExporter.updateByTime(ofGetElapsedTimeMillis());
+void ofApp::update() {
+  //  soo::SaveFrame(ofGetFrameNum());
 
-    for(auto& particle : particles)
-    {
-        // Constraint the particle to be inside the circle
-        float nextStepDistToCenter = circle.position.distance(particle.position + particle.direction);
-        bool out = nextStepDistToCenter >= circle.properties.radius - particle.properties.radius;
+  // Constraint the particles to be inside the main circle. If the next step is
+  // going to make a particle cross the border, then change its direction so
+  // that it moves to the inside
+  for (auto& particle : particles_) {
+    auto next_step = soo::motion::UniformLinear(
+        particle.center_, particle.direction_, particle.speed_);
 
-        if(out)
-        {
-            // Change the direction if the particle is about to cross the border
-            particle.direction.rotate(ofRandom(160, 200));
-        }
+    const bool next_step_inside =
+        soo::inside::InCircle(next_step, main_circle_.center_,
+                              main_circle_.radius_ - particle.radius_);
 
-        // Move forward
-        particle.position += particle.direction;
+    if (!next_step_inside) {
+      // Change the direction if the particle is about to cross the border
+      particle.direction_.rotate(ofRandom(160, 200));
+
+      next_step = soo::motion::UniformLinear(
+          particle.center_, particle.direction_, particle.speed_);
     }
+
+    // Move the particle
+    particle.center_ = next_step;
+  }
 }
 
-void
-ofApp::draw()
-{
-    // Draw main circle
-    ofNoFill();
-    ofSetColor(200);
-    ofSetLineWidth(2);
-    ofDrawCircle(circle.position, circle.properties.radius);
+void ofApp::draw() {
+  // Draw the main circle
+  ofNoFill();
+  ofSetColor(200);
+  ofSetLineWidth(2);
+  ofDrawCircle(main_circle_.center_, main_circle_.radius_);
 
-    // Draw particles
-    for(auto& particle : particles)
-    {
-        // Draw colors
-        ofFill();
-        ofSetColor(particle.properties.color);
-        ofDrawCircle(particle.position, particle.properties.radius);
-
-        //        // Draw geometry
-        //        //        ofFill();
-        //        //        ofSetLineWidth(0.5);
-        //        //        ofSetColor(0, 0, 0, 150);
-        //        //        ofDrawCircle(particle.position, particle.properties.radius);
-
-        //        ofNoFill();
-        //        ofSetColor(255, 0, 0);
-        //        ofDrawCircle(particle.position, particle.properties.radius);
-
-        //        glm::vec3 start(particle.position.x, particle.position.y, 0);
-        //        glm::vec3 d(particle.direction.x, particle.direction.y, 0);
-        //        ofDrawArrow(start, start + 0.5 * particle.properties.radius * d);
+  // Draw the particles
+  for (auto& particle : particles_) {
+    if (draw_colors_) {
+      // Draw colors
+      ofFill();
+      ofSetColor(particle.color_);
+      ofDrawCircle(particle.center_, particle.radius_);
     }
+
+    if (draw_geometry_) {
+      // Draw geometry
+      //      ofFill();
+      //      ofSetLineWidth(0.5);
+      //      ofSetColor(0, 0, 0, 150);
+      //      ofDrawCircle(particle.center_, particle.radius_);
+
+      ofNoFill();
+      ofSetColor(255, 0, 0);
+      ofDrawCircle(particle.center_, particle.radius_);
+
+      ofVec3f start{particle.center_.x, particle.center_.y, 0};
+      ofVec3f direction{particle.direction_.x, particle.direction_.y, 0};
+      ofVec3f end = start + (1.15f * particle.radius_) * direction;
+      ofDrawArrow(start, end);
+    }
+  }
 }
