@@ -1,164 +1,198 @@
 #include "ofApp.h"
+#include "soo_motion.h"
+#include "soo_vectors.h"
 
 //--------------------------------------------------------------
-void
-ofApp::setup()
-{
-    // Setup frames exporter
-    framesExporter.setStartAndEnd(0.1f, 50);
-    framesExporter.setActive(false);
+void ofApp::setup() {
+  // Canvas settings
+  ofBackground(255);
+  ofSetFrameRate(30);
 
-    // Canvas settings
-    ofBackground(255);
-    ofSetFrameRate(30);
+  // Load the character
+  font_.load(font_name_, 800, true, true, true);
+  char_contour_ = font_.getCharacterAsPoints(char_, true, false);
 
-    // Load the character and initialize the character path
-    font.load(fontName, 800, true, true, true);
-    path = std::make_shared<ofPath>(font.getCharacterAsPoints(character, true, false));
+  render_kid_line ? setup_kid_line() : setup_lines();
+}
 
-    // Center the path in the window
-    ofRectangle bbox = path->getOutline()[0].getBoundingBox();
-    float x = ofGetWindowWidth() / 2 - bbox.width / 2 - 50;
-    float y = ofGetWindowHeight() / 2 + bbox.height / 2;
-    path->translate(ofVec2f(x, y));
+//--------------------------------------------------------------
+void ofApp::update() { render_kid_line ? update_kid_line() : update_lines(); }
 
-    // Get the vertices defining the path
-    std::vector<ofVec2f> vertices;
-    for(auto& v : path->getOutline()[0].getVertices())
-    {
-        vertices.push_back(ofVec2f(v.x, v.y));
+//--------------------------------------------------------------
+void ofApp::draw() {
+  bool debug = false;
+
+  ofPushMatrix();
+  {
+    const ofRectangle& bbox = char_contour_.getOutline()[0].getBoundingBox();
+    float x = ofGetWidth() / 2 - bbox.width / 2 - 50;
+    float y = ofGetHeight() / 2 + bbox.height / 2;
+    ofTranslate(x, y);
+
+    if (!debug) {
+      render_kid_line ? draw_kid_line() : draw_lines();
+
+    } else {
+      const auto& contour_vertices =
+          char_contour_.getOutline()[0].getVertices();
+      ofSetColor(0);
+      char_contour_.draw();
+
+      ofFill();
+
+      // Green => Start
+      ofSetColor(0, 255, 0);
+      ofDrawCircle(contour_vertices[65], 10);
+      ofDrawCircle(contour_vertices[66], 10);
+
+      // Red => End
+      ofSetColor(255, 0, 0);
+      ofDrawCircle(contour_vertices[1], 10);
+      ofDrawCircle(contour_vertices[2], 10);
+
+      // Blue => Bottom
+      ofSetColor(0, 0, 255);
+      for (int i{2}; i <= 66; i++) ofDrawCircle(contour_vertices[i], 5);
     }
+  }
+  ofPopMatrix();
+}
 
-    if(!renderKidLine)
-    {
-        // Save the the bottom of the character path separately, to change the moving direction of the lines
-        ofPath pathBottom; // 2 - 125
-        pathBottom.moveTo(vertices[2]);
-        for(auto i = 2; i <= 125; i++)
-            pathBottom.lineTo(vertices[i]);
-        bottom = pathBottom.getOutline()[0].getResampledBySpacing(1);
+//--------------------------------------------------------------
+void ofApp::setup_lines() {
+  // Save the bottom and the end of the contour separately, in order to manage
+  // how the lines shall react when reaching them
+  const auto& contour_vertices = char_contour_.getOutline()[0].getVertices();
 
-        // Save the end of the character path separately, to stop the lines once they reach it
-        ofPath pathEnd; // 1 - 2
-        pathEnd.moveTo(vertices[1]);
-        pathEnd.lineTo(vertices[2]);
-        end = pathEnd.getOutline()[0].getResampledBySpacing(1);
+  ofPath bottom;
+  bottom.moveTo(contour_vertices[2]);
+  for (unsigned long i{2}; i <= 66; i++) {
+    bottom.lineTo(contour_vertices[i]);
+  }
+  char_bottom_ = bottom.getOutline()[0].getResampledBySpacing(1);
 
-        // Initilize the lines
-        auto v1 = vertices[124];
-        auto v2 = vertices[125];
+  ofPath end;
+  end.moveTo(contour_vertices[1]);
+  end.lineTo(contour_vertices[2]);
+  char_end_ = end.getOutline()[0].getResampledBySpacing(1);
 
-        unsigned long numLines = 300;
-        lines.resize(numLines);
-        for(unsigned long i = 0; i < numLines; i++)
-        {
-            soo::Line line;
+  // Initialize the lines at the start of the contour
+  const ofVec2f& v_origin_left = contour_vertices[66];
+  const ofVec2f& v_origin_right = contour_vertices[65];
 
-            // Define line properties
-            line.stepLen = 10;
-            line.angle = ofRandom(50, 140);
-            line.origin.position = ofVec2f(ofRandom(v2.x, v1.x), v1.y);
-            line.origin.setRandomDirection();
+  constexpr unsigned long num_lines = 300;
+  lines_.reserve(num_lines);
 
-            // Define path properties
-            line.path.moveTo(line.origin.position);
-            line.path.setStrokeColor(ofColor(0, 0, 0, 50));
-            line.path.setStrokeWidth(2);
-            line.path.setFilled(false);
+  std::generate_n(std::back_inserter(lines_), num_lines,
+                  [&v_origin_left, &v_origin_right]() {
+                    Line line;
 
-            lines[i] = line;
+                    // Set line parameters
+                    line.position_ =
+                        ofVec2f{ofRandom(v_origin_left.x, v_origin_right.x),
+                                v_origin_right.y};
+                    line.direction_ = soo::vectors::GetRandomUnitVec2();
+                    line.step_length_ = 10;
+                    line.rotation_angle_ = ofRandom(50, 140);
+
+                    // Initialize the path
+                    line.path_.moveTo(line.position_);
+
+                    // Set path properties
+                    line.path_.setStrokeColor(ofColor(0, 0, 0, 50));
+                    line.path_.setStrokeWidth(2);
+                    line.path_.setFilled(false);
+
+                    return line;
+                  });
+}
+
+void ofApp::update_lines() {
+  for (auto& line : lines_) {
+    // Check if the line reached the end of the shape
+    if (!line.done_) {
+      for (const auto& vertex : char_end_) {
+        if (line.position_.distance(vertex) < line.step_length_) {
+          line.done_ = true;
+          break;
         }
+      }
     }
-    else
-    {
-        kidLine.stepLen = 5;
-        kidLine.origin.position = vertices[124];
-        kidLine.origin.setRandomDirection();
-        kidLine.path.setStrokeColor(ofColor(200, 100, 100, 100));
-        kidLine.path.setStrokeWidth(10);
-        kidLine.path.setFilled(false);
-    }
-}
 
-//--------------------------------------------------------------
-void
-ofApp::update()
-{
-    framesExporter.updateByTime(ofGetElapsedTimeMillis());
+    // Grow the line if it did not reach the end of the shape
+    if (!line.done_) {
+      // If the next step is inside the shape, move forward. Otherwise, change
+      // the moving direction in order to continue moving inside the shape
+      ofVec2f next_step = soo::motion::UniformLinear(
+          line.position_, line.direction_, line.step_length_);
 
-    if(!renderKidLine)
-    {
-        for(auto& line : lines)
-        {
+      const bool next_step_inside =
+          char_contour_.getOutline()[0].inside(next_step.x, next_step.y);
 
-            // Check if the line reached the end of the shape
-            for(auto& endVertex : end)
-            {
-                if(line.origin.position.distance(endVertex) < line.stepLen)
-                    line.done = true;
+      if (next_step_inside) {
+        line.AddPosition(next_step);
+      }
+
+      // else if (line.path_.getOutline()[0].getVertices().size() > 1) {
+      else {
+        line.rotation_angle_sign_ = 1;
+
+        // If we are close to the bottom of the shape, we need to change the
+        // sign of the rotation angle. Note that when initializing the lines we
+        // are gonna be close to the bottom since the lines origin at the
+        // bottom. Skip that case by checking that the path has more than the
+        // initial position registered.
+        if (line.path_.getOutline()[0].getVertices().size() > 1) {
+          for (const auto& vertex : char_bottom_) {
+            if (next_step.distance(vertex) < line.step_length_) {
+              line.rotation_angle_sign_ = -1;
+              break;
             }
-
-            // Grow the line
-            if(!line.done)
-            {
-
-                ofVec2f nextPosition = line.origin.position + line.stepLen * line.origin.direction;
-
-                // If the next step is inside the shape, move forward
-                if(path->getOutline()[0].inside(nextPosition.x, nextPosition.y))
-                {
-                    line.origin.position = nextPosition;
-                    line.path.lineTo(line.origin.position.x, line.origin.position.y);
-                }
-                // Otherwise, change direction
-                else
-                {
-                    line.sign = 1;
-                    // Check if we are close to the bottom of the shape to change angle sign
-                    auto numSteps = line.path.getOutline()[0].getVertices().size();
-                    if(numSteps > 1)
-                    {
-                        for(auto& bottomVertex : bottom)
-                        {
-                            if(nextPosition.distance(bottomVertex) < line.stepLen)
-                            {
-                                line.sign = -1;
-                                break;
-                            }
-                        }
-                    }
-
-                    // Change direction
-                    line.origin.direction.rotate(line.sign * line.angle);
-                }
-            }
+          }
         }
+        line.direction_.rotate(line.rotation_angle_sign_ *
+                               line.rotation_angle_);
+      }
     }
-    else
-    {
-        // Kidline
-        ofVec2f next = kidLine.origin.position;
-        do
-        {
-            kidLine.origin.position = next;
-            next += kidLine.stepLen * kidLine.origin.direction;
+  }
+}
 
-        } while(path->getOutline()[0].inside(next.x, next.y));
-
-        kidLine.path.lineTo(kidLine.origin.position.x, kidLine.origin.position.y);
-        kidLine.origin.setRandomDirection();
-    }
+void ofApp::draw_lines() {
+  for (auto& line : lines_) {
+    line.path_.draw();
+  }
 }
 
 //--------------------------------------------------------------
-void
-ofApp::draw()
-{
-    if(!renderKidLine)
-        for(auto& line : lines)
-            line.path.draw();
-    else
-    {
-        kidLine.path.draw();
-    }
+void ofApp::setup_kid_line() {
+  const auto& contour_vertices = char_contour_.getOutline()[0].getVertices();
+
+  // Set line parameters
+  kid_line_.position_ = contour_vertices[65];
+  kid_line_.direction_ = soo::vectors::GetRandomUnitVec2();
+  kid_line_.step_length_ = 5;
+
+  // Initialize the path
+  kid_line_.path_.moveTo(kid_line_.position_);
+
+  // Set path properties
+  kid_line_.path_.setStrokeColor(ofColor(200, 100, 100, 100));
+  kid_line_.path_.setStrokeWidth(10);
+  kid_line_.path_.setFilled(false);
 }
+
+void ofApp::update_kid_line() {
+  // The next step must be inside the shape and the closest possible to the
+  // shape contour
+  ofVec2f next_step = kid_line_.position_;
+  do {
+    kid_line_.position_ = next_step;
+    next_step = soo::motion::UniformLinear(next_step, kid_line_.direction_,
+                                           kid_line_.step_length_);
+  } while (char_contour_.getOutline()[0].inside(next_step.x, next_step.y));
+
+  kid_line_.AddPosition(kid_line_.position_);
+  kid_line_.direction_ = soo::vectors::GetRandomUnitVec2();
+}
+
+void ofApp::draw_kid_line() { kid_line_.path_.draw(); }
