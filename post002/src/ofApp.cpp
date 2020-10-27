@@ -9,14 +9,14 @@ void ofApp::setup() {
   ofSetFrameRate(30);
 
   // Load the character
-  font_.load(kFontName, 800, true, true, true);
-  char_contour_ = font_.getCharacterAsPoints(kChar, true, false);
+  font_.load(kFontName_, 800, true, true, true);
+  char_contour_ = font_.getCharacterAsPoints(kChar_, true, false);
 
-  kRenderKidLine ? setup_kid_line() : setup_lines();
+  kRenderKidLine_ ? setup_kid_line() : setup_lines();
 }
 
 //--------------------------------------------------------------
-void ofApp::update() { kRenderKidLine ? update_kid_line() : update_lines(); }
+void ofApp::update() { kRenderKidLine_ ? update_kid_line() : update_lines(); }
 
 //--------------------------------------------------------------
 void ofApp::draw() {
@@ -30,7 +30,7 @@ void ofApp::draw() {
     ofTranslate(x, y);
 
     if (!debug) {
-      kRenderKidLine ? draw_kid_line() : draw_lines();
+      kRenderKidLine_ ? draw_kid_line() : draw_lines();
 
     } else {
       ofSetColor(0);

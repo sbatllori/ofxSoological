@@ -34,7 +34,7 @@ void ofApp::setup() {
   // TEXT
   //--------------------------------------------------------------
   // Setup and load the font
-  font_.load(kFontName, 30, true, true, true);
+  font_.load(kFontName_, 30, true, true, true);
   font_.setLineHeight(34.f);
 
   //--------------------------------------------------------------
@@ -199,8 +199,8 @@ void ofApp::draw() {
 
   // Draw the text
   ofSetColor(ofColor::white);
-  ofRectangle bbox = font_.getStringBoundingBox(kText, 0, 0);
+  ofRectangle bbox = font_.getStringBoundingBox(kText_, 0, 0);
   const float x = (ofGetWidth() - bbox.width) / 2;
   const float y = ofGetHeight() / 3;
-  font_.drawString(kText, x, y);
+  font_.drawString(kText_, x, y);
 }

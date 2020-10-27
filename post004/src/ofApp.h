@@ -17,17 +17,15 @@ class ofApp : public ofBaseApp {
   void draw();
 
  private:
-  // Text
-  const string kText =
-      "  CUANDO ME INSPIRÁIS TODAS\nA LA VEZ, NUNCA QUIERO ELEGIR.";
-  const string kFontName = "Fishfingers.ttf";
+  const string kFontName_ = "Fishfingers.ttf";
   ofTrueTypeFont font_;
 
-  // Sky
+  const string kText_ =
+      "  CUANDO ME INSPIRÁIS TODAS\nA LA VEZ, NUNCA QUIERO ELEGIR.";
+
   ofPath sky_border_;
   std::vector<Star> stars_;
 
-  // Rocks
   Rock flying_rock_;
   Rock fire_rock_;
   std::vector<Rock> ground_rocks_;

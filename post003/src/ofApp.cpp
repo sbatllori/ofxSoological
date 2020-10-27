@@ -58,7 +58,7 @@ void ofApp::setup() {
 
       // Set the final color depending on if the cell belongs to the final shape
       const bool is_shape_cell = std::count(
-          shape_indices_.begin(), shape_indices_.end(), std::make_pair(j, i));
+          kShapeIndices_.begin(), kShapeIndices_.end(), std::make_pair(j, i));
 
       cell.final_color_ = is_shape_cell ? in_final_color : out_final_color;
 

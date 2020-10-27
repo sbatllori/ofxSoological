@@ -33,8 +33,8 @@ void ofApp::setup() {
 
     // Assign a random color from the color palette to it
     const auto color_idx =
-        static_cast<unsigned long>(ofRandom(color_palette.size()));
-    particle.color_.setHex(color_palette[color_idx]);
+        static_cast<unsigned long>(ofRandom(kColorPalette_.size()));
+    particle.color_.setHex(kColorPalette_[color_idx]);
 
     return particle;
   });
@@ -76,14 +76,14 @@ void ofApp::draw() {
 
   // Draw the particles
   for (auto& particle : particles_) {
-    if (kDrawColors) {
+    if (kDrawColors_) {
       // Draw colors
       ofFill();
       ofSetColor(particle.color_);
       ofDrawCircle(particle.center_, particle.radius_);
     }
 
-    if (kDrawGeometry) {
+    if (kDrawGeometry_) {
       // Draw geometry
       //      ofFill();
       //      ofSetLineWidth(0.5);
