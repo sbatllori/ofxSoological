@@ -22,6 +22,6 @@ class ofApp : public ofBaseApp {
   std::vector<Particle> particles_;
   soo::colors::Palette color_palette{soo::colors::procreate_flourish};
 
-  const bool draw_colors_ = true;
-  const bool draw_geometry_ = false;
+  const bool kDrawColors = true;
+  const bool kDrawGeometry = false;
 };

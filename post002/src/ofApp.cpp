@@ -9,14 +9,14 @@ void ofApp::setup() {
   ofSetFrameRate(30);
 
   // Load the character
-  font_.load(font_name_, 800, true, true, true);
-  char_contour_ = font_.getCharacterAsPoints(char_, true, false);
+  font_.load(kFontName, 800, true, true, true);
+  char_contour_ = font_.getCharacterAsPoints(kChar, true, false);
 
-  render_kid_line ? setup_kid_line() : setup_lines();
+  kRenderKidLine ? setup_kid_line() : setup_lines();
 }
 
 //--------------------------------------------------------------
-void ofApp::update() { render_kid_line ? update_kid_line() : update_lines(); }
+void ofApp::update() { kRenderKidLine ? update_kid_line() : update_lines(); }
 
 //--------------------------------------------------------------
 void ofApp::draw() {
@@ -25,20 +25,20 @@ void ofApp::draw() {
   ofPushMatrix();
   {
     const ofRectangle& bbox = char_contour_.getOutline()[0].getBoundingBox();
-    float x = ofGetWidth() / 2 - bbox.width / 2 - 50;
-    float y = ofGetHeight() / 2 + bbox.height / 2;
+    const float x = ofGetWidth() / 2 - bbox.width / 2 - 50;
+    const float y = ofGetHeight() / 2 + bbox.height / 2;
     ofTranslate(x, y);
 
     if (!debug) {
-      render_kid_line ? draw_kid_line() : draw_lines();
+      kRenderKidLine ? draw_kid_line() : draw_lines();
 
     } else {
-      const auto& contour_vertices =
-          char_contour_.getOutline()[0].getVertices();
       ofSetColor(0);
       char_contour_.draw();
 
       ofFill();
+      const auto& contour_vertices =
+          char_contour_.getOutline()[0].getVertices();
 
       // Green => Start
       ofSetColor(0, 255, 0);
@@ -80,10 +80,10 @@ void ofApp::setup_lines() {
   const ofVec2f& v_origin_left = contour_vertices[66];
   const ofVec2f& v_origin_right = contour_vertices[65];
 
-  constexpr unsigned long num_lines = 300;
-  lines_.reserve(num_lines);
+  constexpr unsigned long kNumLines = 300;
+  lines_.reserve(kNumLines);
 
-  std::generate_n(std::back_inserter(lines_), num_lines,
+  std::generate_n(std::back_inserter(lines_), kNumLines,
                   [&v_origin_left, &v_origin_right]() {
                     Line line;
 
@@ -123,7 +123,7 @@ void ofApp::update_lines() {
     if (!line.done_) {
       // If the next step is inside the shape, move forward. Otherwise, change
       // the moving direction in order to continue moving inside the shape
-      ofVec2f next_step = soo::motion::UniformLinear(
+      const ofVec2f next_step = soo::motion::UniformLinear(
           line.position_, line.direction_, line.step_length_);
 
       const bool next_step_inside =

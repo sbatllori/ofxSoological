@@ -15,18 +15,18 @@ void ofApp::setup() {
   main_circle_.center_ = ofVec2f{ofGetWidth() / 2.f, ofGetHeight() / 2.f};
 
   // Define particles
-  constexpr unsigned long num_particles = 1000;
-  particles_.reserve(num_particles);
+  constexpr unsigned long kNumParticles = 1000;
+  particles_.reserve(kNumParticles);
 
-  std::generate_n(std::back_inserter(particles_), num_particles, [this]() {
+  std::generate_n(std::back_inserter(particles_), kNumParticles, [this]() {
     Particle particle;
 
     // Initiate the particle in a square inside the main circle
-    float inBoundary = 0.5f * main_circle_.radius_;
+    const float kInBoundary = 0.5f * main_circle_.radius_;
     particle.center_.x =
-        main_circle_.center_.x + ofRandom(-inBoundary, inBoundary);
+        main_circle_.center_.x + ofRandom(-kInBoundary, kInBoundary);
     particle.center_.y =
-        main_circle_.center_.y + ofRandom(-inBoundary, inBoundary);
+        main_circle_.center_.y + ofRandom(-kInBoundary, kInBoundary);
 
     // Assign a random direction to it
     particle.direction_ = soo::vectors::GetRandomUnitVec2();
@@ -76,14 +76,14 @@ void ofApp::draw() {
 
   // Draw the particles
   for (auto& particle : particles_) {
-    if (draw_colors_) {
+    if (kDrawColors) {
       // Draw colors
       ofFill();
       ofSetColor(particle.color_);
       ofDrawCircle(particle.center_, particle.radius_);
     }
 
-    if (draw_geometry_) {
+    if (kDrawGeometry) {
       // Draw geometry
       //      ofFill();
       //      ofSetLineWidth(0.5);
@@ -94,9 +94,9 @@ void ofApp::draw() {
       ofSetColor(255, 0, 0);
       ofDrawCircle(particle.center_, particle.radius_);
 
-      ofVec3f start{particle.center_.x, particle.center_.y, 0};
-      ofVec3f direction{particle.direction_.x, particle.direction_.y, 0};
-      ofVec3f end = start + (1.15f * particle.radius_) * direction;
+      const ofVec3f start{particle.center_.x, particle.center_.y, 0};
+      const ofVec3f direction{particle.direction_.x, particle.direction_.y, 0};
+      const ofVec3f end = start + (1.15f * particle.radius_) * direction;
       ofDrawArrow(start, end);
     }
   }
