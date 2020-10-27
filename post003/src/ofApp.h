@@ -1,34 +1,30 @@
 #pragma once
 
 #include "ofMain.h"
-#include "sooFramesExporter.h"
 
-namespace soo
-{
-struct Cell
-{
-    ofVec2f origin;
-    float w, h;
-    ofColor color;
-    ofColor finalColor = ofColor(20);
-    bool isFinalColorSet = false;
+struct Cell {
+  ofVec2f top_left_corner_;
+  float width_;
+  float height_;
+
+  ofColor current_color_;
+  ofColor final_color_;
+  bool is_final_color_set_ = false;
 };
-} // namespace soo
 
-class ofApp : public ofBaseApp
-{
-private:
-    soo::FramesExporter framesExporter;
+class ofApp : public ofBaseApp {
+ public:
+  void setup();
+  void update();
+  void draw();
 
-    int nRows = 9, nColumns = 9;
-    std::vector<ofColor> randomColors;
-    std::stack<int> unsetIndices;
-    std::vector<soo::Cell> cells;
-    std::vector<std::pair<int, int>> shapeIndices = {
-        {2, 2}, {1, 3}, {1, 4}, {1, 5}, {2, 6}, {3, 6}, {4, 4}, {4, 5}, {5, 6}, {6, 2}, {6, 6}, {7, 3}, {7, 4}, {7, 5}};
+ private:
+  const int kNumRows_ = 9, kNumColumns_ = 9;
+  std::vector<Cell> cells_;
+  std::vector<int> unset_indices_;
+  const std::vector<std::pair<int, int>> shape_indices_ = {
+      {2, 2}, {1, 3}, {1, 4}, {1, 5}, {2, 6}, {3, 6}, {4, 4},
+      {4, 5}, {5, 6}, {6, 2}, {6, 6}, {7, 3}, {7, 4}, {7, 5}};
 
-public:
-    void setup();
-    void update();
-    void draw();
+  std::vector<ofColor> available_colors_;
 };
