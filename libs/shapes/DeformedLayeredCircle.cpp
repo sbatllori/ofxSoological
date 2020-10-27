@@ -28,7 +28,7 @@ ofPath DeformedLayeredCircle::GenerateLayer(const std::vector<float>& radii) {
   path.curveTo(first_vertex);  // this opens the path
   path.curveTo(first_vertex);  // this fixes an OF bug in ofPath::moveTo
 
-  auto resolution = radii.size();
+  const auto resolution = radii.size();
   for (unsigned long i{1}; i < resolution; i++) {
     const float theta = (1.f * i) / resolution;
     path.curveTo(coord::Polar2Cartesian(center_, radii[i], theta));
@@ -52,7 +52,7 @@ bool DeformedLayeredCircle::DecreaseRadii(std::vector<float>& radii,
   }
 
   std::transform(radii.begin(), radii.end(), radii.begin(),
-                 [spacing_between_layers](float radius) {
+                 [spacing_between_layers](const float radius) {
                    return radius - spacing_between_layers;
                  });
   return true;

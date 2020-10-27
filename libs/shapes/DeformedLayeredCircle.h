@@ -6,6 +6,7 @@ namespace soo {
 
 class DeformedLayeredCircle {
  public:
+  DeformedLayeredCircle() = default;
   DeformedLayeredCircle(const ofVec2f& center, const unsigned long num_layers,
                         const float spacing_between_layers,
                         std::vector<float>& radii);
