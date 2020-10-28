@@ -4,6 +4,7 @@
 #include "shapes/DeformedLayeredCircle.h"
 #include "shapes/Triangle.h"
 #include "soo_inside.h"
+#include "soo_intersection.h"
 #include "soo_motion.h"
 
 namespace {
@@ -32,28 +33,6 @@ void soo_run(bool run, const std::string& unit_test) {
   std::cout << out;
 }
 }  // namespace
-
-//--------------------------------------------------------------
-void ofApp::run_unit_tests() {
-  test_DeformedLayeredCircle_Constructor();
-
-  test_TriangleVertices_Generate_from_vertices();
-  test_TriangleVertices_Generate_from_edge_lengths();
-  test_Triangle_Constructor();
-
-  test_Motion_UniformLinear();
-  test_Inside_InCircle();
-}
-
-//--------------------------------------------------------------
-void ofApp::draw() {
-  if (ofGetFrameNum() == 10) {
-    draw_DeformedLayeredCircle(false);
-    draw_Triangle(false);
-    draw_TrianglesOutBrush(false);
-    draw_Dandelion(false);
-  }
-}
 
 //--------------------------------------------------------------
 // UNIT TESTS
@@ -321,4 +300,50 @@ void ofApp::test_Inside_InCircle() {
              "Boundary");
 
   soo_passed(unit_test);
+}
+
+//--------------------------------------------------------------
+// soo_intersection
+//--------------------------------------------------------------
+void ofApp::draw_Intersection_Horizontal_PolylineClosed(bool run) {
+  std::string unit_test = "draw_Intersection_Horizontal_PolylineClosed";
+
+  if (run) {
+    ofPushMatrix();
+    {
+      ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);
+
+      ofPolyline poly_line;
+      poly_line.addVertex(0, 0);
+      poly_line.addVertex(100, 0);
+      poly_line.addVertex(200, 100);
+      poly_line.addVertex(200, 150);
+      poly_line.addVertex(50, 200);
+      poly_line.addVertex(-100, 200);
+      poly_line.addVertex(-150, 150);
+      poly_line.addVertex(-100, 50);
+      poly_line.close();
+
+      for (int y{-20}; y < 250; y += 17) {
+        ofSetLineWidth(1);
+        ofSetColor(0, 0, 255);
+        ofDrawLine(-500, y, 500, y);
+
+        const std::vector<ofVec2f>& intersection_points =
+            soo::intersection::HorizontalAxis_PolylineClosed(y, poly_line, 1.f);
+
+        ofSetColor(255, 0, 0);
+        for (const auto& p : intersection_points) {
+          ofDrawCircle(p, 5);
+        }
+      }
+
+      ofSetLineWidth(2);
+      ofSetColor(0);
+      poly_line.draw();
+    }
+    ofPopMatrix();
+  }
+
+  soo_run(run, unit_test);
 }
