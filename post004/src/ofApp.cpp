@@ -1,6 +1,6 @@
 #include "ofApp.h"
-namespace {
 
+namespace {
 std::vector<float> GenerateExternalRadii(const float min_external_radius,
                                          const float max_external_radius,
                                          const unsigned long resolution) {
@@ -22,8 +22,8 @@ void SetPathDefaultDrawingSettings(ofPath& path) {
   path.setStrokeWidth(2);
   path.setCurveResolution(72);
 }
-
 }  // namespace
+
 //--------------------------------------------------------------
 void ofApp::setup() {
   // Canvas settings

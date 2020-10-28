@@ -24,6 +24,7 @@ void ofApp::draw() {
 
   ofPushMatrix();
   {
+    // Center the shape in the canvas
     const ofRectangle& bbox = char_contour_.getOutline()[0].getBoundingBox();
     const float x = ofGetWidth() / 2 - bbox.width / 2 - 50;
     const float y = ofGetHeight() / 2 + bbox.height / 2;
