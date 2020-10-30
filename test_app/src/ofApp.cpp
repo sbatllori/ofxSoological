@@ -1,5 +1,7 @@
 #include "ofApp.h"
 #include "brushes/TrianglesOutBrush.h"
+#include "fractals/DragonCurve.h"
+#include "fractals/LevyCCurve.h"
 #include "shapes/Dandelion.h"
 #include "shapes/DeformedLayeredCircle.h"
 #include "shapes/Triangle.h"
@@ -343,6 +345,33 @@ void ofApp::draw_Intersection_Horizontal_PolylineClosed(bool run) {
       poly_line.draw();
     }
     ofPopMatrix();
+  }
+
+  soo_run(run, unit_test);
+}
+
+//--------------------------------------------------------------
+// Fractals
+//--------------------------------------------------------------
+void ofApp::draw_DragonCurve(bool run) {
+  std::string unit_test = "draw_DragonCurve";
+
+  if (run) {
+    soo::DragonCurve curve(90.f);
+    curve.GenerateRecursive(10);
+    curve.draw();
+  }
+
+  soo_run(run, unit_test);
+}
+
+void ofApp::draw_LevyCCurve(bool run) {
+  std::string unit_test = "draw_LevyCCurve";
+
+  if (run) {
+    soo::LevyCCurve curve(90.f);
+    curve.GenerateRecursive(15);
+    curve.draw();
   }
 
   soo_run(run, unit_test);

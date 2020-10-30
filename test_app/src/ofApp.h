@@ -13,7 +13,7 @@ class ofApp : public ofBaseApp {
     test_Inside_InCircle();
   }
   void setup() {
-    ofSetBackgroundAuto(false);
+    ofSetBackgroundAuto(true);
     ofSetCircleResolution(72);
     ofSetLineWidth(1);
     ofBackground(255);
@@ -25,9 +25,14 @@ class ofApp : public ofBaseApp {
       draw_Triangle(false);
       draw_TrianglesOutBrush(false);
       draw_Dandelion(false);
-      draw_Intersection_Horizontal_PolylineClosed(true);
+      draw_Intersection_Horizontal_PolylineClosed(false);
     }
+
+    draw_DragonCurve(false);
+    draw_LevyCCurve(true);
   }
+
+  //  void keyPressed(int key) {}
 
  private:
   void test_DeformedLayeredCircle_Constructor();
@@ -42,4 +47,6 @@ class ofApp : public ofBaseApp {
   void draw_TrianglesOutBrush(bool run);
   void draw_Dandelion(bool run);
   void draw_Intersection_Horizontal_PolylineClosed(bool run);
+  void draw_DragonCurve(bool run);
+  void draw_LevyCCurve(bool run);
 };
