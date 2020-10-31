@@ -11,18 +11,23 @@ class TriangleVertices {
   ofVec2f C_;
 
   TriangleVertices() = default;
-  bool Generate(const ofVec2f& A, const ofVec2f& B, const ofVec2f& C);
-  bool Generate(const float edge_a_length, const float edge_b_length,
-                const float edge_c_length);
+  TriangleVertices(const ofVec2f& A, const ofVec2f& B, const ofVec2f& C);
+  TriangleVertices(const float edge_a_length, const float edge_b_length,
+                   const float edge_c_length);
 
  private:
   bool TriangleInequalityTheorem(const float edge_a_length,
                                  const float edge_b_length,
                                  const float edge_c_length);
+
+ private:
+  std::string kExceptionMsg_ =
+      "Couldn't generate the triangle vertices. Wrong values given.";
 };
 
 class Triangle {
  public:
+  Triangle() = default;
   Triangle(const TriangleVertices& vertices) : vertices_(vertices) {}
 
   const ofVec2f A() const { return vertices_.A_; }
