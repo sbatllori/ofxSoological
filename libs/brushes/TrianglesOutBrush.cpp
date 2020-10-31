@@ -1,6 +1,30 @@
 #include "TrianglesOutBrush.h"
 
 namespace soo {
+
+TrianglesOutBrush::TrianglesOutBrush(
+    const Triangle& reference_triangle, const int num_triangles,
+    const int min_offset_to_center, const int max_offset_to_center,
+    const ofColor& color, const ofColor& target_color, const int alpha)
+    : reference_triangle_(reference_triangle),
+      num_triangles_(num_triangles),
+      min_offset_to_center_(min_offset_to_center),
+      max_offset_to_center_(max_offset_to_center),
+      color_(color),
+      target_color_(target_color),
+      alpha_(alpha) {}
+
+TrianglesOutBrush::TrianglesOutBrush(
+    const GenerateTriangleParams& triangle_params,
+    const GenerateColorParams& color_params)
+    : reference_triangle_(triangle_params.reference_triangle_),
+      num_triangles_(triangle_params.num_triangles_),
+      min_offset_to_center_(triangle_params.min_offset_to_center_),
+      max_offset_to_center_(triangle_params.max_offset_to_center_),
+      color_(color_params.color_),
+      target_color_(color_params.target_color_),
+      alpha_(color_params.alpha_) {}
+
 void TrianglesOutBrush::draw(const ofVec2f& center) const {
   for (int _{0}; _ < num_triangles_; _++) {
     // Copy the reference triangle coordinates
