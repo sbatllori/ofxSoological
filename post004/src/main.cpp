@@ -3,7 +3,7 @@
 
 //========================================================================
 int main() {
-  constexpr int dim = 1080;
-  ofSetupOpenGL(dim, dim, OF_WINDOW);
+  constexpr int kDim = 1080;
+  ofSetupOpenGL(kDim, kDim, OF_WINDOW);
   ofRunApp(new ofApp());
 }
