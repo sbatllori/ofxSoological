@@ -1,175 +1,126 @@
 #include "ofApp.h"
+#include "soo_export.h"
 
 //--------------------------------------------------------------
-void
-ofApp::setup()
-{
-    // Frames exporter
-    framesExporter.setEnd(900);
-    framesExporter.setActive(false);
+void ofApp::setup() {
+  // Canvas settings
+  ofBackground(255);
+  ofSetFrameRate(30);
+  ofSetCircleResolution(72);
 
-    // Canvas settings
-    ofBackground(255);
-    ofSetFrameRate(30);
-    ofSetCircleResolution(72);
+  // Background settings
+  // - The vertical moving border starts in the left side of the canvas
+  // - The initial color for the background is pink, i.e. blue will start
+  // covering the left side while the vertical border moves forward
+  bg_vertical_ = 0;
+  bg_color_ = pink_;
 
-    // Background settings
-    bgX = 0;
-    bgColor = myPink;
-
-    // Character settings
-    ofTrueTypeFont::setGlobalDpi(72);
-    font.load(fontName, 650, true, true);
-    fontColor = ofColor::white;
-
-    deg = 0;
-    rotate = true;
+  // Character settings
+  // - Load the font
+  // - Init the character rotation
+  ofTrueTypeFont::setGlobalDpi(72);
+  font_.load(kFontName_, 650, true, true);
+  rotate_character_ = true;
+  rotation_angle_deg_ = 0;
 }
 
 //--------------------------------------------------------------
-void
-ofApp::update()
-{
-    framesExporter.updateByFrames(ofGetFrameNum());
+void ofApp::update() {
+  // Update the scene:
+  // - The vertical border moves forward until it reaches the end of the canvas.
+  // Then, it starts moving again from the left side of the canvas.
+  // - Increase the rotation angle if the rotation is activated
+  // - Switch the background color in the following situations:
+  //    - Every time the moving border is resarted
+  //    - Randomly up to 5% of the times
+  const bool end_reached = bg_vertical_ >= ofGetWidth();
+  const bool up_to_5_percent = ofRandom(100) < 5;
 
-    bgX += 5;
-    if(bgX == ofGetWidth())
-    {
-        bgX = 0;
-        switchBgColor();
-    }
-
-    if(rotate)
-        deg++;
-
-    if(ofRandom(100) < 5)
-        switchBgColor();
+  bg_vertical_ = end_reached ? 0 : bg_vertical_ + 5;
+  if (rotate_character_) rotation_angle_deg_++;
+  if (end_reached || up_to_5_percent) SwitchBgColor();
 }
 
 //--------------------------------------------------------------
-void
-ofApp::draw()
-{
-    auto w = ofGetWidth();
-    auto h = ofGetHeight();
+void ofApp::draw() {
+  int w = ofGetWidth();
+  int h = ofGetHeight();
 
-    ofFill();
-    ofSetColor(bgColor);
-    ofColor picoColor, tresColor;
+  ofColor pico_color;
+  ofColor tres_color;
 
-    // Draw the background
-    if(bgX < w / 2)
-    {
-        switchBgColor();
-        ofDrawRectangle(0, 0, w / 2, h);
-        (bgColor == myBlue) ? picoColor = ofColor::white : picoColor = ofColor::black;
+  ofFill();
+  ofSetColor(bg_color_);
 
-        switchBgColor();
-        ofDrawRectangle(w / 2, 0, w / 2, h);
-        (bgColor == myBlue) ? tresColor = ofColor::white : tresColor = ofColor::black;
+  // Draw the background
+  // - The background color is switched so that the canvas is divided in two
+  // halfs, and the moving border defines what portion of each half belongs to
+  // the background color
+  // - The color of the characters also change according to the background color
+  // changes
+  if (bg_vertical_ < w / 2) {
+    // ==> The moving border is on the first half of the canvas
 
-        ofDrawRectangle(0, 0, bgX, h);
-    }
-    else
-    {
-        ofDrawRectangle(0, 0, w / 2, h);
-        ofDrawRectangle(w / 2, 0, w / 2, h);
-        (bgColor == myBlue) ? picoColor = ofColor::white : picoColor = ofColor::black;
-        (bgColor == myBlue) ? tresColor = ofColor::white : tresColor = ofColor::black;
+    // Rectangle covering the first half of the screen
+    SwitchBgColor();
+    ofDrawRectangle(0, 0, w / 2, h);
+    pico_color = GetFontColor();
 
-        switchBgColor();
-        ofDrawRectangle(w / 2, 0, bgX - w / 2, h);
-        switchBgColor();
-    }
+    // Rectangle covering the second half of the screen
+    SwitchBgColor();
+    ofDrawRectangle(w / 2, 0, w / 2, h);
+    tres_color = GetFontColor();
 
-    // Draw the characters
-    int d = 90;
-    ofPushMatrix();
-    {
-        ofRectangle bbox = font.getStringBoundingBox("<", 0, 0);
-        ofTranslate(w / 2 - bbox.width / 2 - d, h / 2);
-        ofRotateZDeg(deg);
+    // Moving rectangle on the first half of the screen
+    ofDrawRectangle(0, 0, bg_vertical_, h);
 
-        ofSetColor(picoColor);
-        font.drawString("<", -bbox.width / 2, bbox.height / 2);
-    }
-    ofPopMatrix();
+  } else {
+    // ==> The moving border is on the second half of the canvas
 
-    ofPushMatrix();
-    {
-        ofRectangle bbox = font.getStringBoundingBox("3", 0, 0);
-        ofTranslate(w / 2 + d, h / 2 + bbox.height / 2);
+    // Rectangle covering the full screen
+    ofDrawRectangle(0, 0, w, h);
+    pico_color = GetFontColor();
+    tres_color = GetFontColor();
 
-        ofSetColor(tresColor);
-        font.drawString("3", 0, 0);
-    }
-    ofPopMatrix();
+    // Moving rectangle on the second half of the screen
+    SwitchBgColor();
+    ofDrawRectangle(w / 2, 0, bg_vertical_ - w / 2, h);
+    SwitchBgColor();
+  }
 
-    //    ofDrawLine(0, h / 2, w, h / 2);
+  // Draw the characters
+  // - Each character is centered vertically in a different half of the screen
+  // - The "pico" caracter rotates, while the "tres" character remains static
+  const int kDistanceBetweenChars = 90;
+
+  ofPushMatrix();
+  {
+    ofRectangle bbox = font_.getStringBoundingBox("<", 0, 0);
+    ofTranslate((w - bbox.width) / 2 - kDistanceBetweenChars, h / 2);
+    ofRotateZDeg(rotation_angle_deg_);
+
+    ofSetColor(pico_color);
+    font_.drawString("<", -bbox.width / 2, bbox.height / 2);
+  }
+  ofPopMatrix();
+
+  ofPushMatrix();
+  {
+    ofRectangle bbox = font_.getStringBoundingBox("3", 0, 0);
+    ofTranslate(w / 2 + kDistanceBetweenChars, (h + bbox.height) / 2);
+
+    ofSetColor(tres_color);
+    font_.drawString("3", 0, 0);
+  }
+  ofPopMatrix();
 }
 
 //--------------------------------------------------------------
-void
-ofApp::keyPressed(int key)
-{
-    if(key == 's')
-    {
-        glReadBuffer(GL_FRONT); // HACK: only needed on windows, when using ofSetAutoBackground(false)
-        ofSaveScreen("savedScreenshot_" + ofGetTimestampString() + ".png");
-    }
-
-    if(key == 'r')
-    {
-        rotate = !rotate;
-    }
+void ofApp::keyPressed(int key) {
+  if (key == 's') {
+    soo::SaveFrame();
+  }
+  if (key == 'r') {
+    rotate_character_ = !rotate_character_;
+  }
 }
-
-//--------------------------------------------------------------
-void
-ofApp::keyReleased(int key)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mouseMoved(int x, int y)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mouseDragged(int x, int y, int button)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mousePressed(int x, int y, int button)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mouseReleased(int x, int y, int button)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mouseEntered(int x, int y)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mouseExited(int x, int y)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::windowResized(int w, int h)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::gotMessage(ofMessage msg)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::dragEvent(ofDragInfo dragInfo)
-{}
