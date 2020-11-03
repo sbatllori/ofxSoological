@@ -1,7 +1,7 @@
 #version 150
 
 /**
-  * This shader was originally written by Pierre Tardif and me, Sonia Batllori,
+  * This shader was originally written by Pierre Tardif and me, Sonia Batllori, I
   * have got it from his public github repository ofxPlasticTexture. Find it here:
   * https://github.com/pierrextardif/ofxPlasticTexture
  **/
