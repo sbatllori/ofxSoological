@@ -1,44 +1,32 @@
 #pragma once
 
 #include "ofMain.h"
-#include "sooFramesExporter.h"
-#include "sooParticle.h"
 
-struct BrushProperties
-{
-    int size;
-    int alpha;
-    float speed;
-    bool active;
+struct WaterColorDrop {
+  ofVec2f position_;
+  float radius_;
+  ofVec2f direction_;
+  float speed_;
+  unsigned int alpha_;
+  bool active_;
+
+  void draw(ofColor& color) {
+    color.a = alpha_;
+    ofSetColor(color);
+    ofDrawCircle(position_, radius_);
+  }
 };
 
-using Brush = soo::Particle<BrushProperties>;
-using Brushes = std::vector<Brush>;
+class ofApp : public ofBaseApp {
+ public:
+  void setup();
+  void update();
+  void draw();
+  void keyPressed(int key);
 
-class ofApp : public ofBaseApp
-{
-public:
-    int w, h;
-    string imagePath = "MaddalenaDoni.jpg";
-    ofImage image;
-    Brushes brushes;
+ private:
+  ofImage image_;
+  const std::string kImagePath_ = "MaddalenaDoni.jpg";
 
-    soo::FramesExporter framesExporter;
-
-public:
-    void setup();
-    void update();
-    void draw();
-
-    void keyPressed(int key);
-    void keyReleased(int key);
-    void mouseMoved(int x, int y);
-    void mouseDragged(int x, int y, int button);
-    void mousePressed(int x, int y, int button);
-    void mouseReleased(int x, int y, int button);
-    void mouseEntered(int x, int y);
-    void mouseExited(int x, int y);
-    void windowResized(int w, int h);
-    void dragEvent(ofDragInfo dragInfo);
-    void gotMessage(ofMessage msg);
+  std::vector<WaterColorDrop> drops_;
 };
