@@ -2,10 +2,10 @@
 #define PI                          3.14159265358979323846
 #define BLUR                        1.0
 #define erase(scene, mask) 			scene * (1. - mask)
-#define add(scene, object, color)	erase(scene,object) + object*color
+#define add(scene, object, color)	erase(scene, object) + object * color
 
-// Available modes: 1-2
-#define MODE                        1
+// Available modes: 1(dark), 2(bright)
+#define MODE                        2
 
 in vec4 vposition;
 out vec4 fcolor;
@@ -15,78 +15,59 @@ uniform float time;
 uniform float width;
 uniform float height;
 
-struct LayerParameters
+struct Layer
 {
-    vec2 center;
-    float radius;
-    int numCircles;
+    int idx_;
+    vec2 center_;
+    float radius_;
+    int num_particles_;
 };
 
-struct CircleParameters
+struct Particle
 {
-    float t0;
-    float speed;
-    vec2 center;
-    float radius;
-    vec3 color;
+    vec2 center_;
+    float radius_;
+    vec3 color_;
 };
 
-// Functions to define the scene: the scene shows circles moving around circular layers
-LayerParameters addLayer(int i);
-CircleParameters addCircle(int k, int i, LayerParameters layerParams, vec2 p);
-
-// Primitive distance functions
+Layer AddLayer(int idx);
+Particle AddParticle(int idx, Layer layer, vec2 p);
 float dCircle(vec2 p, vec2 c, float r);
-
-// Physical 2D movements
-vec2 mcu(       // (movimiento circular uniforme)
-    vec2 x0,    // initial movement position
-    float r,    // movement radius
-    float theta,// movement angle speed (radians)
-    float t0    // initial movement time
-);
+vec2 UniformCircularMotion(vec2 x0, float r, float theta, float t0);
 
 void main()
 {
     // Get the current pixel position
     vec2 p = vposition.xy;
 
-    // Define the scene
-    vec3 scene;     // color representing the scene
-    vec3 bgColor;   // background color of the scene
-    int numLayers;  // number of layers
+    // Define the scene parameters
+    vec3 scene;
+    vec3 bg_color= vec3(1.);
+    int num_layers = 1;
 
     if(MODE == 1)
     {
-        bgColor = vec3(0.05);
-        numLayers = 20;
+        bg_color = vec3(0.05);
+        num_layers = 20;
     }
-
     else if(MODE == 2)
     {
-        bgColor = vec3(0.9);
-        numLayers = 20;
-    }
-
-    else
-    {
-        bgColor = vec3(1.);
-        numLayers = 1;
+        bg_color = vec3(0.9);
+        num_layers = 20;
     }
 
     // Init the scene
-    scene = add(scene, bgColor - scene, 0);
+    scene = add(scene, bg_color - scene, 0);
 
-     // Define circles for each layer
-    for(int i = 0; i < numLayers; i++)
+     // Define the particles for each layer and add them to the scene
+    for(int i = 0; i < num_layers; i++)
     {
-        LayerParameters layerParams = addLayer(i);
-
-        for(int k = 0; k < layerParams.numCircles; k++)
+        Layer layer = AddLayer(i);
+        for(int k = 0; k < layer.num_particles_; k++)
         {
-            CircleParameters circleParams = addCircle(k, i, layerParams, p);
-            float circle = dCircle(p, circleParams.center, circleParams.radius);
-            scene = add(scene, circle, circleParams.color);
+            Particle particle = AddParticle(k, layer, p);
+            float circle = dCircle(p, particle.center_, particle.radius_);
+            scene = add(scene, circle, particle.color_);
         }
     }
 
@@ -95,87 +76,97 @@ void main()
 }
 
 // Functions to define the scene
-LayerParameters addLayer(int i)
+Layer AddLayer(int idx)
 {
-    LayerParameters params;
+    Layer layer;
+    layer.idx_ = idx;
 
     if(MODE == 1)
     {
-        params.center = vec2(width/2, height/2);
-        params.radius = 12*i;
-        params.numCircles = 5*i + 1;
+        layer.center_ = vec2(width / 2, height / 2);
+        layer.radius_ = 12 * idx;
+        layer.num_particles_ = 5 * idx + 1;
     }
-
     else if(MODE == 2)
     {
-        params.center = vec2(width/2, height/2);
-        params.radius = 15*i;
-        params.numCircles = 10*i + 1;
+        layer.center_ = vec2(width / 2, height / 2);
+        layer.radius_ = 15 * idx;
+        layer.num_particles_ = 10 * idx + 1;
     }
-
     else
     {
-        params.center = vec2(width/2, height/2);
-        params.radius = 100;
-        params.numCircles = 1;
+        layer.center_ = vec2(width / 2, height / 2);
+        layer.radius_ = 100.;
+        layer.num_particles_ = 1;
     }
 
-    return params;
+    return layer;
 }
 
-CircleParameters addCircle(int k, int i, LayerParameters layerParams, vec2 p)
+Particle AddParticle(int idx, Layer layer, vec2 p)
 {
-    CircleParameters params;
+    Particle particle;
 
     if(MODE == 1)
     {
+        // Define the parameters for the uniform circular motion
+        // - the motion starts in a different position of the circle,
+        // depending on the number of particles on the layer
+        // - the moving direction alternates every layer
         float theta = 2.;
-        float speedFactor = 0.1;
-        params.speed = speedFactor * theta;
-        if(i % 2 == 0)
-            params.speed *= -1.;
-        params.t0 = (PI * k) / (speedFactor * layerParams.numCircles);
-        params.center = mcu(layerParams.center, layerParams.radius, params.speed, params.t0);
-        params.radius = 5;
-        vec4 col0 = texture(tex0, params.center);
-        vec4 col1 = texture(tex0, p.yx*1.5);
-        params.color = mix(col0.bgr, col1.gbr - vec3(.2), 0.5);
-    }
+        float speed_factor = .1;
+        float t0 = (PI * idx) / (speed_factor * layer.num_particles_);
+        float speed = speed_factor * theta;
+        speed = layer.idx_ % 2 == 0 ? speed : -speed;
+        particle.center_ = UniformCircularMotion(layer.center_, layer.radius_, speed, t0);
 
+        // Define the drawing parameters
+        particle.radius_ = 5.;
+        vec4 col0 = texture(tex0, particle.center_);
+        vec4 col1 = texture(tex0, p.yx*1.5);
+        particle.color_ = mix(col0.bgr, col1.gbr - vec3(.2), 0.5);
+    }
     else if(MODE == 2)
     {
-        params.speed = -radians(10.);
-        params.t0 = radians(10.0 * layerParams.numCircles / (k + 1));
-        params.center = mcu(layerParams.center, layerParams.radius, params.speed, params.t0);
-        params.radius = 5;
-        params.color = texture(tex0, params.center).rgb;
-    }
+        // Define the parameters for the uniform circular motion
+        // - transform the circular motion according to the particle index
+        float speed = -radians(10.);
+        float t0 = radians(10.0 * layer.num_particles_ / (idx + 1));
+        particle.center_ = UniformCircularMotion(layer.center_, layer.radius_, speed, t0);
 
+        // Define the drawing parameters
+        particle.radius_ = 5.;
+        particle.color_ = texture(tex0, particle.center_).rgb;
+    }
     else
     {
-        params.speed = 0.;
-        params.t0 = 0.;
-        params.center = layerParams.center;
-        params.radius = 5;
-        params.color = vec3(0.);
+        // Default values
+        particle.center_ = layer.center_;
+        particle.radius_ = 5.;
+        particle.color_ = vec3(0.);
     }
 
-    return params;
+    return particle;
 }
 
 // Primitive distance functions
 float dCircle(vec2 p, vec2 c, float r)
 {
     float d = length(c - p);
-    return smoothstep(r+BLUR, r, d);
+    return smoothstep(r + BLUR, r, d);
 }
 
 // Physical 2D movements
-vec2 mcu(vec2 x0, float r, float theta, float t0)
+vec2 UniformCircularMotion(
+        vec2 x0,        // initial movement position
+        float r,        // movement radius
+        float theta,    // movement angle speed (radians)
+        float t0        // initial movement time
+)
 {
     vec2 x;
     float t = time;
 
-    x = vec2(r*cos(theta*(t+t0)), r*sin(theta*(t+t0))) + x0;
+    x = vec2(r * cos(theta * (t + t0)), r * sin(theta * (t + t0))) + x0;
     return x;
 }

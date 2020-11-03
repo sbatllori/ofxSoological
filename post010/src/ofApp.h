@@ -1,36 +1,16 @@
 #pragma once
 
 #include "ofMain.h"
-#include "sooFramesExporter.h"
 
-class ofApp : public ofBaseApp
-{
-public:
-    // Image
-    int w, h;
-    string imagePath = "DSC05554.jpg";
-    ofImage image;
+class ofApp : public ofBaseApp {
+ public:
+  void setup();
+  void update();
+  void draw();
+  void keyPressed(int key);
 
-    // Shaders
-    ofShader shader;
-
-    // Frames Exporter
-    soo::FramesExporter framesExporter;
-
-public:
-    void setup();
-    void update();
-    void draw();
-
-    void keyPressed(int key);
-    void keyReleased(int key);
-    void mouseMoved(int x, int y);
-    void mouseDragged(int x, int y, int button);
-    void mousePressed(int x, int y, int button);
-    void mouseReleased(int x, int y, int button);
-    void mouseEntered(int x, int y);
-    void mouseExited(int x, int y);
-    void windowResized(int w, int h);
-    void dragEvent(ofDragInfo dragInfo);
-    void gotMessage(ofMessage msg);
+ private:
+  const std::string kImagePath_ = "DSC05554.jpg";
+  ofImage image_;
+  ofShader shader_;
 };
