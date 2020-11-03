@@ -66,7 +66,7 @@ void ofApp::update() {
 //--------------------------------------------------------------
 void ofApp::draw() {
   // Draw each drop with the color of the correspondent pixel on the image
-  for (auto& drop : drops_) {
+  for (const auto& drop : drops_) {
     if (drop.active_) {
       ofColor color{image_.getColor(drop.position_.x, drop.position_.y)};
       drop.draw(color);

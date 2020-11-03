@@ -10,7 +10,7 @@ struct WaterColorDrop {
   unsigned int alpha_;
   bool active_;
 
-  void draw(ofColor& color) {
+  void draw(ofColor& color) const {
     color.a = alpha_;
     ofSetColor(color);
     ofDrawCircle(position_, radius_);
