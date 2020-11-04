@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "soo_export.h"
 
 class ofApp : public ofBaseApp {
  public:
@@ -26,20 +27,24 @@ class ofApp : public ofBaseApp {
       draw_TrianglesOutBrush(false);
       draw_Dandelion(false);
       draw_Intersection_Horizontal_PolylineClosed(false);
-      draw_Noise_Rectagle(false);
+      draw_Noise_Rectagle(true);
     }
 
     if (kRunDrawFractals_) {
       ofSetBackgroundAuto(true);
-      draw_DragonCurve(true);
-      draw_LevyCCurve(false);
+      draw_DragonCurve(false);
+      draw_LevyCCurve(true);
     }
   }
 
-  //  void keyPressed(int key) {}
+  void keyPressed(int key) {
+    if (key == 's') {
+      soo::SaveFrame();
+    }
+  }
 
  private:
-  const bool kRunDrawFractals_ = true;
+  const bool kRunDrawFractals_ = false;
 
   void test_DeformedLayeredCircle_Constructor();
   void test_TriangleVertices_Constructor_vertices();

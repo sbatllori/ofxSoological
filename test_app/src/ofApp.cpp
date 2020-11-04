@@ -85,7 +85,7 @@ void ofApp::draw_DeformedLayeredCircle(bool run) {
     const ofVec2f center{0.f, 0.f};
     const unsigned long num_layers{10};
     const float spacing_between_layers{15.f};
-    std::vector<float> radii{200.f, 250.f, 200.f, 150.f, 200.f, 150.f, 200.f};
+    std::vector<float> radii{200.f, 250.f, 200.f, 150.f, 200.f, 150.f, 250.f};
     soo::DeformedLayeredCircle shape = soo::DeformedLayeredCircle(
         center, num_layers, spacing_between_layers, radii);
 
@@ -199,13 +199,11 @@ void ofApp::draw_Triangle(bool run) {
   std::string unit_test = "draw_Triangle";
 
   if (run) {
-    soo::TriangleVertices triangle_vertices(5, 4, 3);
-    soo::Triangle triangle(triangle_vertices);
+    soo::Triangle triangle(soo::TriangleVertices(300, 240, 180));
 
     ofPushMatrix();
     {
       ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);
-      ofScale(50);
       ofDrawTriangle(triangle.B(), triangle.C(), triangle.A());
     }
     ofPopMatrix();
@@ -221,11 +219,17 @@ void ofApp::draw_TrianglesOutBrush(bool run) {
   std::string unit_test = "draw_TrianglesOutBrush";
 
   if (run) {
-    soo::TriangleVertices triangle_vertices(50, 30, 50);
-    soo::Triangle triangle(triangle_vertices);
-    soo::TrianglesOutBrush brush(triangle, 500, 0, 100, ofColor::cyan,
-                                 ofColor::magenta, 70);
+    soo::Triangle triangle(soo::TriangleVertices(150, 30, 150));
+    soo::GenerateTriangleParams brush_triangle_params;
+    brush_triangle_params.reference_triangle(triangle)
+        .num_triangles(1000)
+        .min_offset_to_center(0)
+        .max_offset_to_center(50);
 
+    soo::GenerateColorParams brush_color_params;
+    brush_color_params.color(ofColor{150}).target_color(ofColor{10}).alpha(40);
+
+    soo::TrianglesOutBrush brush(brush_triangle_params, brush_color_params);
     brush.draw({ofGetWidth() / 2.f, ofGetHeight() / 2.f});
   }
 
@@ -311,7 +315,7 @@ void ofApp::draw_Intersection_Horizontal_PolylineClosed(bool run) {
   if (run) {
     ofPushMatrix();
     {
-      ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);
+      ofTranslate(ofGetWidth() / 2, 150);
 
       ofPolyline poly_line;
       poly_line.addVertex(0, 0);
@@ -356,7 +360,7 @@ void ofApp::draw_DragonCurve(bool run) {
 
   if (run) {
     soo::DragonCurve curve(90.f);
-    curve.GenerateRecursive(10);
+    curve.GenerateRecursive(13);
     curve.draw();
   }
 
@@ -368,7 +372,7 @@ void ofApp::draw_LevyCCurve(bool run) {
 
   if (run) {
     soo::LevyCCurve curve(90.f);
-    curve.GenerateRecursive(15);
+    curve.GenerateRecursive(13);
     curve.draw();
   }
 
@@ -384,7 +388,7 @@ void ofApp::draw_Noise_Rectagle(bool run) {
   if (run) {
     soo::GenerateNoiseParams noise_params;
     const ofRectangle noise_bbox =
-        ofRectangle(0, 0, ofGetWidth(), ofGetHeight());
+        ofRectangle(50, 100, ofGetWidth() - 100, ofGetHeight() - 200);
 
     soo::Noise screen_noise = soo::noise::Rectangle(
         noise_bbox, noise_params.amount(ofGetWidth() * ofGetHeight())
