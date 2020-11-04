@@ -5,10 +5,10 @@ build*/
 *.user
 
 # OF project
-addons.make
-config.make
-Makefile
-*.qbs
+# addons.make
+# config.make
+# Makefile
+# *.qbs
 obj/
 
 # Ignore all in bin but shaders
