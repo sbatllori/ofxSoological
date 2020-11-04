@@ -26,7 +26,7 @@ class ofApp : public ofBaseApp {
       draw_TrianglesOutBrush(false);
       draw_Dandelion(false);
       draw_Intersection_Horizontal_PolylineClosed(false);
-      draw_noise_Rectagle(false);
+      draw_Noise_Rectagle(false);
     }
 
     if (kRunDrawFractals_) {
@@ -55,5 +55,5 @@ class ofApp : public ofBaseApp {
   void draw_Intersection_Horizontal_PolylineClosed(bool run);
   void draw_DragonCurve(bool run);
   void draw_LevyCCurve(bool run);
-  void draw_noise_Rectagle(bool run);
+  void draw_Noise_Rectagle(bool run);
 };

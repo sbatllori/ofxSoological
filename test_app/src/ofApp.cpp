@@ -378,7 +378,7 @@ void ofApp::draw_LevyCCurve(bool run) {
 //--------------------------------------------------------------
 // soo_noise
 //--------------------------------------------------------------
-void ofApp::draw_noise_Rectagle(bool run) {
+void ofApp::draw_Noise_Rectagle(bool run) {
   std::string unit_test = "draw_noise_Rectagle";
 
   if (run) {
