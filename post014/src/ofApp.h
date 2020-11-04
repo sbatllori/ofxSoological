@@ -1,51 +1,189 @@
 #pragma once
 
 #include "ofMain.h"
-#include "sooDandelion.h"
-#include "sooParticle.h"
+#include "shapes/Dandelion.h"
+#include "soo_noise.h"
 
-namespace soo
-{
-struct NoiseProperties
-{
-    float radius;
-    float alpha;
+//--------------------------------------------------------------
+// Helper structs to draw different scenes
+//--------------------------------------------------------------
+struct DrawDandelion {
+  static void draw(const soo::Dandelion& dandelion, const ofColor& stroke_color,
+                   const ofColor& bbox_stroke_color,
+                   const ofColor& bbox_background_color,
+                   const ofVec2f& p = {0, 0}) {
+    ofSetColor(bbox_background_color);
+
+    ofFill();
+    ofSetLineWidth(3);
+    dandelion.DrawBbox(p.x, p.y);
+
+    ofSetColor(stroke_color);
+
+    ofSetLineWidth(2);
+    dandelion.DrawLines(p.x, p.y);
+
+    ofFill();
+    ofSetLineWidth(2);
+    dandelion.DrawEllipse(p.x, p.y);
+
+    ofNoFill();
+    ofSetLineWidth(4);
+    dandelion.DrawCircle(p.x, p.y);
+
+    ofSetLineWidth(4);
+    dandelion.DrawTrunk(p.x, p.y);
+
+    ofSetColor(bbox_stroke_color);
+
+    ofNoFill();
+    ofSetLineWidth(3);
+    dandelion.DrawBbox(p.x, p.y);
+  }
+
+  static void BlackOnWhite(const soo::Dandelion& dandelion,
+                           const ofVec2f& p = {0, 0}) {
+    draw(dandelion, ofColor::black, ofColor::black, ofColor::white, p);
+  }
+
+  static void RedOnWhiteNoBbox(const soo::Dandelion& dandelion,
+                               const ofVec2f& p = {0, 0}) {
+    draw(dandelion, ofColor{200, 0, 0}, ofColor{0, 0, 0, 0}, ofColor::white, p);
+  }
+  static void WhiteOnBlack(const soo::Dandelion& dandelion,
+                           const ofVec2f& p = {0, 0}) {
+    draw(dandelion, ofColor::white, ofColor{255, 200, 0}, ofColor::black, p);
+  }
+
+  static ofVec2f TransformHFlip(const soo::Dandelion& dandelion) {
+    ofVec2f pivot;
+    pivot.x = dandelion.center().x;
+    pivot.y = dandelion.center().y;
+
+    ofTranslate(pivot);
+    ofRotateZDeg(270);
+
+    return pivot;
+  }
 };
-} // namespace soo
 
-using NoiseParticle = soo::Particle<soo::NoiseProperties>;
+struct DandelionGrid {
+  int kExternalMargin_;
+  int kInternalMargin_;
+  int kNCellsPerAxe_;
+  std::vector<soo::Dandelion> dandelions_;
 
-class ofApp : public ofBaseApp
-{
-private:
-    // Dandelion Grid
-    constexpr static int kExternalMargin = 200;
-    constexpr static int kInternalMargin = 50;
-    constexpr static int kNCellsPerAxe = 1;
-    constexpr static int kDifferentDandelionIdx = -1;
-    bool light_mode_ = true;
-    std::vector<soo::Dandelion> dandelion_list_;
+  virtual void draw() const = 0;
+};
 
-    // General Noise
-    constexpr static float kBlackNoiseAmount = 0.7f;
-    constexpr static float kWhiteNoiseAmount = 0.3f;
-    std::vector<NoiseParticle> black_noise_;
-    std::vector<NoiseParticle> white_noise_;
+struct Composition1 : DandelionGrid {
+  Composition1() {
+    kExternalMargin_ = 30;
+    kInternalMargin_ = 20;
+    kNCellsPerAxe_ = 5;
+  }
 
-public:
-    void setup();
-    void update();
-    void draw();
+  void draw() const {
+    constexpr int kOtherIdx = 8;
 
-    void keyPressed(int key);
-    void keyReleased(int key);
-    void mouseMoved(int x, int y);
-    void mouseDragged(int x, int y, int button);
-    void mousePressed(int x, int y, int button);
-    void mouseReleased(int x, int y, int button);
-    void mouseEntered(int x, int y);
-    void mouseExited(int x, int y);
-    void windowResized(int w, int h);
-    void dragEvent(ofDragInfo dragInfo);
-    void gotMessage(ofMessage msg);
+    for (int i{0}; i < dandelions_.size(); i++) {
+      if (i != kOtherIdx) {
+        DrawDandelion::BlackOnWhite(dandelions_[i]);
+      }
+    }
+
+    const auto& dandelion = dandelions_[kOtherIdx];
+    ofPushMatrix();
+    ofVec2f pivot = DrawDandelion::TransformHFlip(dandelion);
+    DrawDandelion::RedOnWhiteNoBbox(dandelion, -pivot);
+    ofPopMatrix();
+  }
+};
+
+struct Composition2 : DandelionGrid {
+  Composition2() {
+    kExternalMargin_ = 250;
+    kInternalMargin_ = 50;
+    kNCellsPerAxe_ = 1;
+  }
+
+  void draw() const {
+    for (const auto& dandelion : dandelions_) {
+      DrawDandelion::BlackOnWhite(dandelion);
+    }
+  }
+};
+
+struct Composition3 : DandelionGrid {
+  Composition3() {
+    kExternalMargin_ = 200;
+    kInternalMargin_ = 200;
+    kNCellsPerAxe_ = 2;
+  }
+
+  void draw() const {
+    for (const auto& dandelion : dandelions_) {
+      DrawDandelion::BlackOnWhite(dandelion);
+    }
+  }
+};
+
+struct Composition4 : DandelionGrid {
+  Composition4() {
+    kExternalMargin_ = 300;
+    kInternalMargin_ = 20;
+    kNCellsPerAxe_ = 2;
+  }
+
+  void draw() const {
+    constexpr int kOtherIdx = 3;
+
+    for (int i{0}; i < dandelions_.size(); i++) {
+      if (i != kOtherIdx) {
+        DrawDandelion::BlackOnWhite(dandelions_[i]);
+      }
+    }
+
+    const auto& dandelion = dandelions_[kOtherIdx];
+    ofPushMatrix();
+    ofVec2f pivot = DrawDandelion::TransformHFlip(dandelion);
+    DrawDandelion::WhiteOnBlack(dandelion, -pivot);
+    ofPopMatrix();
+  }
+};
+
+struct Composition5 : DandelionGrid {
+  Composition5() {
+    kExternalMargin_ = 200;
+    kInternalMargin_ = 50;
+    kNCellsPerAxe_ = 1;
+  }
+
+  void draw() const {
+    for (const auto& dandelion : dandelions_) {
+      ofPushMatrix();
+      ofVec2f pivot = DrawDandelion::TransformHFlip(dandelion);
+      DrawDandelion::WhiteOnBlack(dandelion, -pivot);
+      ofPopMatrix();
+    }
+  }
+};
+
+class ofApp : public ofBaseApp {
+ public:
+  void setup();
+  void update();
+  void draw();
+
+  void keyPressed(int key);
+
+ private:
+  // Dandelion Grid
+  Composition1 grid_;
+
+  // Screen Noise
+  constexpr static float kBlackNoisePercent_ = 0.7f;
+  constexpr static float kWhiteNoisePercent_ = 0.3f;
+  soo::Noise black_noise_;
+  soo::Noise white_noise_;
 };

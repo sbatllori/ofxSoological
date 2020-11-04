@@ -1,241 +1,86 @@
 #include "ofApp.h"
+#include "soo_export.h"
 
 //--------------------------------------------------------------
-void
-ofApp::setup()
-{
-    // Canvas settings
-    ofSetFrameRate(30);
-    ofSetCircleResolution(72);
-    ofSetBackgroundAuto(false);
+void ofApp::setup() {
+  // Canvas settings
+  ofSetFrameRate(30);
+  ofSetCircleResolution(72);
+  ofSetBackgroundAuto(false);
 
-    // Define the dandelion grid
-    auto w = (ofGetWidth() - 2.f * kExternalMargin - (kNCellsPerAxe - 1) * kInternalMargin) / kNCellsPerAxe;
-    auto h = (ofGetHeight() - 2.f * kExternalMargin - (kNCellsPerAxe - 1) * kInternalMargin) / kNCellsPerAxe;
-    for(int i = 0; i < kNCellsPerAxe; i++)
-        for(int j = 0; j < kNCellsPerAxe; j++)
-        {
-            soo::Dandelion dandelion;
-            dandelion.generate(ofVec2f(i * (w + kInternalMargin), j * (h + kInternalMargin)), w);
-            dandelion_list_.push_back(dandelion);
-        }
+  // Define the grid
+  //
+  // The grid is defined by the number of cells per axis, an external marging
+  // and an internal margin. It is symmetric, meaning that it has the same
+  // amount of rows than of columns. The external margin is defined as the
+  // distance between the grid and the screen borders. The internal margin is
+  // defined as the horizontal and vertical spacing between the cells.
+  // Therefore, in order to compute the size of the cells, we need to substract
+  // the external marging twice, and the internal margin once per each cell but
+  // the last one.
+  const float kTotal = ofGetWidth();  // width = height
+  const float kExternal = 2.f * grid_.kExternalMargin_;
+  const float kInternal = (grid_.kNCellsPerAxe_ - 1) * grid_.kInternalMargin_;
+  const float kBboxEdgeLength =
+      (kTotal - kExternal - kInternal) / grid_.kNCellsPerAxe_;
 
-    // Define noise particles
-    int n = ofGetWidth() * ofGetHeight();
+  for (int i{0}; i < grid_.kNCellsPerAxe_; i++) {
+    for (int j{0}; j < grid_.kNCellsPerAxe_; j++) {
+      ofVec2f bbox_top_left_corner{
+          i * (kBboxEdgeLength + grid_.kInternalMargin_),
+          j * (kBboxEdgeLength + grid_.kInternalMargin_)};
 
-    black_noise_.resize(kBlackNoiseAmount * n);
-    for(int i = 0; i < kBlackNoiseAmount * n; i++)
-    {
-        NoiseParticle particle;
-        particle.position.x = ofRandomWidth();
-        particle.position.y = ofRandomHeight();
-        particle.properties.radius = ofRandom(.01f, .5f);
-        particle.properties.alpha = ofRandom(10, 50);
-
-        black_noise_[i] = particle;
+      soo::Dandelion dandelion(bbox_top_left_corner, kBboxEdgeLength);
+      grid_.dandelions_.push_back(dandelion);
     }
+  }
 
-    white_noise_.resize(kWhiteNoiseAmount * n);
-    for(int i = 0; i < kWhiteNoiseAmount * n; i++)
-    {
-        NoiseParticle particle;
-        particle.position.x = ofRandomWidth();
-        particle.position.y = ofRandomHeight();
-        particle.properties.radius = ofRandom(.01f, .5f);
-        particle.properties.alpha = ofRandom(10, 100);
+  // Define black and white noise covering the whole screen
+  const ofRectangle noise_bbox = ofRectangle(0, 0, ofGetWidth(), ofGetHeight());
 
-        white_noise_[i] = particle;
-    }
+  soo::GenerateNoiseParams noise_params;
+  noise_params.min_radius(.01f).max_radius(.5f).min_alpha(10);  // common params
+
+  black_noise_ = soo::noise::Rectangle(
+      noise_bbox,
+      noise_params.amount(kBlackNoisePercent_ * ofGetWidth() * ofGetHeight())
+          .max_alpha(50)
+          .color(ofColor::black));
+
+  white_noise_ = soo::noise::Rectangle(
+      noise_bbox,
+      noise_params.amount(kWhiteNoisePercent_ * ofGetWidth() * ofGetHeight())
+          .max_alpha(100)
+          .color(ofColor::white));
 }
 
 //--------------------------------------------------------------
-void
-ofApp::update()
-{}
+void ofApp::update() {}
 
 //--------------------------------------------------------------
-void
-ofApp::draw()
-{
-    if(ofGetFrameNum() == 10) // Optimization: draw the scene only once since it is static
+void ofApp::draw() {
+  // Optimization: draw the scene only once since it is static
+  if (ofGetFrameNum() == 10) {
+    ofBackground(ofColor::white);
+
+    // Draw the dandelion grid centered on the canvas
+    ofPushMatrix();
     {
-        ofBackground(255);
-
-        // Draw the dandelion grid, centered on the canvas
-        ofPushMatrix();
-        {
-            ofTranslate(ofVec2f(kExternalMargin));
-
-            // Draw all the dandelions equal, but the scpecified one
-            int count = 0;
-            for(auto& dandelion : dandelion_list_)
-            {
-                if(count != kDifferentDandelionIdx)
-                {
-                    ofSetColor(0);
-
-                    ofNoFill();
-                    ofSetLineWidth(3);
-                    dandelion.drawBoundingBox();
-
-                    ofSetLineWidth(2);
-                    dandelion.drawLines();
-
-                    ofFill();
-                    ofSetLineWidth(2);
-                    dandelion.drawEllipse();
-
-                    ofNoFill();
-                    ofSetLineWidth(4);
-                    dandelion.drawCircle();
-
-                    ofSetLineWidth(4);
-                    dandelion.drawTrunk();
-                }
-                else
-                {
-                    ofPushMatrix();
-                    {
-                        ofVec2f pivot;
-                        pivot.x = dandelion.getCenter().x;
-                        pivot.y = dandelion.getCenter().y;
-
-                        ofTranslate(pivot);
-                        ofRotateZDeg(270);
-
-                        if(light_mode_)
-                        {
-                            ofSetColor(0);
-
-                            ofSetLineWidth(2);
-                            dandelion.drawLines(-pivot.x, -pivot.y);
-
-                            ofFill();
-                            ofSetLineWidth(2);
-                            dandelion.drawEllipse(-pivot.x, -pivot.y);
-
-                            ofNoFill();
-                            ofSetLineWidth(4);
-                            dandelion.drawCircle(-pivot.x, -pivot.y);
-
-                            ofSetLineWidth(4);
-                            dandelion.drawTrunk(-pivot.x, -pivot.y);
-
-                            // ofSetColor(255, 200, 0);
-                            ofNoFill();
-                            ofSetLineWidth(3);
-                            dandelion.drawBoundingBox(-pivot.x, -pivot.y);
-                        }
-                        else
-                        {
-                            ofSetColor(0);
-                            ofFill();
-                            ofSetLineWidth(3);
-                            dandelion.drawBoundingBox(-pivot.x, -pivot.y);
-
-                            ofSetColor(255);
-
-                            ofSetLineWidth(2);
-                            dandelion.drawLines(-pivot.x, -pivot.y);
-
-                            ofFill();
-                            ofSetLineWidth(2);
-                            dandelion.drawEllipse(-pivot.x, -pivot.y);
-
-                            ofNoFill();
-                            ofSetLineWidth(4);
-                            dandelion.drawCircle(-pivot.x, -pivot.y);
-
-                            ofSetLineWidth(4);
-                            dandelion.drawTrunk(-pivot.x, -pivot.y);
-
-                            ofSetColor(255, 200, 0);
-                            ofNoFill();
-                            ofSetLineWidth(3);
-                            dandelion.drawBoundingBox(-pivot.x, -pivot.y);
-                        }
-                    }
-                    ofPopMatrix();
-                }
-                count++;
-            }
-        }
-        ofPopMatrix();
-
-        // Draw the noise as the last layer on the canvas
-        for(auto& particle : white_noise_)
-        {
-            ofFill();
-            ofSetColor(255, 255, 255, particle.properties.alpha);
-            ofDrawCircle(particle.position, particle.properties.radius);
-        }
-
-        for(auto& particle : black_noise_)
-        {
-            ofFill();
-            ofSetColor(0, 0, 0, particle.properties.alpha);
-            ofDrawCircle(particle.position, particle.properties.radius);
-        }
+      ofTranslate(ofVec2f(grid_.kExternalMargin_));
+      grid_.draw();
     }
+    ofPopMatrix();
+
+    // Draw the noise on top
+    ofFill();
+    white_noise_.draw();
+    black_noise_.draw();
+  }
 }
 
 //--------------------------------------------------------------
-void
-ofApp::keyPressed(int key)
-{
-    if(key == 's')
-    {
-        glReadBuffer(GL_FRONT); // HACK: only needed on windows, when using ofSetAutoBackground(false)
-        ofSaveScreen("savedScreenshot_" + ofGetTimestampString() + ".png");
-    }
+void ofApp::keyPressed(int key) {
+  if (key == 's') {
+    soo::SaveFrame();
+  }
 }
-
-//--------------------------------------------------------------
-void
-ofApp::keyReleased(int key)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mouseMoved(int x, int y)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mouseDragged(int x, int y, int button)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mousePressed(int x, int y, int button)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mouseReleased(int x, int y, int button)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mouseEntered(int x, int y)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mouseExited(int x, int y)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::windowResized(int w, int h)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::gotMessage(ofMessage msg)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::dragEvent(ofDragInfo dragInfo)
-{}
