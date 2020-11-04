@@ -8,6 +8,7 @@
 #include "soo_inside.h"
 #include "soo_intersection.h"
 #include "soo_motion.h"
+#include "soo_noise.h"
 
 namespace {
 void soo_assert(bool statement, const std::string& unit_test,
@@ -369,6 +370,31 @@ void ofApp::draw_LevyCCurve(bool run) {
     soo::LevyCCurve curve(90.f);
     curve.GenerateRecursive(15);
     curve.draw();
+  }
+
+  soo_run(run, unit_test);
+}
+
+//--------------------------------------------------------------
+// soo_noise
+//--------------------------------------------------------------
+void ofApp::draw_noise_Rectagle(bool run) {
+  std::string unit_test = "draw_noise_Rectagle";
+
+  if (run) {
+    soo::GenerateNoiseParams noise_params;
+    const ofRectangle noise_bbox =
+        ofRectangle(0, 0, ofGetWidth(), ofGetHeight());
+
+    soo::Noise screen_noise = soo::noise::Rectangle(
+        noise_bbox, noise_params.amount(ofGetWidth() * ofGetHeight())
+                        .min_radius(.01f)
+                        .max_radius(.5f)
+                        .min_alpha(10)
+                        .max_alpha(50)
+                        .color(ofColor::black));
+
+    screen_noise.draw();
   }
 
   soo_run(run, unit_test);
