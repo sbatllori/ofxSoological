@@ -1,27 +1,18 @@
 #pragma once
 
-#include "ofMain.h"
+#include "CurveFractal.h"
 
 namespace soo {
 
-class LevyCCurve {
+class LevyCCurve : public CurveFractal {
  public:
-  LevyCCurve();
-  LevyCCurve(const float rotation_angle);
-  LevyCCurve(const float edge_length, const float rotation_angle);
-
-  void GenerateRecursive(unsigned int iteration);
-  void GenerateNextIteration();
-
-  void draw(const float margin = 50.f);
+  LevyCCurve() : CurveFractal() {}
+  LevyCCurve(const float rotation_angle) : CurveFractal(rotation_angle) {}
+  LevyCCurve(const float edge_length, const float rotation_angle)
+      : CurveFractal(edge_length, rotation_angle) {}
 
  private:
   void Init();
   void Iterate();
-
- private:
-  float edge_length_;
-  float rotation_angle_;
-  ofPolyline line_;
 };
 }  // namespace soo

@@ -1,4 +1,5 @@
 #include "ofApp.h"
+#include "soo_export.h"
 
 //--------------------------------------------------------------
 void ofApp::setup() {
@@ -16,3 +17,10 @@ void ofApp::update() {}
 
 //--------------------------------------------------------------
 void ofApp::draw() { curve_.draw(); }
+
+//--------------------------------------------------------------
+void ofApp::keyPressed(int key) {
+  if (key == 's') {
+    soo::SaveFrame();
+  }
+}

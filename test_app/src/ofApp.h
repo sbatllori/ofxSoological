@@ -23,15 +23,15 @@ class ofApp : public ofBaseApp {
     if (ofGetFrameNum() == 10) {
       draw_DeformedLayeredCircle(false);
       draw_Triangle(false);
-      draw_TrianglesOutBrush(true);
+      draw_TrianglesOutBrush(false);
       draw_Dandelion(false);
       draw_Intersection_Horizontal_PolylineClosed(false);
-      draw_noise_Rectagle(true);
+      draw_noise_Rectagle(false);
     }
 
     if (kRunDrawFractals_) {
       ofSetBackgroundAuto(true);
-      draw_DragonCurve(false);
+      draw_DragonCurve(true);
       draw_LevyCCurve(false);
     }
   }
@@ -39,7 +39,7 @@ class ofApp : public ofBaseApp {
   //  void keyPressed(int key) {}
 
  private:
-  const bool kRunDrawFractals_ = false;
+  const bool kRunDrawFractals_ = true;
 
   void test_DeformedLayeredCircle_Constructor();
   void test_TriangleVertices_Constructor_vertices();

@@ -2,47 +2,6 @@
 
 namespace soo {
 
-DragonCurve::DragonCurve() : edge_length_(10.f), rotation_angle_(90.f) {}
-
-DragonCurve::DragonCurve(const float rotation_angle)
-    : edge_length_(10.f), rotation_angle_(rotation_angle) {}
-
-DragonCurve::DragonCurve(const float edge_length, const float rotation_angle)
-    : edge_length_(edge_length), rotation_angle_(rotation_angle) {}
-
-void DragonCurve::GenerateRecursive(unsigned int iteration) {
-  if (iteration > 0) {
-    GenerateNextIteration();
-    GenerateRecursive(--iteration);
-  }
-}
-
-void DragonCurve::GenerateNextIteration() {
-  nodes_.empty() ? Init() : Iterate();
-}
-
-void DragonCurve::draw(const float margin) {
-  ofPushMatrix();
-  {
-    const ofRectangle& bbox = line_.getBoundingBox();
-
-    // Define scaling parameters
-    float scaleFactor = bbox.width > bbox.height
-                            ? (ofGetWidth() - 2 * margin) / bbox.width
-                            : (ofGetHeight() - 2 * margin) / bbox.height;
-
-    // Define translation parameters
-    float x = ofGetWidth() / 2 - scaleFactor * (bbox.x + bbox.width / 2);
-    float y = ofGetHeight() / 2 - scaleFactor * (bbox.y + bbox.height / 2);
-
-    ofTranslate(x, y);
-    ofScale(scaleFactor);
-
-    line_.draw();
-  }
-  ofPopMatrix();
-}
-
 void DragonCurve::Init() {
   // Reset the dragon curve data
   nodes_.clear();

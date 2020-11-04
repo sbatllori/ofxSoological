@@ -1,21 +1,17 @@
 #pragma once
 
-#include "ofMain.h"
+#include "CurveFractal.h"
 
 namespace soo {
 
 using Node = std::shared_ptr<ofNode>;
 
-class DragonCurve {
+class DragonCurve : public CurveFractal {
  public:
-  DragonCurve();
-  DragonCurve(const float rotation_angle);
-  DragonCurve(const float edge_length, const float rotation_angle);
-
-  void GenerateRecursive(unsigned int iteration);
-  void GenerateNextIteration();
-
-  void draw(const float margin = 50.f);
+  DragonCurve() : CurveFractal() {}
+  DragonCurve(const float rotation_angle) : CurveFractal(rotation_angle) {}
+  DragonCurve(const float edge_length, const float rotation_angle)
+      : CurveFractal(edge_length, rotation_angle) {}
 
  private:
   void Init();
@@ -26,9 +22,6 @@ class DragonCurve {
   void AddNode(const Node& node);
 
  private:
-  float edge_length_;
-  float rotation_angle_;
   std::vector<Node> nodes_;
-  ofPolyline line_;
 };
 }  // namespace soo

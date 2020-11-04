@@ -8,6 +8,7 @@ class ofApp : public ofBaseApp {
   void setup();
   void update();
   void draw();
+  void keyPressed(int key);
 
  private:
   const float kRotationAngle_ = 90.f;
