@@ -85,3 +85,5 @@ openFrameworks/apps/ofxSoological/postXXX$ make
 openFrameworks/apps/ofxSoological/postXXX$ make run
 ```
 A window displaying the output of the post should open.
+
+Note that some of the apps require an input image. For privacy, I will not always share the source image. In those cases, you will need to provide your own image and specify the corresponding path in `ofApp.h`.

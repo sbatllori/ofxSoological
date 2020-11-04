@@ -29,36 +29,36 @@ There are different categories of libraries:
 ### Brushes
 <table>
   <tr>
-    <td><img src="../doc/TrianglesOutBrush.png" width="150px" border="2px solid #555;"></td>
+    <td><img src="../doc/TrianglesOutBrush.png" width="150px"></td>
   </tr>
     <tr>
-    <td style="text-align:center">TrianglesOutBrush</td>
+    <td>TrianglesOutBrush</td>
   </tr>
 </table>
 
 ### Fractals
 <table>
   <tr>
-    <td><img src="../doc/DragonCurve.png" width="150px" border="2px solid #555;"></td>
-    <td><img src="../doc/LevyCCurve.png" width="150px" border="2px solid #555;"></td>
+    <td><img src="../doc/DragonCurve.png" width="150px"></td>
+    <td><img src="../doc/LevyCCurve.png" width="150px"></td>
   </tr>
     <tr>
-    <td style="text-align:center">DragonCurve</td>
-    <td style="text-align:center">LevyCCurve</td>
+    <td>DragonCurve</td>
+    <td>LevyCCurve</td>
   </tr>
 </table>
 
 ### Shapes
 <table>
   <tr>
-    <td><img src="../doc/Dandelion.png" width="150px" border="2px solid #555;"></td>
-    <td><img src="../doc/DeformedLayeredCircle.png" width="150px" border="2px solid #555;"></td>
-    <td><img src="../doc/Triangle.png" width="150px" border="2px solid #555;"></td>
+    <td><img src="../doc/Dandelion.png" width="150px"></td>
+    <td><img src="../doc/DeformedLayeredCircle.png" width="150px"></td>
+    <td><img src="../doc/Triangle.png" width="150px"></td>
   </tr>
     <tr>
-    <td style="text-align:center">Dandelion</td>
-    <td style="text-align:center">DeformedLayeredCircle</td>
-    <td style="text-align:center">Triangle</td>
+    <td>Dandelion</td>
+    <td>DeformedLayeredCircle</td>
+    <td>Triangle</td>
   </tr>
 </table>
 
@@ -66,11 +66,11 @@ There are different categories of libraries:
 ### Free Functions
 <table>
   <tr>
-    <td><img src="../doc/soo_intersection.png" width="150px" border="2px solid #555;"></td>
-    <td><img src="../doc/soo_noise.png" width="150px" border="2px solid #555;"></td>
+    <td><img src="../doc/soo_intersection.png" width="150px"></td>
+    <td><img src="../doc/soo_noise.png" width="150px"></td>
   </tr>
     <tr>
-    <td style="text-align:center">soo_intersection</td>
-    <td style="text-align:center">soo_noise</td>
+    <td>soo_intersection</td>
+    <td>soo_noise</td>
   </tr>
 </table>
