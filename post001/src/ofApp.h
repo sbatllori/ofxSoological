@@ -20,8 +20,8 @@ class ofApp : public ofBaseApp {
  private:
   Particle main_circle_;
   std::vector<Particle> particles_;
-  const soo::colors::Palette kColorPalette_{soo::colors::procreate_flourish};
+  const soo::colors::Palette color_palette_{soo::colors::procreate_flourish};
 
-  const bool kDrawColors_ = true;
-  const bool kDrawGeometry_ = false;
+  const bool draw_colors_ = true;
+  const bool draw_geometry_ = false;
 };
