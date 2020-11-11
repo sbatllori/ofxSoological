@@ -34,7 +34,7 @@ void ofApp::setup() {
   // TEXT
   //--------------------------------------------------------------
   // Setup and load the font
-  font_.load(kFontName_, 30, true, true, true);
+  font_.load(font_name_, 30, true, true, true);
   font_.setLineHeight(34.f);
 
   //--------------------------------------------------------------
@@ -46,10 +46,10 @@ void ofApp::setup() {
   sky_border_.ellipse(w / 2, h / 2, 2 * w / 3, 3 * h / 4);
 
   // Define the stars to be inside the ellipse that delimites the sky
-  constexpr unsigned long kNumStars = 40;
-  stars_.reserve(kNumStars);
+  constexpr auto num_stars = 40l;
+  stars_.reserve(num_stars);
 
-  std::generate_n(std::back_inserter(stars_), kNumStars, [this]() {
+  std::generate_n(std::back_inserter(stars_), num_stars, [this]() {
     Star star;
 
     float x, y;
@@ -68,31 +68,31 @@ void ofApp::setup() {
   // ROCKS
   //--------------------------------------------------------------
   // Define the ground rocks to be outside the ellipse that delimites the sky
-  constexpr unsigned long kNumRocks = 700;
-  ground_rocks_.reserve(kNumRocks);
+  constexpr auto num_rocks = 700l;
+  ground_rocks_.reserve(num_rocks);
 
-  std::generate_n(std::back_inserter(ground_rocks_), kNumRocks, [this]() {
-    // Define shape geometry
+  std::generate_n(std::back_inserter(ground_rocks_), num_rocks, [this]() {
+    // Define rock geometry
     float x, y;
     do {
       x = ofRandomWidth();
       y = ofRandomHeight();
     } while (sky_border_.getOutline()[0].inside(x, y));
-
     const ofVec2f center{x, y};
     const unsigned long num_layers{9};
     const float spacing_between_layers{7.f};
 
+    // Define layers radii
     const float min_external_radius = ofRandom(52, 60);
     const float max_external_radius = min_external_radius + 10;
-    const auto kResolution = static_cast<unsigned long>(ofRandom(6, 12));
-
+    const auto resolution = static_cast<unsigned long>(ofRandom(6, 12));
     std::vector<float> external_radii = GenerateExternalRadii(
-        min_external_radius, max_external_radius, kResolution);
+        min_external_radius, max_external_radius, resolution);
 
+    // Define rock
     Rock rock(center, num_layers, spacing_between_layers, external_radii);
 
-    // Define shape drawing settings
+    // Define rock layers drawing settings
     for (auto& layer : rock.layers_mutable()) {
       SetPathDefaultDrawingSettings(layer);
     }
@@ -199,8 +199,8 @@ void ofApp::draw() {
 
   // Draw the text
   ofSetColor(ofColor::white);
-  ofRectangle bbox = font_.getStringBoundingBox(kText_, 0, 0);
+  const ofRectangle bbox = font_.getStringBoundingBox(text_, 0, 0);
   const float x = (ofGetWidth() - bbox.width) / 2;
   const float y = ofGetHeight() / 3;
-  font_.drawString(kText_, x, y);
+  font_.drawString(text_, x, y);
 }

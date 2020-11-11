@@ -17,10 +17,10 @@ class ofApp : public ofBaseApp {
   void draw();
 
  private:
-  const string kFontName_ = "Fishfingers.ttf";
+  const string font_name_ = "Fishfingers.ttf";
   ofTrueTypeFont font_;
 
-  const string kText_ =
+  const string text_ =
       "  CUANDO ME INSPIRÁIS TODAS\nA LA VEZ, NUNCA QUIERO ELEGIR.";
 
   ofPath sky_border_;
