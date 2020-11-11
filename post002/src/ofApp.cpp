@@ -9,14 +9,14 @@ void ofApp::setup() {
   ofSetFrameRate(30);
 
   // Load the character
-  font_.load(kFontName_, 800, true, true, true);
-  char_contour_ = font_.getCharacterAsPoints(kChar_, true, false);
+  font_.load(font_name_, 800, true, true, true);
+  char_contour_ = font_.getCharacterAsPoints(char_, true, false);
 
-  kRenderKidLine_ ? setup_kid_line() : setup_lines();
+  render_kid_line_ ? setup_kid_line() : setup_lines();
 }
 
 //--------------------------------------------------------------
-void ofApp::update() { kRenderKidLine_ ? update_kid_line() : update_lines(); }
+void ofApp::update() { render_kid_line_ ? update_kid_line() : update_lines(); }
 
 //--------------------------------------------------------------
 void ofApp::draw() {
@@ -31,7 +31,7 @@ void ofApp::draw() {
     ofTranslate(x, y);
 
     if (!debug) {
-      kRenderKidLine_ ? draw_kid_line() : draw_lines();
+      render_kid_line_ ? draw_kid_line() : draw_lines();
 
     } else {
       ofSetColor(0);
@@ -53,7 +53,9 @@ void ofApp::draw() {
 
       // Blue => Bottom
       ofSetColor(0, 0, 255);
-      for (int i{2}; i <= 66; i++) ofDrawCircle(contour_vertices[i], 5);
+      for (unsigned long i{2}; i <= 66; i++) {
+        ofDrawCircle(contour_vertices[i], 5);
+      }
     }
   }
   ofPopMatrix();
@@ -63,7 +65,7 @@ void ofApp::draw() {
 void ofApp::setup_lines() {
   // Save the bottom and the end of the contour separately, in order to manage
   // how the lines shall react when reaching them
-  const auto& contour_vertices = char_contour_.getOutline()[0].getVertices();
+  const auto contour_vertices = char_contour_.getOutline()[0].getVertices();
 
   ofPath bottom;
   bottom.moveTo(contour_vertices[2]);
@@ -81,10 +83,10 @@ void ofApp::setup_lines() {
   const ofVec2f& v_origin_left = contour_vertices[66];
   const ofVec2f& v_origin_right = contour_vertices[65];
 
-  constexpr unsigned long kNumLines = 300;
-  lines_.reserve(kNumLines);
+  constexpr auto num_lines = 300l;
+  lines_.reserve(num_lines);
 
-  std::generate_n(std::back_inserter(lines_), kNumLines,
+  std::generate_n(std::back_inserter(lines_), num_lines,
                   [&v_origin_left, &v_origin_right]() {
                     Line line;
 
@@ -132,10 +134,7 @@ void ofApp::update_lines() {
 
       if (next_step_inside) {
         line.AddPosition(next_step);
-      }
-
-      // else if (line.path_.getOutline()[0].getVertices().size() > 1) {
-      else {
+      } else {
         line.rotation_angle_sign_ = 1;
 
         // If we are close to the bottom of the shape, we need to change the
@@ -159,14 +158,14 @@ void ofApp::update_lines() {
 }
 
 void ofApp::draw_lines() {
-  for (auto& line : lines_) {
+  for (const auto& line : lines_) {
     line.path_.draw();
   }
 }
 
 //--------------------------------------------------------------
 void ofApp::setup_kid_line() {
-  const auto& contour_vertices = char_contour_.getOutline()[0].getVertices();
+  const auto contour_vertices = char_contour_.getOutline()[0].getVertices();
 
   // Set line parameters
   kid_line_.position_ = contour_vertices[65];
@@ -185,14 +184,16 @@ void ofApp::setup_kid_line() {
 void ofApp::update_kid_line() {
   // The next step must be inside the shape and the closest possible to the
   // shape contour
+  ofVec2f current_step;
   ofVec2f next_step = kid_line_.position_;
+
   do {
-    kid_line_.position_ = next_step;
+    current_step = next_step;
     next_step = soo::motion::UniformLinear(next_step, kid_line_.direction_,
                                            kid_line_.step_length_);
   } while (char_contour_.getOutline()[0].inside(next_step.x, next_step.y));
 
-  kid_line_.AddPosition(kid_line_.position_);
+  kid_line_.AddPosition(current_step);
   kid_line_.direction_ = soo::vectors::GetRandomUnitVec2();
 }
 

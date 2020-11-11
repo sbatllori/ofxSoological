@@ -34,15 +34,15 @@ class ofApp : public ofBaseApp {
   void draw_kid_line();
 
  private:
-  const std::string kFontName_ = "FreeSans.ttf";
+  const std::string font_name_ = "FreeSans.ttf";
   ofTrueTypeFont font_;
 
-  const uint32_t kChar_ = '2';
+  const uint32_t char_ = '2';
   ofPath char_contour_;
   ofPolyline char_bottom_;
   ofPolyline char_end_;
 
-  const bool kRenderKidLine_ = false;
+  const bool render_kid_line_ = false;
   std::vector<Line> lines_;
   Line kid_line_;
 };
