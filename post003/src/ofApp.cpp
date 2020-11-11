@@ -14,12 +14,12 @@ void ofApp::setup() {
   ofSetLineWidth(4);
 
   // Define the available colors for the cells
-  const unsigned int kBright = 255;
-  const unsigned int kDark = 50;
-  available_colors_.push_back(ofColor(kBright, kDark, kDark));    // red-ish
-  available_colors_.push_back(ofColor(kDark, kBright, kDark));    // green-ish
-  available_colors_.push_back(ofColor(kDark, kDark, kBright));    // blue-ish
-  available_colors_.push_back(ofColor(kBright, kBright, kDark));  // yellow-ish
+  const unsigned int bright = 255;
+  const unsigned int dark = 50;
+  available_colors_.push_back(ofColor(bright, dark, dark));    // red-ish
+  available_colors_.push_back(ofColor(dark, bright, dark));    // green-ish
+  available_colors_.push_back(ofColor(dark, dark, bright));    // blue-ish
+  available_colors_.push_back(ofColor(bright, bright, dark));  // yellow-ish
 
   const ofColor in_final_color = available_colors_[0];  // red-ish
   const ofColor out_final_color = ofColor(20);          // black-ish
@@ -34,12 +34,12 @@ void ofApp::setup() {
   //    an initialized container.
   //    - iota() fills in the vector with sequentially increasing values
   //    starting with 0
-  unset_indices_.resize(kNumRows_ * kNumColumns_);
+  unset_indices_.resize(static_cast<unsigned long>(kNumRows_ * kNumColumns_));
   std::iota(unset_indices_.begin(), unset_indices_.end(), 0);
   std::random_shuffle(unset_indices_.begin(), unset_indices_.end());
 
   // Initialize the cells
-  cells_.reserve(kNumRows_ * kNumColumns_);
+  cells_.reserve(static_cast<unsigned long>(kNumRows_ * kNumColumns_));
 
   const float width = ofGetWindowWidth() / kNumRows_;
   const float height = ofGetWindowHeight() / kNumColumns_;
@@ -49,7 +49,7 @@ void ofApp::setup() {
       Cell cell;
 
       // Define cell geometry
-      cell.top_left_corner_ = ofVec2f(i * width, j * height);
+      cell.top_left_corner_ = ofVec2f{i * width, j * height};
       cell.width_ = width;
       cell.height_ = height;
 
@@ -58,7 +58,7 @@ void ofApp::setup() {
 
       // Set the final color depending on if the cell belongs to the final shape
       const bool is_shape_cell = std::count(
-          kShapeIndices_.begin(), kShapeIndices_.end(), std::make_pair(j, i));
+          shape_indices_.begin(), shape_indices_.end(), std::make_pair(j, i));
 
       cell.final_color_ = is_shape_cell ? in_final_color : out_final_color;
 
@@ -90,7 +90,7 @@ void ofApp::update() {
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-  for (auto& cell : cells_) {
+  for (const auto& cell : cells_) {
     ofFill();
     ofSetColor(cell.current_color_);
     ofDrawRectangle(cell.top_left_corner_, cell.width_, cell.height_);

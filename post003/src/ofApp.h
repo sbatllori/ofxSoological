@@ -24,7 +24,7 @@ class ofApp : public ofBaseApp {
   std::vector<Cell> cells_;
 
   std::vector<int> unset_indices_;
-  const std::vector<std::pair<int, int>> kShapeIndices_ = {
+  const std::vector<std::pair<int, int>> shape_indices_ = {
       {2, 2}, {1, 3}, {1, 4}, {1, 5}, {2, 6}, {3, 6}, {4, 4},
       {4, 5}, {5, 6}, {6, 2}, {6, 6}, {7, 3}, {7, 4}, {7, 5}};
 
