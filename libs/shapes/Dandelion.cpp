@@ -3,7 +3,8 @@
 
 namespace soo {
 
-Dandelion::Dandelion(ofVec2f bbox_top_left_corner, float bbox_edge_length) {
+Dandelion::Dandelion(const ofVec2f& bbox_top_left_corner,
+                     const float bbox_edge_length) {
   // Define the bouding box
   bbox_ = ofRectangle(bbox_top_left_corner.x, bbox_top_left_corner.y,
                       bbox_edge_length, bbox_edge_length);
@@ -31,10 +32,10 @@ Dandelion::Dandelion(ofVec2f bbox_top_left_corner, float bbox_edge_length) {
   // - some of the lines should be arrows:
   //   - up to 75% of the the longest lines can be set as arrows
   //   - up to 10% of the rest of the lines can be set as arrows
-  unsigned long num_lines = static_cast<unsigned long>(bbox_edge_length / 5);
-  lines.reserve(num_lines);
+  const auto num_lines = static_cast<unsigned long>(bbox_edge_length / 5.f);
+  lines_.reserve(num_lines);
 
-  for (unsigned long i{0}; i < num_lines; i++) {
+  std::generate_n(std::back_inserter(lines_), num_lines, [this]() {
     dandelion::Line line;
     line.origin_ = ellipse_center_;
     line.direction_ = vectors::GetRandomUnitVec2();
@@ -43,46 +44,45 @@ Dandelion::Dandelion(ofVec2f bbox_top_left_corner, float bbox_edge_length) {
     const float y = line.direction_.y;
     constexpr float min_factor = 0.5f;
     float max_factor = min_factor;
-    (x >= 0.f && y < 0.f) ? max_factor = 1.7f : false;    // 1st q
-    (x < 0.f && y < 0.f) ? max_factor = 1.25f : false;    // 2nd q
-    (x < 0.f && y >= 0.f) ? max_factor = 1.1f : false;    // 3rd q
-    (x >= 0.f && y >= 0.f) ? max_factor = 1.25f : false;  // 4th q
+    max_factor = (x >= 0.f && y < 0.f) ? 1.70f : max_factor;   // 1st q
+    max_factor = (x < 0.f && y < 0.f) ? 1.25f : max_factor;    // 2nd q
+    max_factor = (x < 0.f && y >= 0.f) ? 1.10f : max_factor;   // 3rd q
+    max_factor = (x >= 0.f && y >= 0.f) ? 1.25f : max_factor;  // 4th q
     line.length_ = circle_radius_ * ofRandom(min_factor, max_factor);
 
-    bool longest_lines = line.length_ > .9f * circle_radius_ * max_factor;
-    bool up_to_75_percent = ofRandom(100) < 75;
-    bool up_to_10_percent = ofRandom(100) < 10;
+    const bool longest_lines = line.length_ > .9f * circle_radius_ * max_factor;
+    const bool up_to_75_percent = ofRandom(100) < 75;
+    const bool up_to_10_percent = ofRandom(100) < 10;
     line.is_arrow_ = ((longest_lines && up_to_75_percent) || up_to_10_percent)
                          ? true
                          : false;
-
-    lines.push_back(line);
-  }
+    return line;
+  });
 }
 
-void Dandelion::DrawBbox(float x, float y) const {
+void Dandelion::DrawBbox(const float x, const float y) const {
   ofPushMatrix();
   ofTranslate(x, y);
   ofDrawRectangle(bbox_);
   ofPopMatrix();
 }
 
-void Dandelion::DrawCircle(float x, float y) const {
+void Dandelion::DrawCircle(const float x, const float y) const {
   ofPushMatrix();
   ofTranslate(x, y);
   ofDrawCircle(circle_center_, circle_radius_);
   ofPopMatrix();
 }
 
-void Dandelion::DrawTrunk(float x, float y) const {
+void Dandelion::DrawTrunk(const float x, const float y) const {
   ofPushMatrix();
   ofTranslate(x, y);
-  ofVec2f bbox_bottom_left_corner = ofVec2f(bbox_.x, bbox_.y + bbox_.height);
+  const ofVec2f bbox_bottom_left_corner{bbox_.x, bbox_.y + bbox_.height};
   ofDrawLine(bbox_bottom_left_corner, ellipse_center_);
   ofPopMatrix();
 }
 
-void Dandelion::DrawEllipse(float x, float y) const {
+void Dandelion::DrawEllipse(const float x, const float y) const {
   ofPushMatrix();
   ofTranslate(x, y);
   ofPushMatrix();
@@ -93,14 +93,14 @@ void Dandelion::DrawEllipse(float x, float y) const {
   ofPopMatrix();
 }
 
-void Dandelion::DrawLines(float x, float y) const {
+void Dandelion::DrawLines(const float x, const float y) const {
   ofPushMatrix();
   ofTranslate(x, y);
 
-  for (auto& line : lines) {
-    ofVec3f direction{line.direction_.x, line.direction_.y, 0.f};
-    ofVec3f start{line.origin_.x, line.origin_.y, 0.f};
-    ofVec3f end = start + line.length_ * direction;
+  for (const auto& line : lines_) {
+    const ofVec3f direction{line.direction_.x, line.direction_.y, 0.f};
+    const ofVec3f start{line.origin_.x, line.origin_.y, 0.f};
+    const ofVec3f end = start + line.length_ * direction;
 
     line.is_arrow_ ? ofDrawArrow(start, end, 0.04f * circle_radius_)
                    : ofDrawLine(start, end);

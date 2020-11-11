@@ -13,7 +13,7 @@ void LevyCCurve::Init() {
 
 void LevyCCurve::Iterate() {
   ofPolyline line_copy{line_};
-  auto pivot = line_copy.getVertices().back();
+  const auto pivot = line_copy.getVertices().back();
 
   line_copy.translate({0, 0});
   line_copy.rotateDeg(rotation_angle_, {0, 0, 1});

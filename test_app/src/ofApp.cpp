@@ -309,8 +309,8 @@ void ofApp::test_Inside_InCircle() {
 //--------------------------------------------------------------
 // soo_intersection
 //--------------------------------------------------------------
-void ofApp::draw_Intersection_Horizontal_PolylineClosed(bool run) {
-  std::string unit_test = "draw_Intersection_Horizontal_PolylineClosed";
+void ofApp::draw_Intersection_Horizontal_ClosedPolyline(bool run) {
+  std::string unit_test = "draw_Intersection_Horizontal_ClosedPolyline";
 
   if (run) {
     ofPushMatrix();
@@ -334,7 +334,7 @@ void ofApp::draw_Intersection_Horizontal_PolylineClosed(bool run) {
         ofDrawLine(-500, y, 500, y);
 
         const std::vector<ofVec2f>& intersection_points =
-            soo::intersection::HorizontalAxis_PolylineClosed(y, poly_line, 1.f);
+            soo::intersection::HorizontalAxis_ClosedPolyline(y, poly_line, 1.f);
 
         ofSetColor(255, 0, 0);
         for (const auto& p : intersection_points) {

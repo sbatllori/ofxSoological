@@ -8,9 +8,10 @@ namespace soo {
 struct GenerateTriangleParams;
 struct GenerateColorParams;
 
-class TrianglesOutBrush : Brush {
+class TrianglesOutBrush : public Brush {
  public:
   TrianglesOutBrush() = default;
+
   TrianglesOutBrush(const Triangle& reference_triangle, const int num_triangles,
                     const int min_offset_to_center,
                     const int max_offset_to_center, const ofColor& color,

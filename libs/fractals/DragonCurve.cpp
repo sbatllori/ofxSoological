@@ -8,8 +8,8 @@ void DragonCurve::Init() {
   line_.clear();
 
   // Add the first segment
-  Node root = GenerateNode({0, 0, 0});
-  Node node = GenerateNode({edge_length_, 0, 0}, root);
+  const Node root = GenerateNode({0, 0, 0});
+  const Node node = GenerateNode({edge_length_, 0, 0}, root);
 
   AddNode(root);
   AddNode(node);
@@ -33,7 +33,7 @@ void DragonCurve::Iterate() {
   pivot->rotateDeg(rotation_angle_, {0, 0, 1});
 
   // Add the copied and rotated nodes to the dragon curve
-  for (auto& node : nodes_copy) {
+  for (const auto& node : nodes_copy) {
     AddNode(node);
   }
 }

@@ -4,33 +4,29 @@
 namespace soo {
 
 DeformedLayeredCircle::DeformedLayeredCircle(const ofVec2f& center,
-                                             const unsigned long num_layers,
+                                             const int num_layers,
                                              const float spacing_between_layers,
                                              std::vector<float>& radii)
     : center_(center) {
-  layers_.reserve(num_layers);
+  layers_.reserve(static_cast<unsigned long>(num_layers));
 
-  for (unsigned long i{0}; i < num_layers; i++) {
-    ofPath layer = this->GenerateLayer(radii);
-    layers_.push_back(layer);
-
-    bool next_layer = this->DecreaseRadii(radii, spacing_between_layers);
-    if (!next_layer) {
-      break;
-    }
+  for (int _{0}; _ < num_layers; _++) {
+    layers_.push_back(this->GenerateLayer(radii));
+    if (!this->DecreaseRadii(radii, spacing_between_layers)) break;
   }
 }
 
 ofPath DeformedLayeredCircle::GenerateLayer(const std::vector<float>& radii) {
   ofPath path;
 
-  ofVec2f first_vertex = coord::Polar2Cartesian(center_, radii[0], 0.f);
+  const ofVec2f first_vertex = coord::Polar2Cartesian(center_, radii[0], 0.f);
   path.curveTo(first_vertex);  // this opens the path
   path.curveTo(first_vertex);  // this fixes an OF bug in ofPath::moveTo
 
-  const auto resolution = radii.size();
-  for (unsigned long i{1}; i < resolution; i++) {
-    const float theta = (1.f * i) / resolution;
+  const float resolution(radii.size());
+  for (unsigned long i{1}; i < radii.size(); i++) {
+    const float fragment(i);
+    const float theta = fragment / resolution;
     path.curveTo(coord::Polar2Cartesian(center_, radii[i], theta));
   }
 
@@ -44,9 +40,10 @@ ofPath DeformedLayeredCircle::GenerateLayer(const std::vector<float>& radii) {
 
 bool DeformedLayeredCircle::DecreaseRadii(std::vector<float>& radii,
                                           const float spacing_between_layers) {
-  // Decrese the radii only if they will remain positive, otherwise return
-  // false
-  auto it = std::min_element(radii.begin(), radii.end());
+  // Decrease the radii and return true only if they will remain positive,
+  // otherwise return false without decreasing the radii
+  const auto it = std::min_element(radii.begin(), radii.end());
+
   if (*it - spacing_between_layers <= 0) {
     return false;
   }

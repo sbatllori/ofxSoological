@@ -33,7 +33,7 @@ void TrianglesOutBrush::draw(const ofVec2f& center) const {
     ofVec2f C(reference_triangle_.C());
 
     // Apply to the vertices a random rotation around the origin
-    float degrees = ofRandom(360);
+    const float degrees = ofRandom(360);
     A.rotate(degrees);
     B.rotate(degrees);
     C.rotate(degrees);
@@ -49,8 +49,9 @@ void TrianglesOutBrush::draw(const ofVec2f& center) const {
 
     // Compute a linear interpolation of the two colors to paint the triangle
     // Fix: colors need to be copied for lerp to work properly
-    ofColor color(color_), target_color(target_color_);
-    ofColor interpolated_color = color.lerp(target_color, ofRandom(1.0f));
+    ofColor color(color_);
+    const ofColor target_color(target_color_);
+    const ofColor interpolated_color = color.lerp(target_color, ofRandom(1.0f));
     ofSetColor(interpolated_color, alpha_);
     ofFill();
     ofDrawTriangle(A, B, C);

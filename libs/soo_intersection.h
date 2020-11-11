@@ -6,7 +6,7 @@ namespace soo {
 namespace intersection {
 
 /**
- * @brief HorizontalAxis_PolylineClosed Computes the intersection points between
+ * @brief HorizontalAxis_ClosedPolyline Computes the intersection points between
  * an horizontal axis defined by a Y-value, and a closed polygon defined by a
  * polyline.
  *
@@ -15,12 +15,12 @@ namespace intersection {
  * @param spacing float defining the intersection precision error
  * @return the intersection points
  */
-inline std::vector<ofVec2f> HorizontalAxis_PolylineClosed(
+inline std::vector<ofVec2f> HorizontalAxis_ClosedPolyline(
     const float y, const ofPolyline& closed_polyline,
     const float spacing = 1.f) {
   // Consider an arbitrary closed polygon, and an horizontal line that might be
-  // cutting its border in 2, 1 or no point. This function returns the
-  // intersection points between the horizontal and the closed polygon.
+  // cutting its border in 2^n or no point. This function returns the
+  // intersection points between the horizontal axis and the closed polygon.
   //
   //       +---------------+
   //       |   . .     .   |
@@ -54,10 +54,10 @@ inline std::vector<ofVec2f> HorizontalAxis_PolylineClosed(
   std::transform(
       segment.begin(), --segment.end(), ++segment.begin(),
       std::back_inserter(intersection_points),
-      [&closed_polyline, point_to_remove](const ofVec2f& current,
-                                          const ofVec2f& next) {
-        bool is_current_in = closed_polyline.inside(current.x, current.y);
-        bool is_next_in = closed_polyline.inside(next.x, next.y);
+      [&closed_polyline, &point_to_remove](const ofVec2f& current,
+                                           const ofVec2f& next) {
+        const bool is_current_in = closed_polyline.inside(current.x, current.y);
+        const bool is_next_in = closed_polyline.inside(next.x, next.y);
 
         return (is_current_in ^ is_next_in) ? current : point_to_remove;
       });

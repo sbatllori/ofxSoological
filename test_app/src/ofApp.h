@@ -26,11 +26,11 @@ class ofApp : public ofBaseApp {
       draw_Triangle(false);
       draw_TrianglesOutBrush(false);
       draw_Dandelion(false);
-      draw_Intersection_Horizontal_PolylineClosed(false);
-      draw_Noise_Rectagle(true);
+      draw_Intersection_Horizontal_ClosedPolyline(true);
+      draw_Noise_Rectagle(false);
     }
 
-    if (kRunDrawFractals_) {
+    if (run_draw_fractals) {
       ofSetBackgroundAuto(true);
       draw_DragonCurve(false);
       draw_LevyCCurve(true);
@@ -44,7 +44,7 @@ class ofApp : public ofBaseApp {
   }
 
  private:
-  const bool kRunDrawFractals_ = false;
+  const bool run_draw_fractals = false;
 
   void test_DeformedLayeredCircle_Constructor();
   void test_TriangleVertices_Constructor_vertices();
@@ -57,7 +57,7 @@ class ofApp : public ofBaseApp {
   void draw_Triangle(bool run);
   void draw_TrianglesOutBrush(bool run);
   void draw_Dandelion(bool run);
-  void draw_Intersection_Horizontal_PolylineClosed(bool run);
+  void draw_Intersection_Horizontal_ClosedPolyline(bool run);
   void draw_DragonCurve(bool run);
   void draw_LevyCCurve(bool run);
   void draw_Noise_Rectagle(bool run);

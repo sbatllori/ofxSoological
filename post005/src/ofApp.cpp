@@ -59,7 +59,7 @@ void ofApp::update() {
 
     // Find the intersection points between the line and the contour of the
     // loaded shape and define the line path
-    auto intersection_points = soo::intersection::HorizontalAxis_PolylineClosed(
+    auto intersection_points = soo::intersection::HorizontalAxis_ClosedPolyline(
         line.y_value_, char_contour_, 1.f);
 
     intersection_points.size() > 0 ? line.DefinePath(intersection_points)

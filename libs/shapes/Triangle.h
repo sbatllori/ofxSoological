@@ -18,10 +18,10 @@ class TriangleVertices {
  private:
   bool TriangleInequalityTheorem(const float edge_a_length,
                                  const float edge_b_length,
-                                 const float edge_c_length);
+                                 const float edge_c_length) const;
 
  private:
-  std::string kExceptionMsg_ =
+  std::string exception_msg_ =
       "Couldn't generate the triangle vertices. Wrong values given.";
 };
 

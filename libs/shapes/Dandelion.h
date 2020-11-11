@@ -17,16 +17,17 @@ struct Line {
 
 class Dandelion {
  public:
-  Dandelion(ofVec2f bbox_top_left_corner, float bbox_edge_length);
+  Dandelion(const ofVec2f& bbox_top_left_corner, const float bbox_edge_length);
+
+  void DrawBbox(const float x = 0.f, const float y = 0.f) const;
+  void DrawCircle(const float x = 0.f, const float y = 0.f) const;
+  void DrawTrunk(const float x = 0.f, const float y = 0.f) const;
+  void DrawEllipse(const float x = 0.f, const float y = 0.f) const;
+  void DrawLines(const float x = 0.f, const float y = 0.f) const;
+
   const ofVec2f center() const {
     return ofVec2f{bbox_.x + bbox_.width / 2.f, bbox_.y + bbox_.height / 2.f};
   }
-
-  void DrawBbox(float x = 0.f, float y = 0.f) const;
-  void DrawCircle(float x = 0.f, float y = 0.f) const;
-  void DrawTrunk(float x = 0.f, float y = 0.f) const;
-  void DrawEllipse(float x = 0.f, float y = 0.f) const;
-  void DrawLines(float x = 0.f, float y = 0.f) const;
 
  private:
   ofRectangle bbox_;
@@ -38,6 +39,6 @@ class Dandelion {
   float ellipse_width_;
   float ellipse_height_;
 
-  std::vector<dandelion::Line> lines;
+  std::vector<dandelion::Line> lines_;
 };
 }  // namespace soo
