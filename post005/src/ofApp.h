@@ -3,13 +3,13 @@
 #include "ofMain.h"
 #include "soo_intersection.h"
 
-struct HorizontalAxisWithBezierSegments {
+struct Line {
   float x_start_;
   float x_end_;
   float y_value_;
   ofPath path_;
 
-  void DefinePath() {
+  void DefineStraight() {
     path_.clear();
 
     // Horizontal path from the start of the line to the end of the line
@@ -17,7 +17,7 @@ struct HorizontalAxisWithBezierSegments {
     path_.lineTo(x_end_, y_value_);
   }
 
-  void DefinePath(const vector<ofVec2f>& bezier_points) {
+  void DefineBezierSegments(const vector<ofVec2f>& bezier_points) {
     path_.clear();
 
     // The path initiates on the starting point of the line
@@ -35,8 +35,8 @@ struct HorizontalAxisWithBezierSegments {
 
       // Bezier line in the bezier segment (with dynamic values for the bezier
       // intensity depending on the length of the bezier segment)
-      float dx = 20;
-      float dy = (bezier_x_end - bezier_x_start) / 10;
+      const float dx = 20;
+      const float dy = (bezier_x_end - bezier_x_start) / 10;
       path_.bezierTo(bezier_x_start - dx, y_value_ - dy, bezier_x_end + dx,
                      y_value_ - dy, bezier_x_end, y_value_);
     }
@@ -53,14 +53,14 @@ class ofApp : public ofBaseApp {
   void draw();
 
  private:
-  const std::string kFontName_ = "FreeSans.ttf";
+  const std::string font_name_ = "FreeSans.ttf";
   ofTrueTypeFont font_;
 
-  const uint32_t kChar_ = '5';
+  const uint32_t char_ = '5';
   ofPolyline char_contour_;
 
   const float kMovingStep_ = -2.f;
   const float kHorizontalMargin_ = 0;
   const float kVerticalMargin_ = 0;
-  std::vector<HorizontalAxisWithBezierSegments> lines_;
+  std::vector<Line> lines_;
 };

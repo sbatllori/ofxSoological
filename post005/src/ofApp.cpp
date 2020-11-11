@@ -7,28 +7,28 @@ void ofApp::setup() {
   ofSetFrameRate(30);
 
   // Load the character and center it on the screen
-  font_.load(kFontName_, 800, true, true, true);
+  font_.load(font_name_, 800, true, true, true);
   char_contour_ =
-      font_.getCharacterAsPoints(kChar_, true, false).getOutline()[0];
+      font_.getCharacterAsPoints(char_, true, false).getOutline()[0];
 
   // Translate the shape to be centered vertically and shifted to the left
   // ourside the screen
   const ofRectangle bbox = char_contour_.getBoundingBox();
-  float y = (ofGetHeight() + bbox.height) / 2 - 25;
+  const float y = (ofGetHeight() + bbox.height) / 2 - 25;
   char_contour_.translate({-1.2f * bbox.width, y});
 
   // Define the lines
-  constexpr int kNumLines = 39;
-  lines_.reserve(kNumLines);
+  constexpr auto num_lines = 39;
+  lines_.reserve(num_lines);
 
-  const float kDistanceBetweenLines =
-      (ofGetHeight() - 2 * kVerticalMargin_) / (kNumLines - 1);
+  const float distance_between_lines =
+      (ofGetHeight() - 2 * kVerticalMargin_) / (num_lines - 1);
 
-  for (int i{0}; i < kNumLines; i++) {
-    HorizontalAxisWithBezierSegments line;
+  for (int i{0}; i < num_lines; i++) {
+    Line line;
     line.x_start_ = kHorizontalMargin_;
     line.x_end_ = ofGetWidth() - kHorizontalMargin_;
-    line.y_value_ = i * kDistanceBetweenLines + kVerticalMargin_;
+    line.y_value_ = i * distance_between_lines + kVerticalMargin_;
     lines_.push_back(line);
   }
 }
@@ -41,17 +41,17 @@ void ofApp::update() {
     // Handle first the extreme cases where a line is going to move outside the
     // screen either from the bottow (too large y value when moving down) or
     // from the top (too small y value when moving up).
-    const float kUpperMargin = kVerticalMargin_;
-    const float kLowerMargin = ofGetHeight() - kVerticalMargin_;
+    const float upper_margin = kVerticalMargin_;
+    const float lower_margin = ofGetHeight() - kVerticalMargin_;
 
     // Case 1: the lines are moving down
-    line.y_value_ = kMovingStep_ > 0 && (line.y_value_ >= kLowerMargin)
-                        ? kUpperMargin
+    line.y_value_ = kMovingStep_ > 0 && (line.y_value_ >= lower_margin)
+                        ? upper_margin
                         : line.y_value_;
 
     // Case 2: the lines are moving up
-    line.y_value_ = kMovingStep_ < 0 && (line.y_value_ <= kUpperMargin)
-                        ? kLowerMargin
+    line.y_value_ = kMovingStep_ < 0 && (line.y_value_ <= upper_margin)
+                        ? lower_margin
                         : line.y_value_;
 
     // Update the vertical position of the line:
@@ -59,20 +59,20 @@ void ofApp::update() {
 
     // Find the intersection points between the line and the contour of the
     // loaded shape and define the line path
-    auto intersection_points = soo::intersection::HorizontalAxis_ClosedPolyline(
-        line.y_value_, char_contour_, 1.f);
+    const auto intersection_points =
+        soo::intersection::HorizontalAxis_ClosedPolyline(line.y_value_,
+                                                         char_contour_, 1.f);
 
-    intersection_points.size() > 0 ? line.DefinePath(intersection_points)
-                                   : line.DefinePath();
+    intersection_points.size() > 0
+        ? line.DefineBezierSegments(intersection_points)
+        : line.DefineStraight();
   }
 
   // Move the shape horizontally in loops
   const auto bbox = char_contour_.getBoundingBox();
-  if (bbox.x > ofGetWidth()) {
-    char_contour_.translate({-ofGetWidth() - bbox.width, 0});
-  } else {
-    char_contour_.translate({5, 0});
-  }
+  bbox.x > ofGetWidth()
+      ? char_contour_.translate({-ofGetWidth() - bbox.width, 0})
+      : char_contour_.translate({5, 0});
 }
 
 //--------------------------------------------------------------
