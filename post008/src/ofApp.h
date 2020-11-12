@@ -10,7 +10,7 @@ struct WaterColorDrop {
   unsigned int alpha_;
   bool active_;
 
-  void draw(ofColor& color) const {
+  void draw(ofColor color) const {
     color.a = alpha_;
     ofSetColor(color);
     ofDrawCircle(position_, radius_);
@@ -26,7 +26,7 @@ class ofApp : public ofBaseApp {
 
  private:
   ofImage image_;
-  const std::string kImagePath_ = "MaddalenaDoni.jpg";
+  const std::string image_path_ = "MaddalenaDoni.jpg";
 
   std::vector<WaterColorDrop> drops_;
 };
