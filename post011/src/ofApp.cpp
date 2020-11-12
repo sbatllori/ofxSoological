@@ -1,176 +1,108 @@
 #include "ofApp.h"
+#include "soo_export.h"
 
 //--------------------------------------------------------------
-void
-ofApp::setup()
-{
-    // Frames exporter
-    framesExporter.setEnd(100);
-    framesExporter.setActive(false);
-    ofSetFrameRate(60);
+void ofApp::setup() {
+  // Setup the background
+  // - Load the background image
+  // - Define a plane where to project the background image
+  // - Resize the canvas to the fit the background image dimensions
+  bg_image_.load(bg_image_path_);
+  bg_plane_.set(bg_image_.getWidth(), bg_image_.getHeight(), 10, 10);
+  bg_plane_.mapTexCoords(0, 0, bg_image_.getWidth(), bg_image_.getHeight());
+  ofSetWindowShape(static_cast<int>(bg_image_.getWidth()),
+                   static_cast<int>(bg_image_.getHeight()));
+  // Setup the 3D scene
+  // - Load the same mesh twice
+  // - Initialize the mesh rotation
+  // - Setup the camera pointing to the meshes
+  left_mesh_.load(mesh_path_);
+  right_mesh_.load(mesh_path_);
+  rotate_mesh_ = true;
+  camera_.setTarget({0, 0, 0});
+  camera_.setDistance(8.35f);
 
-    // Setup background
-    // - Load the background image
-    backgroundImage.load("background.jpg");
-
-    // - Get the image dimensions
-    w = backgroundImage.getWidth();
-    h = backgroundImage.getHeight();
-    //    backgroundImage.resize(w, h);
-
-    // - Define a plane where to project the background image
-    backgroundPlane.set(w, h, 10, 10);
-    backgroundPlane.mapTexCoords(0, 0, w, h);
-
-    // - Set the window dimensions to the background image dimensions
-    ofSetWindowShape(w, h);
-
-    // Setup 3D scene
-    // - Load the meshes '1'
-    meshL.load("one.ply");
-    meshR.load("one.ply");
-
-    // - Initialize the mesh rotation
-    rotateMesh = true;
-
-    // - Setup the camera pointing to the meshes
-    cam.setTarget({0, 0, 0});
-    cam.setDistance(8.35f);
-
-    // Load shaders
-    backgroundShader.load("shaders/background_image");
-    plasticShader.load("shaders/pierrextardif_plastic");
+  // Load the shaders
+  bg_shader_.load("shaders/background_image");
+  plastic_shader_.load("shaders/pierrextardif_plastic");
 }
 
 //--------------------------------------------------------------
-void
-ofApp::update()
-{
-    framesExporter.updateByFrames(ofGetFrameNum());
-
-    // Update the rotation parameter to rotate the meshes
-    if(rotateMesh)
-        meshRotationSpeed = 0.03f;
-    else
-        meshRotationSpeed = 0.f;
-}
+void ofApp::update() { rotation_speed_ = rotate_mesh_ ? 0.03f : 0.f; }
 
 //--------------------------------------------------------------
-void
-ofApp::draw()
-{
-    // Background shader
-    // - Bind the background image as a texture
-    backgroundImage.getTexture().bind();
-    backgroundShader.begin();
-
-    // - Send uniform data to the shader
-    backgroundShader.setUniform1f("height", h);
-
-    // - Draw the plane
+void ofApp::draw() {
+  // Background shader
+  //
+  // Description:
+  // The shader decreases the brightness of the background image in the cases
+  // where the pixel color is too bright.
+  //
+  // Steps:
+  // - Bind the background image as a texture
+  // - Transform the plane vertices so that it is centered on the screen
+  bg_image_.getTexture().bind();
+  bg_shader_.begin();
+  {
+    bg_shader_.setUniform1f("height", ofGetHeight());
     ofPushMatrix();
     {
-        ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);
-        backgroundPlane.draw();
+      ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);
+      bg_plane_.draw();
     }
     ofPopMatrix();
+  }
+  bg_shader_.end();
+  bg_image_.getTexture().unbind();
 
-    backgroundShader.end();
-    backgroundImage.getTexture().unbind();
+  // Plastinc shader
+  //
+  // Description:
+  // The shader projects a colored plastic texture on top of the
+  // mesh surfaces. This shader is originally defined by Pierre Tardif.
+  //
+  // Steps:
+  // - Transform the meshes so that they are side by side and with opposite
+  // rotation directions
+  // - Send the mesh geometry to the shaders
+  ofEnableDepthTest();
+  plastic_shader_.begin();
+  {
+    plastic_shader_.setUniform2f("u_resImg", ofGetWidth(), ofGetHeight());
+    plastic_shader_.setUniform1f("u_time", 5 * ofGetElapsedTimef());
+    plastic_shader_.setUniform2f("u_offset", glm::vec2(0, 0));
 
-    // Plastinc shader
-    ofEnableDepthTest();
-    plasticShader.begin();
-
-    // - Send uniform data to the shader
-    plasticShader.setUniform2f("u_resImg", ofGetWidth(), ofGetHeight());
-    plasticShader.setUniform1f("u_time", 5 * ofGetElapsedTimef());
-    plasticShader.setUniform2f("u_offset", glm::vec2(0, 0));
-
-    // - Draw the meshes
-    cam.begin();
-    ofPushMatrix();
+    camera_.begin();
     {
+      ofPushMatrix();
+      {
         ofTranslate({-2, 0});
-        ofRotateYDeg(-meshRotationSpeed * ofGetElapsedTimeMillis());
-        ofScale(1.0, 1.3);
-        meshL.draw();
-    }
-    ofPopMatrix();
-    ofPushMatrix();
-    {
+        ofRotateYDeg(-rotation_speed_ * ofGetElapsedTimeMillis());
+        ofScale(1.f, 1.3f);
+        left_mesh_.draw();
+      }
+      ofPopMatrix();
+      ofPushMatrix();
+      {
         ofTranslate({2, 0});
-        ofRotateYDeg(meshRotationSpeed * ofGetElapsedTimeMillis());
-        ofScale(1.0, 1.3);
-        meshR.draw();
+        ofRotateYDeg(rotation_speed_ * ofGetElapsedTimeMillis());
+        ofScale(1.f, 1.3f);
+        right_mesh_.draw();
+      }
+      ofPopMatrix();
     }
-    ofPopMatrix();
-    cam.end();
-
-    plasticShader.end();
-    ofDisableDepthTest();
+    camera_.end();
+  }
+  plastic_shader_.end();
+  ofDisableDepthTest();
 }
 
 //--------------------------------------------------------------
-void
-ofApp::keyPressed(int key)
-{
-    if(key == 's')
-    {
-        glReadBuffer(GL_FRONT); // HACK: only needed on windows, when using ofSetAutoBackground(false)
-        ofSaveScreen("savedScreenshot_" + ofGetTimestampString() + ".png");
-    }
-
-    if(key == 'r')
-        rotateMesh = !rotateMesh;
+void ofApp::keyPressed(int key) {
+  if (key == 's') {
+    soo::SaveFrame();
+  }
+  if (key == 'r') {
+    rotate_mesh_ = !rotate_mesh_;
+  }
 }
-
-//--------------------------------------------------------------
-void
-ofApp::keyReleased(int key)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mouseMoved(int x, int y)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mouseDragged(int x, int y, int button)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mousePressed(int x, int y, int button)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mouseReleased(int x, int y, int button)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mouseEntered(int x, int y)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mouseExited(int x, int y)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::windowResized(int w, int h)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::gotMessage(ofMessage msg)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::dragEvent(ofDragInfo dragInfo)
-{}

@@ -1,43 +1,35 @@
 #pragma once
 
+#include "brushes/TrianglesOutBrush.h"
 #include "ofMain.h"
-#include "sooTrianglesOutBrush.h"
 
-namespace soo
-{
-struct HairyShape
-{
-    ofPolyline contour;
-    TrianglesOutBrush brush;
+struct HairyShape {
+  ofPolyline contour_;
+  soo::TrianglesOutBrush brush_;
 
-    void drawRandom()
-    {
-        ofVec2f p = contour[ofRandom(contour.size())];
-        brush.draw(p);
-    }
+  void draw() const {
+    const ofVec2f& p = contour_[static_cast<int>(ofRandom(contour_.size()))];
+    brush_.draw(p);
+  }
 };
-} // namespace soo
 
-class ofApp : public ofBaseApp
-{
-private:
-    // Character
-    const uint32_t character = '7';
-    const string fontName = "FreeSans.ttf";
-    ofTrueTypeFont font;
-    ofPolyline charPoly;
+class ofApp : public ofBaseApp {
+ public:
+  void setup();
+  void update();
+  void draw();
+  void keyPressed(int key);
 
-    // Hairy shapes
-    soo::HairyShape seven;
-    std::vector<soo::HairyShape> shapes;
+ private:
+  void GenerateBalls();
 
-public:
-    void setup();
-    void update();
-    void draw();
+ private:
+  const std::string font_name_ = "FreeSans.ttf";
+  ofTrueTypeFont font_;
 
-    void keyPressed(int key);
+  const uint32_t char_ = '7';
+  HairyShape seven_;
 
-private:
-    void initRandomShapes();
+  const unsigned int kNumBalls_ = 7;
+  std::vector<HairyShape> balls_;
 };

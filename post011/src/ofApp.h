@@ -1,41 +1,27 @@
 #pragma once
 
 #include "ofMain.h"
-#include "sooFramesExporter.h"
 
-class ofApp : public ofBaseApp
-{
-public:
-    // Background
-    float w, h;
-    ofImage backgroundImage;
-    ofPlanePrimitive backgroundPlane;
-    ofShader backgroundShader;
+class ofApp : public ofBaseApp {
+ public:
+  void setup();
+  void update();
+  void draw();
+  void keyPressed(int key);
 
-    // 3D scene
-    ofEasyCam cam;
-    bool rotateMesh;
-    float meshRotationSpeed;
-    ofMesh meshL, meshR;
-    ofShader plasticShader;
+ public:
+  // Background
+  const std::string bg_image_path_ = "background.jpg";
+  ofImage bg_image_;
+  ofPlanePrimitive bg_plane_;
+  ofShader bg_shader_;
 
-    // Frames Exporter
-    soo::FramesExporter framesExporter;
-
-public:
-    void setup();
-    void update();
-    void draw();
-
-    void keyPressed(int key);
-    void keyReleased(int key);
-    void mouseMoved(int x, int y);
-    void mouseDragged(int x, int y, int button);
-    void mousePressed(int x, int y, int button);
-    void mouseReleased(int x, int y, int button);
-    void mouseEntered(int x, int y);
-    void mouseExited(int x, int y);
-    void windowResized(int w, int h);
-    void dragEvent(ofDragInfo dragInfo);
-    void gotMessage(ofMessage msg);
+  // 3D scene
+  const std::string mesh_path_ = "one.ply";
+  ofMesh left_mesh_;
+  ofMesh right_mesh_;
+  bool rotate_mesh_;
+  float rotation_speed_;
+  ofEasyCam camera_;
+  ofShader plastic_shader_;
 };

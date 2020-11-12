@@ -1,162 +1,81 @@
 #include "ofApp.h"
+#include "soo_export.h"
+#include "soo_motion.h"
 
-void
-ofApp::addParticle()
-{
-    auto particle = soo::Particle<soo::Properties>();
+//--------------------------------------------------------------
+void ofApp::setup() {
+  // Canvas settings
+  ofSetBackgroundAuto(false);
+  ofBackground(255);
+  ofSetFrameRate(30);
+  ofSetCircleResolution(72);
 
-    // Set the initial position. The initial position is a point inside the mask.
+  // Load the images and define the bounding box for the mask
+  bg_image_.load(bg_image_path_);
+  mask_.load(mask_path_);
+  mask_bbox_.set(100, 600, ofGetWidth() - 200, 380);
+
+  // Define the particles
+  constexpr auto num_particles = 500l;
+  particles_.reserve(num_particles);
+
+  std::generate_n(std::back_inserter(particles_), num_particles, [this]() {
+    // A particle is initialized as follows:
+    // - It is located inside the mask
+    // - Its direction points up with a bit of horizontal noise
+    // - Its color is set to the color of the pixel in the background image
+    // corresponding to the initial position of the particle
+    // - All particles have the same radius and a similar random speed
+    Particle particle;
+
     float x, y;
     bool in_mask;
-    do
-    {
-        // Get random points from the interior of the mask bounding box
-        x = ofRandom(maskBbox.x, maskBbox.x + maskBbox.width);
-        y = ofRandom(maskBbox.y, maskBbox.y + maskBbox.height);
+    do {
+      // Get random points from the interior of the mask bounding box
+      x = ofRandom(mask_bbox_.x, mask_bbox_.x + mask_bbox_.width);
+      y = ofRandom(mask_bbox_.y, mask_bbox_.y + mask_bbox_.height);
 
-        // Check if the point is in the mask (white part)
-        in_mask = mask.getColor(x, y) == ofColor::white;
+      // Check if the point is in the mask (white part)
+      in_mask = mask_.getColor(x, y) == ofColor::white;
 
-    } while(!in_mask);
-    particle.position = ofVec2f(x, y);
+    } while (!in_mask);
+    particle.center_ = ofVec2f{x, y};
+    particle.color_ = bg_image_.getColor(x, y);
+    particle.direction_ = ofVec2f{ofRandom(-.1f, .1f), -1}.getNormalized();
+    particle.radius_ = 10.f;
+    particle.speed_ = ofRandom(.05f, .5f);
 
-    // Set the particle color. The color is the pixel color of the background image in the initial particle's position
-    particle.properties.color = background.getColor(x, y);
-
-    // Set the particle direction. The direction points up with a bit of horizontal noise.
-    particle.direction = ofVec2f(ofRandom(-0.1f, 0.1f), 1.).getNormalized();
-    //    particle.direction.normalize();
-
-    // Set the other particle properties
-    particle.properties.radius = 10.f;
-    particle.properties.speed = ofRandom(0.05f, 0.5f);
-
-    // Add the particle to the list
-    particles.push_back(particle);
-}
-
-void
-ofApp::updateParticle(Particle& particle)
-{
-    // Move up with a bit of noise
-    ofVec2f noise;
-    noise.x = ofRandom(-1, 1) * ofNoise(particle.position);
-    noise.y = ofRandom(-1, 1) * ofNoise(particle.position);
-
-    particle.position -= particle.properties.speed * (particle.direction + noise);
+    return particle;
+  });
 }
 
 //--------------------------------------------------------------
-void
-ofApp::setup()
-{
-    // Frames exporter
-    framesExporter.setEnd(2000);
-    framesExporter.setActive(false);
+void ofApp::update() {
+  // The particles move up linearly with a bit of noise on its direction
+  for (auto& particle : particles_) {
+    const ofVec2f noise{ofRandom(-1, 1) * ofNoise(particle.center_),
+                        ofRandom(-1, 1) * ofNoise(particle.center_)};
 
-    // Canvas settings
-    ofSetBackgroundAuto(false);
-    ofBackground(255);
-    ofSetFrameRate(30);
-    ofSetCircleResolution(72);
-
-    // Load images and define the bounding box for the mask
-    background.load(imagePath);
-    mask.load(maskPath);
-    maskBbox.set(100, 600, ofGetWidth() - 200, 380);
-
-    // Add particles
-    numParticles = 500;
-    particles.resize(numParticles);
-    for(unsigned long i = 0; i < numParticles; i++)
-        addParticle();
+    particle.center_ = soo::motion::UniformLinear(
+        particle.center_, particle.direction_ + noise, particle.speed_);
+  }
 }
 
 //--------------------------------------------------------------
-void
-ofApp::update()
-{
-    framesExporter.updateByFrames(ofGetFrameNum());
+void ofApp::draw() {
+  if (ofGetFrameNum() < 10) {
+    ofSetColor(255);
+    bg_image_.draw(0, 0);
+  }
 
-    for(auto& particle : particles)
-        updateParticle(particle);
+  for (const auto& particle : particles_) {
+    particle.draw();
+  }
 }
 
 //--------------------------------------------------------------
-void
-ofApp::draw()
-{
-    if(ofGetFrameNum() < 10)
-    {
-        ofSetColor(255);
-        background.draw(0, 0);
-    }
-
-    for(auto& particle : particles)
-    {
-        ofNoFill();
-        ofSetColor(particle.properties.color, 10);
-        ofDrawCircle(particle.position, particle.properties.radius);
-    }
+void ofApp::keyPressed(int key) {
+  if (key == 's') {
+    soo::SaveFrame();
+  }
 }
-
-//--------------------------------------------------------------
-void
-ofApp::keyPressed(int key)
-{
-    if(key == 's')
-    {
-        glReadBuffer(GL_FRONT); // HACK: only needed on windows, when using ofSetAutoBackground(false)
-        ofSaveScreen("savedScreenshot_" + ofGetTimestampString() + ".png");
-    }
-}
-
-//--------------------------------------------------------------
-void
-ofApp::keyReleased(int key)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mouseMoved(int x, int y)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mouseDragged(int x, int y, int button)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mousePressed(int x, int y, int button)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mouseReleased(int x, int y, int button)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mouseEntered(int x, int y)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::mouseExited(int x, int y)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::windowResized(int w, int h)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::gotMessage(ofMessage msg)
-{}
-
-//--------------------------------------------------------------
-void
-ofApp::dragEvent(ofDragInfo dragInfo)
-{}

@@ -1,40 +1,32 @@
 #pragma once
 
 #include "ofMain.h"
-#include "sooDeformedCircle.h"
-#include "sooFramesExporter.h"
-#include "sooParticle.h"
+#include "shapes/DeformedLayeredCircle.h"
 
-struct StarProperties
-{
-    float radius;
+using Rock = soo::DeformedLayeredCircle;
+
+struct Star {
+  ofVec2f center_;
+  float radius_;
 };
 
-using Star = soo::Particle<StarProperties>;
-using Stars = std::vector<Star>;
+class ofApp : public ofBaseApp {
+ public:
+  void setup();
+  void update();
+  void draw();
 
-using Rock = soo::DeformedCircle;
-using Rocks = std::vector<Rock>;
+ private:
+  const string font_name_ = "Fishfingers.ttf";
+  ofTrueTypeFont font_;
 
-class ofApp : public ofBaseApp
-{
-private:
-    // Frames exporter
-    soo::FramesExporter framesExporter;
+  const string text_ =
+      "  CUANDO ME INSPIRÁIS TODAS\nA LA VEZ, NUNCA QUIERO ELEGIR.";
 
-    // Text
-    const string text = "  CUANDO ME INSPIRÁIS TODAS\nA LA VEZ, NUNCA QUIERO ELEGIR.";
-    const string fontName = "Fishfingers.ttf";
-    ofTrueTypeFont font;
+  ofPath sky_border_;
+  std::vector<Star> stars_;
 
-    // Scene
-    ofPath sky;
-    Stars stars;
-    Rocks ground;
-    Rock flyingRock, fire;
-
-public:
-    void setup();
-    void update();
-    void draw();
+  Rock flying_rock_;
+  Rock fire_rock_;
+  std::vector<Rock> ground_rocks_;
 };

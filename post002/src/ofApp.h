@@ -1,53 +1,48 @@
 #pragma once
 
 #include "ofMain.h"
-#include "sooFramesExporter.h"
-#include "sooParticle.h"
 
-// TODO move this to soolibs if similar structures are needed
-namespace soo
-{
-struct Properties
-{};
+struct Line {
+  ofVec2f position_;
+  ofVec2f direction_;
+  float step_length_;
+  float rotation_angle_;
+  int rotation_angle_sign_ = 1;
+  bool done_ = false;
 
-struct Line
-{
-    ofPath path;
-    Particle<Properties> origin;
-    float stepLen;
-    float angle;
-    int sign = 1;
-    bool done = false;
+  ofPath path_;
 
-    Line() = default;
+  void AddPosition(const ofVec2f& p) {
+    position_ = p;
+    path_.lineTo(p);
+  }
 };
 
-} // namespace soo
+class ofApp : public ofBaseApp {
+ public:
+  void setup();
+  void update();
+  void draw();
 
-class ofApp : public ofBaseApp
-{
-private:
-    // Frames Exporter
-    soo::FramesExporter framesExporter;
+ private:
+  void setup_lines();
+  void update_lines();
+  void draw_lines();
 
-    // Character
-    const uint32_t character = '2';
-    const string fontName = "FreeSans.ttf";
-    ofTrueTypeFont font;
+  void setup_kid_line();
+  void update_kid_line();
+  void draw_kid_line();
 
-    // Character shape
-    std::shared_ptr<ofPath> path;
-    ofPolyline bottom, end;
+ private:
+  const std::string font_name_ = "FreeSans.ttf";
+  ofTrueTypeFont font_;
 
-    // Lines
-    std::vector<soo::Line> lines;
+  const uint32_t char_ = '2';
+  ofPath char_contour_;
+  ofPolyline char_bottom_;
+  ofPolyline char_end_;
 
-    // Kidline
-    soo::Line kidLine;
-    bool renderKidLine = false;
-
-public:
-    void setup();
-    void update();
-    void draw();
+  const bool render_kid_line_ = false;
+  std::vector<Line> lines_;
+  Line kid_line_;
 };
