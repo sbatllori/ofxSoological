@@ -24,10 +24,10 @@ class ofApp : public ofBaseApp {
   void keyPressed(int key);
 
  private:
-  const std::string kImagePath_ = "012_background.jpg";
+  const std::string bg_image_path_ = "012_background.jpg";
   ofImage bg_image_;
 
-  const std::string kMaskPath_ = "012_mask.jpg";
+  const std::string mask_path_ = "012_mask.jpg";
   ofImage mask_;
   ofRectangle mask_bbox_;
 

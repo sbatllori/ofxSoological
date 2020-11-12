@@ -11,15 +11,15 @@ void ofApp::setup() {
   ofSetCircleResolution(72);
 
   // Load the images and define the bounding box for the mask
-  bg_image_.load(kImagePath_);
-  mask_.load(kMaskPath_);
+  bg_image_.load(bg_image_path_);
+  mask_.load(mask_path_);
   mask_bbox_.set(100, 600, ofGetWidth() - 200, 380);
 
   // Define the particles
-  constexpr int kNumParticles = 500;
-  particles_.reserve(kNumParticles);
+  constexpr auto num_particles = 500l;
+  particles_.reserve(num_particles);
 
-  std::generate_n(std::back_inserter(particles_), kNumParticles, [this]() {
+  std::generate_n(std::back_inserter(particles_), num_particles, [this]() {
     // A particle is initialized as follows:
     // - It is located inside the mask
     // - Its direction points up with a bit of horizontal noise
@@ -56,7 +56,6 @@ void ofApp::update() {
     const ofVec2f noise{ofRandom(-1, 1) * ofNoise(particle.center_),
                         ofRandom(-1, 1) * ofNoise(particle.center_)};
 
-    //    particle.center_ -= particle.speed_ * (particle.direction_ + noise);
     particle.center_ = soo::motion::UniformLinear(
         particle.center_, particle.direction_ + noise, particle.speed_);
   }
