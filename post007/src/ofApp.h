@@ -24,12 +24,12 @@ class ofApp : public ofBaseApp {
   void GenerateBalls();
 
  private:
-  const std::string kFontName_ = "FreeSans.ttf";
+  const std::string font_name_ = "FreeSans.ttf";
   ofTrueTypeFont font_;
 
-  const uint32_t kChar_ = '7';
+  const uint32_t char_ = '7';
   HairyShape seven_;
 
-  const unsigned int kNumBalls = 7;
+  const unsigned int kNumBalls_ = 7;
   std::vector<HairyShape> balls_;
 };

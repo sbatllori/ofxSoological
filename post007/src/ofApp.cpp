@@ -3,7 +3,17 @@
 #include "soo_export.h"
 
 void ofApp::GenerateBalls() {
-  // Setup the common brush parameters for all the balls
+  // Reset the vetor of balls
+  balls_.clear();
+  balls_.reserve(kNumBalls_);
+
+  // Define a box to initialize the ball positions
+  ofRectangle grown_seven_bbox = seven_.contour_.getBoundingBox();
+  grown_seven_bbox.translate(-grown_seven_bbox.width / 4.f,
+                             -grown_seven_bbox.height / 4.f);
+  grown_seven_bbox.scale(1.5);
+
+  // Define the common brush parameters for all the balls
   soo::GenerateTriangleParams brush_triangle_params;
   soo::GenerateColorParams brush_color_params;
 
@@ -12,37 +22,33 @@ void ofApp::GenerateBalls() {
       .max_offset_to_center(15);
   brush_color_params.color(ofColor{0}).alpha(50);
 
-  // Reset the vetor of balls
-  balls_.clear();
-  balls_.reserve(kNumBalls);
-
   std::generate_n(
-      std::back_inserter(balls_), kNumBalls,
-      [this, &brush_triangle_params, &brush_color_params]() {
+      std::back_inserter(balls_), kNumBalls_,
+      [this, &grown_seven_bbox, &brush_triangle_params, &brush_color_params]() {
         HairyShape ball;
 
         // Define the ball contour for the hairy shape, such that:
-        // - the ball is placed inside the bounding box of the seven, but
-        // outside the seven itself (with a specific maximal closeness to it)
+        // - the ball is placed inside the grown bounding box of the seven, but
+        // outside the seven itself and not too close to it
         // - the contour of a ball is defined as a circle with a random radius
-        ofRectangle boundary = seven_.contour_.getBoundingBox();
-        boundary.translate(-boundary.width / 4.f, -boundary.height / 4.f);
-        boundary.scale(1.5);
-
+        constexpr float min_distance = 50;
+        bool inside;
+        bool not_too_close;
         float x, y;
-        float closeness;
         do {
           x = ofRandomWidth();
           y = ofRandomHeight();
-          ofVec2f closest = seven_.contour_.getClosestPoint({x, y, 0});
-          closeness = closest.distance({x, y});
-        } while (!(boundary.inside(x, y) && closeness > 50));
+          const ofVec2f closest = seven_.contour_.getClosestPoint({x, y, 0});
+          inside = grown_seven_bbox.inside(x, y);
+          not_too_close = closest.distance({x, y}) >= min_distance;
+
+        } while (!(inside && not_too_close));
 
         const float radius = ofRandom(20, 40);
         ball.contour_.arc({x, y, 0}, radius, radius, 0, 360);
 
         // Define the ball brush with the specific parameters
-        const auto& reference_triangle = soo::Triangle(soo::TriangleVertices(
+        const soo::Triangle reference_triangle(soo::TriangleVertices(
             {0, 0.15f * radius}, {radius, 0}, {0, -0.15f * radius}));
 
         ball.brush_ = soo::TrianglesOutBrush(
@@ -67,14 +73,14 @@ void ofApp::setup() {
   // - define a brush for the hairy shape
 
   // Setup contour
-  font_.load(kFontName_, 500, true, true, true);
-  seven_.contour_ = font_.getCharacterAsPoints(kChar_, true, false)
+  font_.load(font_name_, 500, true, true, true);
+  seven_.contour_ = font_.getCharacterAsPoints(char_, true, false)
                         .getOutline()[0]
                         .getResampledBySpacing(1);
 
-  const ofRectangle& bbox = seven_.contour_.getBoundingBox();
-  float x = ofGetWidth() / 2 - (bbox.x + bbox.width / 2);
-  float y = ofGetHeight() / 2 - (bbox.y + bbox.height / 2);
+  const ofRectangle bbox = seven_.contour_.getBoundingBox();
+  const float x = ofGetWidth() / 2 - (bbox.x + bbox.width / 2);
+  const float y = ofGetHeight() / 2 - (bbox.y + bbox.height / 2);
   seven_.contour_.translate({x, y});
 
   // Setup brush
