@@ -11,7 +11,7 @@ This is a personal project to learn how to code art with [openFrameworks (OF)](h
 
 | Post | Preview | Title | Category | Keywords|
 |:----:|:-------:|:-----:|:--------:|:-------:|
-|15|<img src="post010/doc/output_dark.png" width="80px">|[GPU Dancing Dots](post010/README.md)|Fragment shader art|`shaders` `fragment shader` `2D texture` `uniform circular motion`
+|15|<img src="post010/doc/output_dark.png" width="80px">|[GPU Dancing Dots](post010/README.md)<br>(same as 10)|Fragment shader art|`shaders` `fragment shader` `2D texture` `uniform circular motion`
 |14|<img src="post014/doc/3.png" width="80px">|[Dandelion Generator](post014/README.md)|2D geometric shapes|`2D` `grid` `circle` `ellipse` `rectangle` `line` `arrow` `noise`
 |13|<img src="post013/doc/output.png" width="80px">|[Background & Font Animation](post013/README.md)|Basic color changes|`2D` `ofFont` `ofColor` `rotation` `animated background`
 |12|<img src="post012/doc/output.png" width="80px">|[Image Color Emission](post012/README.md)|2D physical simulations|`2D` `dynamic brush` `uniform linear motion` `ofImage` `binary mask`
@@ -35,9 +35,9 @@ The repo is organised as follows:
 
 ## Installation
 Requirements:
-- [openFrameworks](https://openframeworks.cc/download/)
+- [openFrameworks](https://openframeworks.cc/)
 
-In order to run my apps, OF needs to be installed on your machine. You can follow their installation instuctions [here](https://openframeworks.cc/download/) to do so.
+In order to run my apps, OF needs to be installed on your machine. You can follow their installation instructions [here](https://openframeworks.cc/download/) to do so.
 
 The folder structure of the OF repository looks like this:
 ```bash
