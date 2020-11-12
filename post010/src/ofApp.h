@@ -10,7 +10,7 @@ class ofApp : public ofBaseApp {
   void keyPressed(int key);
 
  private:
-  const std::string kImagePath_ = "DSC05554.jpg";
+  const std::string image_path_ = "DSC05554.jpg";
   ofImage image_;
   ofShader shader_;
 };
