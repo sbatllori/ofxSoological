@@ -19,7 +19,7 @@ void ofApp::setup() {
   // - Load the font
   // - Init the character rotation
   ofTrueTypeFont::setGlobalDpi(72);
-  font_.load(kFontName_, 650, true, true);
+  font_.load(font_name_, 650, true, true);
   rotate_character_ = true;
   rotation_angle_deg_ = 0;
 }
@@ -43,8 +43,8 @@ void ofApp::update() {
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-  int w = ofGetWidth();
-  int h = ofGetHeight();
+  const int w = ofGetWidth();
+  const int h = ofGetHeight();
 
   ofColor pico_color;
   ofColor tres_color;
@@ -91,12 +91,12 @@ void ofApp::draw() {
   // Draw the characters
   // - Each character is centered vertically in a different half of the screen
   // - The "pico" caracter rotates, while the "tres" character remains static
-  const int kDistanceBetweenChars = 90;
+  const int distance_between_chars = 90;
 
   ofPushMatrix();
   {
-    ofRectangle bbox = font_.getStringBoundingBox("<", 0, 0);
-    ofTranslate((w - bbox.width) / 2 - kDistanceBetweenChars, h / 2);
+    const ofRectangle bbox = font_.getStringBoundingBox("<", 0, 0);
+    ofTranslate((w - bbox.width) / 2 - distance_between_chars, h / 2);
     ofRotateZDeg(rotation_angle_deg_);
 
     ofSetColor(pico_color);
@@ -106,8 +106,8 @@ void ofApp::draw() {
 
   ofPushMatrix();
   {
-    ofRectangle bbox = font_.getStringBoundingBox("3", 0, 0);
-    ofTranslate(w / 2 + kDistanceBetweenChars, (h + bbox.height) / 2);
+    const ofRectangle bbox = font_.getStringBoundingBox("3", 0, 0);
+    ofTranslate(w / 2 + distance_between_chars, (h + bbox.height) / 2);
 
     ofSetColor(tres_color);
     font_.drawString("3", 0, 0);

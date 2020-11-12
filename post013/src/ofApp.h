@@ -16,15 +16,14 @@ class ofApp : public ofBaseApp {
   }
 
   ofColor GetFontColor() {
-    ofColor font_color = bg_color_ == blue_ ? ofColor::white : ofColor::black;
-    return font_color;
+    return bg_color_ == blue_ ? ofColor::white : ofColor::black;
   }
 
  private:
   const ofColor blue_{112, 198, 255};
   const ofColor pink_{255, 135, 221};
 
-  const std::string kFontName_ = "orange juice 2.0.ttf";
+  const std::string font_name_ = "orange juice 2.0.ttf";
   ofTrueTypeFont font_;
 
   int bg_vertical_;
