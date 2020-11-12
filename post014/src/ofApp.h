@@ -84,17 +84,17 @@ struct Composition1 : DandelionGrid {
   }
 
   void draw() const {
-    constexpr int kOtherIdx = 8;
+    constexpr int other_idx = 8;
 
     for (int i{0}; i < dandelions_.size(); i++) {
-      if (i != kOtherIdx) {
+      if (i != other_idx) {
         DrawDandelion::BlackOnWhite(dandelions_[i]);
       }
     }
 
-    const auto& dandelion = dandelions_[kOtherIdx];
+    const auto& dandelion = dandelions_[other_idx];
     ofPushMatrix();
-    ofVec2f pivot = DrawDandelion::TransformHFlip(dandelion);
+    const ofVec2f pivot = DrawDandelion::TransformHFlip(dandelion);
     DrawDandelion::RedOnWhiteNoBbox(dandelion, -pivot);
     ofPopMatrix();
   }
@@ -136,17 +136,17 @@ struct Composition4 : DandelionGrid {
   }
 
   void draw() const {
-    constexpr int kOtherIdx = 3;
+    constexpr int other_idx = 3;
 
     for (int i{0}; i < dandelions_.size(); i++) {
-      if (i != kOtherIdx) {
+      if (i != other_idx) {
         DrawDandelion::BlackOnWhite(dandelions_[i]);
       }
     }
 
-    const auto& dandelion = dandelions_[kOtherIdx];
+    const auto& dandelion = dandelions_[other_idx];
     ofPushMatrix();
-    ofVec2f pivot = DrawDandelion::TransformHFlip(dandelion);
+    const ofVec2f pivot = DrawDandelion::TransformHFlip(dandelion);
     DrawDandelion::WhiteOnBlack(dandelion, -pivot);
     ofPopMatrix();
   }
@@ -162,7 +162,7 @@ struct Composition5 : DandelionGrid {
   void draw() const {
     for (const auto& dandelion : dandelions_) {
       ofPushMatrix();
-      ofVec2f pivot = DrawDandelion::TransformHFlip(dandelion);
+      const ofVec2f pivot = DrawDandelion::TransformHFlip(dandelion);
       DrawDandelion::WhiteOnBlack(dandelion, -pivot);
       ofPopMatrix();
     }
@@ -182,8 +182,8 @@ class ofApp : public ofBaseApp {
   Composition1 grid_;
 
   // Screen Noise
-  constexpr static float kBlackNoisePercent_ = 0.7f;
-  constexpr static float kWhiteNoisePercent_ = 0.3f;
+  const float kBlackNoisePercent_ = 0.7f;
+  const float kWhiteNoisePercent_ = 0.3f;
   soo::Noise black_noise_;
   soo::Noise white_noise_;
 };

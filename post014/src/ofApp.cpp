@@ -10,7 +10,7 @@ void ofApp::setup() {
 
   // Define the grid
   //
-  // The grid is defined by the number of cells per axis, an external marging
+  // The grid is defined by the number of cells per axis, an external margin
   // and an internal margin. It is symmetric, meaning that it has the same
   // amount of rows than of columns. The external margin is defined as the
   // distance between the grid and the screen borders. The internal margin is
@@ -18,19 +18,20 @@ void ofApp::setup() {
   // Therefore, in order to compute the size of the cells, we need to substract
   // the external marging twice, and the internal margin once per each cell but
   // the last one.
-  const float kTotal = ofGetWidth();  // width = height
-  const float kExternal = 2.f * grid_.kExternalMargin_;
-  const float kInternal = (grid_.kNCellsPerAxe_ - 1) * grid_.kInternalMargin_;
-  const float kBboxEdgeLength =
-      (kTotal - kExternal - kInternal) / grid_.kNCellsPerAxe_;
+  const float total_space = ofGetWidth();  // width = height
+  const float external_space = 2.f * grid_.kExternalMargin_;
+  const float internal_space =
+      (grid_.kNCellsPerAxe_ - 1) * grid_.kInternalMargin_;
+  const float bbox_edge_length =
+      (total_space - external_space - internal_space) / grid_.kNCellsPerAxe_;
 
   for (int i{0}; i < grid_.kNCellsPerAxe_; i++) {
     for (int j{0}; j < grid_.kNCellsPerAxe_; j++) {
       ofVec2f bbox_top_left_corner{
-          i * (kBboxEdgeLength + grid_.kInternalMargin_),
-          j * (kBboxEdgeLength + grid_.kInternalMargin_)};
+          i * (bbox_edge_length + grid_.kInternalMargin_),
+          j * (bbox_edge_length + grid_.kInternalMargin_)};
 
-      soo::Dandelion dandelion(bbox_top_left_corner, kBboxEdgeLength);
+      soo::Dandelion dandelion(bbox_top_left_corner, bbox_edge_length);
       grid_.dandelions_.push_back(dandelion);
     }
   }
