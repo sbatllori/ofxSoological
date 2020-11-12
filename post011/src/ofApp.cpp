@@ -7,7 +7,7 @@ void ofApp::setup() {
   // - Load the background image
   // - Define a plane where to project the background image
   // - Resize the canvas to the fit the background image dimensions
-  bg_image_.load(kImagePath_);
+  bg_image_.load(bg_image_path_);
   bg_plane_.set(bg_image_.getWidth(), bg_image_.getHeight(), 10, 10);
   bg_plane_.mapTexCoords(0, 0, bg_image_.getWidth(), bg_image_.getHeight());
   ofSetWindowShape(static_cast<int>(bg_image_.getWidth()),
@@ -16,8 +16,8 @@ void ofApp::setup() {
   // - Load the same mesh twice
   // - Initialize the mesh rotation
   // - Setup the camera pointing to the meshes
-  left_mesh_.load(kMeshPath_);
-  right_mesh_.load(kMeshPath_);
+  left_mesh_.load(mesh_path_);
+  right_mesh_.load(mesh_path_);
   rotate_mesh_ = true;
   camera_.setTarget({0, 0, 0});
   camera_.setDistance(8.35f);
@@ -78,7 +78,7 @@ void ofApp::draw() {
       {
         ofTranslate({-2, 0});
         ofRotateYDeg(-rotation_speed_ * ofGetElapsedTimeMillis());
-        ofScale(1.0, 1.3);
+        ofScale(1.f, 1.3f);
         left_mesh_.draw();
       }
       ofPopMatrix();
@@ -86,7 +86,7 @@ void ofApp::draw() {
       {
         ofTranslate({2, 0});
         ofRotateYDeg(rotation_speed_ * ofGetElapsedTimeMillis());
-        ofScale(1.0, 1.3);
+        ofScale(1.f, 1.3f);
         right_mesh_.draw();
       }
       ofPopMatrix();
