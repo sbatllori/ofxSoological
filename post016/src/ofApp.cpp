@@ -4,26 +4,26 @@
 //--------------------------------------------------------------
 void ofApp::setup() {
   ofSetBackgroundAuto(false);
-  ofSetFrameRate(100);
+  ofSetFrameRate(600);
   ofBackground(255);
-  ofSetColor(0);
   ofSetLineWidth(2);
 
-  position_ = SpirographNode({0, 0, 0});
-  circle_ = SpirographNode({200, 0, 0}, position_);
-  brush_ = SpirographNode({150, 0, 0}, circle_);
+  Spirograph sg01;
+  sg01.nodes_.push_back(new SpirographNode({0, 0, 0}));
+  sg01.nodes_.push_back(new SpirographNode({200, 0, 0}, sg01.nodes_[0]));
+  sg01.nodes_.push_back(new SpirographNode({150, 0, 0}, sg01.nodes_[1]));
+  sg01.nodes_[0]->set_rotate_deg(1.1f);
+  sg01.nodes_[1]->set_rotate_deg(5);
+  sg01.color_ = ofColor(50);
+  spirographs_.push_back(sg01);
 }
 
 //--------------------------------------------------------------
 void ofApp::update() {
-  previous_brush_position_ = brush_.global_position();
-
-  position_.RotateZ();
-  circle_.RotateZ();
-
-  if (position_.IsCicleStart()) {
-    position_.set_rotate_deg(ofRandom(.1f, 1.f));
-    circle_.set_rotate_deg(ofRandom(1, 5));
+  for (auto& spirograph : spirographs_) {
+    spirograph.previous_brush_position_ = spirograph.brush_position();
+    std::for_each(spirograph.nodes_.begin(), --spirograph.nodes_.end(),
+                  [](auto& node) { node->RotateZ(); });
   }
 }
 
@@ -31,7 +31,13 @@ void ofApp::update() {
 void ofApp::draw() {
   ofPushMatrix();
   ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);
-  ofDrawLine(previous_brush_position_, brush_.global_position());
+  {
+    for (auto& spirograph : spirographs_) {
+      ofSetColor(spirograph.color_);
+      ofDrawLine(spirograph.previous_brush_position_,
+                 spirograph.brush_position());
+    }
+  }
   ofPopMatrix();
 }
 

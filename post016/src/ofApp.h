@@ -7,12 +7,13 @@ class SpirographNode {
   SpirographNode() = default;
   SpirographNode(const ofVec3f& position) { node_.setGlobalPosition(position); }
 
-  SpirographNode(const ofVec3f& position, SpirographNode& parent) {
-    node_.setParent(parent.node_);
+  SpirographNode(const ofVec3f& position, SpirographNode* parent) {
+    node_.setParent(parent->node_);
     node_.setPosition(position);
   }
 
-  const ofVec3f global_position() const { return node_.getGlobalPosition(); }
+  auto global_position() const { return node_.getGlobalPosition(); }
+  const float& rotate_deg() const { return rotate_deg_; }
   void set_rotate_deg(const float rotate_deg) { rotate_deg_ = rotate_deg; }
 
   void RotateZ() { node_.rotateDeg(rotate_deg_, {0, 0, 1}); }
@@ -25,6 +26,14 @@ class SpirographNode {
  private:
   ofNode node_;
   float rotate_deg_;
+};
+
+struct Spirograph {
+  std::vector<SpirographNode*> nodes_;
+  ofVec3f previous_brush_position_;
+  ofColor color_;
+
+  auto brush_position() const { return nodes_.back()->global_position(); }
 };
 
 class ofApp : public ofBaseApp {
@@ -46,8 +55,5 @@ class ofApp : public ofBaseApp {
   void gotMessage(ofMessage msg);
 
  private:
-  SpirographNode position_;
-  SpirographNode circle_;
-  SpirographNode brush_;
-  ofVec3f previous_brush_position_;
+  std::vector<Spirograph> spirographs_;
 };
