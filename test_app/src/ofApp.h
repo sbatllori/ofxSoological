@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "shapes/Spirograph.h"
 #include "soo_export.h"
 
 class ofApp : public ofBaseApp {
@@ -19,6 +20,8 @@ class ofApp : public ofBaseApp {
     ofSetLineWidth(1);
     ofBackground(255);
     ofSetColor(0);
+
+    setup_Spirograph();
   }
   void draw() {
     if (ofGetFrameNum() == 10) {
@@ -26,9 +29,10 @@ class ofApp : public ofBaseApp {
       draw_Triangle(false);
       draw_TrianglesOutBrush(false);
       draw_Dandelion(false);
-      draw_Intersection_Horizontal_ClosedPolyline(true);
+      draw_Intersection_Horizontal_ClosedPolyline(false);
       draw_Noise_Rectagle(false);
     }
+    draw_Spirograph(true);
 
     if (run_draw_fractals) {
       ofSetBackgroundAuto(true);
@@ -61,4 +65,8 @@ class ofApp : public ofBaseApp {
   void draw_DragonCurve(bool run);
   void draw_LevyCCurve(bool run);
   void draw_Noise_Rectagle(bool run);
+
+  soo::Spirograph spirograph;
+  void setup_Spirograph();
+  void draw_Spirograph(bool run);
 };

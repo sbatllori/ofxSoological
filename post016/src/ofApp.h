@@ -1,40 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
-
-class SpirographNode {
- public:
-  SpirographNode() = default;
-  SpirographNode(const ofVec3f& position) { node_.setGlobalPosition(position); }
-
-  SpirographNode(const ofVec3f& position, SpirographNode* parent) {
-    node_.setParent(parent->node_);
-    node_.setPosition(position);
-  }
-
-  auto global_position() const { return node_.getGlobalPosition(); }
-  const float& rotate_deg() const { return rotate_deg_; }
-  void set_rotate_deg(const float rotate_deg) { rotate_deg_ = rotate_deg; }
-
-  void RotateZ() { node_.rotateDeg(rotate_deg_, {0, 0, 1}); }
-  bool IsCicleStart() const {
-    const float angle = node_.getOrientationEulerDeg().z;
-    const float epsilon = 0.001f;
-    return abs(angle) < epsilon;
-  }
-
- private:
-  ofNode node_;
-  float rotate_deg_;
-};
-
-struct Spirograph {
-  std::vector<SpirographNode*> nodes_;
-  ofVec3f previous_brush_position_;
-  ofColor color_;
-
-  auto brush_position() const { return nodes_.back()->global_position(); }
-};
+#include "shapes/Spirograph.h"
 
 class ofApp : public ofBaseApp {
  public:
@@ -55,5 +22,6 @@ class ofApp : public ofBaseApp {
   void gotMessage(ofMessage msg);
 
  private:
-  std::vector<Spirograph> spirographs_;
+  soo::Spirograph spirograph_;
+  ofVec3f previous_brush_position_;
 };

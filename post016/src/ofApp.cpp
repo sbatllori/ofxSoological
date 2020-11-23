@@ -8,23 +8,18 @@ void ofApp::setup() {
   ofBackground(255);
   ofSetLineWidth(2);
 
-  Spirograph sg01;
-  sg01.nodes_.push_back(new SpirographNode({0, 0, 0}));
-  sg01.nodes_.push_back(new SpirographNode({200, 0, 0}, sg01.nodes_[0]));
-  sg01.nodes_.push_back(new SpirographNode({150, 0, 0}, sg01.nodes_[1]));
-  sg01.nodes_[0]->set_rotate_deg(1.1f);
-  sg01.nodes_[1]->set_rotate_deg(5);
-  sg01.color_ = ofColor(50);
-  spirographs_.push_back(sg01);
+  spirograph_.AddNode({0, 0, 0}, 1.1f);
+  spirograph_.AddNode({200, 0, 0}, 5, true);
+  spirograph_.AddNode({150, 0, 0}, 0, true);
 }
 
 //--------------------------------------------------------------
 void ofApp::update() {
-  for (auto& spirograph : spirographs_) {
-    spirograph.previous_brush_position_ = spirograph.brush_position();
-    std::for_each(spirograph.nodes_.begin(), --spirograph.nodes_.end(),
-                  [](auto& node) { node->RotateZ(); });
-  }
+  previous_brush_position_ = spirograph_.brush_position();
+
+  std::for_each(spirograph_.nodes_mutable().begin(),
+                --spirograph_.nodes_mutable().end(),
+                [](auto& node) { node->RotateZ(); });
 }
 
 //--------------------------------------------------------------
@@ -32,11 +27,8 @@ void ofApp::draw() {
   ofPushMatrix();
   ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);
   {
-    for (auto& spirograph : spirographs_) {
-      ofSetColor(spirograph.color_);
-      ofDrawLine(spirograph.previous_brush_position_,
-                 spirograph.brush_position());
-    }
+    ofSetColor(0);
+    ofDrawLine(previous_brush_position_, spirograph_.brush_position());
   }
   ofPopMatrix();
 }
