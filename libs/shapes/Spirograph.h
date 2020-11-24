@@ -12,7 +12,7 @@ class SpirographNode {
                  SpirographNode* parent);
 
   auto global_position() const { return node_.getGlobalPosition(); }
-  const auto& rotate_deg() const { return rotate_deg_; }
+  void set_position(const ofVec3f& position) { node_.setPosition(position); }
   void set_rotate_deg(const float rotate_deg) { rotate_deg_ = rotate_deg; }
 
   void RotateZ() { node_.rotateDeg(rotate_deg_, {0, 0, 1}); }
