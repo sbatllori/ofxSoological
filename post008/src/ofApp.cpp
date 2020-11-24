@@ -46,6 +46,8 @@ void ofApp::setup() {
 
 //--------------------------------------------------------------
 void ofApp::update() {
+  //  soo::SaveFrame(ofGetFrameNum());
+
   // Update the active drops, so that they continue falling down the canvas with
   // a bit of random noise on the motion to simulate its natural stroke.
   for (auto& drop : drops_) {

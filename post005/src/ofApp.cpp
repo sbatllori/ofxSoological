@@ -1,4 +1,5 @@
 #include "ofApp.h"
+#include "soo_export.h"
 
 //--------------------------------------------------------------
 void ofApp::setup() {
@@ -35,6 +36,8 @@ void ofApp::setup() {
 
 //--------------------------------------------------------------
 void ofApp::update() {
+  //  soo::SaveFrame(ofGetFrameNum());
+
   // Update the lines by moving them vertically, recomputing the intersection
   // points and re-defining the paths with bezier segments
   for (auto& line : lines_) {

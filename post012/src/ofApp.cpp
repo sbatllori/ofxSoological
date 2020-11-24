@@ -51,6 +51,8 @@ void ofApp::setup() {
 
 //--------------------------------------------------------------
 void ofApp::update() {
+  //  soo::SaveFrame(ofGetFrameNum());
+
   // The particles move up linearly with a bit of noise on its direction
   for (auto& particle : particles_) {
     const ofVec2f noise{ofRandom(-1, 1) * ofNoise(particle.center_),

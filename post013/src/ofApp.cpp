@@ -26,6 +26,8 @@ void ofApp::setup() {
 
 //--------------------------------------------------------------
 void ofApp::update() {
+  //  soo::SaveFrame(ofGetFrameNum());
+
   // Update the scene:
   // - The vertical border moves forward until it reaches the end of the canvas.
   // Then, it starts moving again from the left side of the canvas.
