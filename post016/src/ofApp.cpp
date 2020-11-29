@@ -3,66 +3,142 @@
 
 //--------------------------------------------------------------
 void ofApp::setup() {
-  hide_gui_ = false;
-  gui_.setup();
-  gui_.add(frame_rate_.setup("fps", 60, 30, 2000));
-  gui_.add(radius_1_.setup("radius 1", 200, 10, 500));
-  gui_.add(radius_2_.setup("radius 2", 150, 10, 500));
-  gui_.add(angle_0_.setup("angle 0", 1, 0, 1));
-  gui_.add(angle_1_.setup("angle 1", 5, 0, 180));
-  gui_.add(stroke_width_.setup("stroke", 2, 1, 8));
-  gui_.add(color_.setup("color", ofColor(0), ofColor(0, 0), ofColor(255, 255)));
-
   ofSetBackgroundAuto(false);
+  ofSetFrameRate(3000);
   ofBackground(255);
 
-  spirograph_.nodes_mutable().clear();
-  spirograph_.AddNode({0, 0, 0}, angle_0_);
-  spirograph_.AddNode({radius_1_, 0, 0}, angle_1_, true);
-  spirograph_.AddNode({radius_2_, 0, 0}, 0, true);
+  {
+    Layer layer;
+    layer.spirograph_.AddNode({0, 0, 0}, .55f);
+    layer.spirograph_.AddNode({415, 0, 0}, 5.f, true);
+    layer.spirograph_.AddNode({50, 0, 0}, 0, true);
+    layers_.push_back(layer);
+
+    layers_.back().draw_ = [](const Layer& layer) {
+      ofSetColor(80);
+      ofSetLineWidth(2);
+      ofDrawLine(layer.previous_brush_position_,
+                 layer.spirograph_.brush_position());
+    };
+  }
+
+  {
+    Layer layer;
+    layer.spirograph_.AddNode({0, 0, 0}, 1.2f);
+    layer.spirograph_.AddNode({280, 0, 0}, 4.f, true);
+    layer.spirograph_.AddNode({100, 0, 0}, 0, true);
+    layers_.push_back(layer);
+
+    layers_.back().draw_ = [](const Layer& layer) {
+      ofSetColor(80);
+      ofSetLineWidth(8);
+      ofDrawLine(layer.previous_brush_position_,
+                 layer.spirograph_.brush_position());
+
+      ofSetColor(255);
+      ofSetLineWidth(4);
+      ofDrawLine(layer.previous_brush_position_,
+                 layer.spirograph_.brush_position());
+    };
+  }
+
+  {
+    Layer layer;
+    layer.spirograph_.AddNode({0, 0, 0}, 1.f);
+    layer.spirograph_.AddNode({210, 0, 0}, 10.f, true);
+    layer.spirograph_.AddNode({10, 0, 0}, 0, true);
+    layers_.push_back(layer);
+
+    layers_.back().draw_ = [](const Layer& layer) {
+      ofSetColor(80);
+      ofSetLineWidth(2);
+      ofDrawLine(layer.previous_brush_position_,
+                 layer.spirograph_.brush_position());
+    };
+  }
+
+  {
+    Layer layer;
+    layer.spirograph_.AddNode({0, 0, 0}, 20.f);
+    layer.spirograph_.AddNode({150, 0, 0}, 1.f, true);
+    layers_.push_back(layer);
+
+    layers_.back().draw_ = [](const Layer& layer) {
+      ofSetColor(80);
+      ofSetLineWidth(2);
+      ofNoFill();
+
+      const float radius = layer.previous_brush_position_.distance(
+                               layer.spirograph_.brush_position()) /
+                           8.f;
+      ofDrawCircle(layer.previous_brush_position_, radius);
+      ofDrawCircle(layer.spirograph_.brush_position(), radius);
+    };
+  }
+
+  {
+    Layer layer;
+    layer.spirograph_.AddNode({0, 0, 0}, 1.f);
+    layer.spirograph_.AddNode({150, 0, 0}, 1.f, true);
+    layers_.push_back(layer);
+
+    layers_.back().draw_ = [](const Layer& layer) {
+      ofSetColor(0, 100);
+      ofSetLineWidth(2);
+      ofDrawLine(layer.previous_brush_position_,
+                 layer.spirograph_.brush_position());
+    };
+  }
+
+  {
+    Layer layer;
+    layer.spirograph_.nodes_mutable().clear();
+    layer.spirograph_.AddNode({0, 0, 0}, 1.1f);
+    layer.spirograph_.AddNode({80, 0, 0}, 5.f, true);
+    layer.spirograph_.AddNode({50, 0, 0}, 0, true);
+    layers_.push_back(layer);
+
+    layers_.back().draw_ = [](const Layer& layer) {
+      ofSetColor(0, 100);
+      ofSetLineWidth(2);
+      ofDrawLine(layer.previous_brush_position_,
+                 layer.spirograph_.brush_position());
+    };
+  }
 }
 
 //--------------------------------------------------------------
 void ofApp::update() {
-  previous_brush_position_ = spirograph_.brush_position();
-  spirograph_.nodes_mutable()[0]->RotateZ();
-  spirograph_.nodes_mutable()[1]->RotateZ();
+  if (ofGetFrameNum() > 10) {
+    //  Remove the closed spirographs
+    layers_.erase(std::remove_if(layers_.begin(), layers_.end(),
+                                 [](const Layer& layer) {
+                                   return layer.spirograph_.IsCicleStart();
+                                 }),
+                  layers_.end());
+  }
 
-  spirograph_.nodes_mutable()[0]->set_rotate_deg(angle_0_);
-  spirograph_.nodes_mutable()[1]->set_rotate_deg(angle_1_);
-
-  spirograph_.nodes_mutable()[1]->set_position({radius_1_, 0, 0});
-  spirograph_.nodes_mutable()[2]->set_position({radius_2_, 0, 0});
-
-  ofSetFrameRate(frame_rate_);
+  for (auto& layer : layers_) {
+    layer.previous_brush_position_ = layer.spirograph_.brush_position();
+    layer.spirograph_.nodes_mutable()[0]->RotateZ();
+    layer.spirograph_.nodes_mutable()[1]->RotateZ();
+  }
 }
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-  if (!hide_gui_) {
-    gui_.draw();
-  }
-
   ofPushMatrix();
   ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);
   {
-    ofSetColor(color_);
-    ofSetLineWidth(stroke_width_);
-    ofDrawLine(previous_brush_position_, spirograph_.brush_position());
+    for (auto& layer : layers_) {
+      layer.draw();
+    }
   }
   ofPopMatrix();
-
-  if (ofGetMousePressed(OF_MOUSE_BUTTON_RIGHT)) {
-    ofBackground(255);
-  }
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
-  if (key == 'h') {
-    hide_gui_ = !hide_gui_;
-  }
-
   if (key == 's') {
     soo::SaveFrame();
   }

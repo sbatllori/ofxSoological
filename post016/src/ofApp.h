@@ -4,6 +4,18 @@
 #include "ofxGui.h"
 #include "shapes/Spirograph.h"
 
+struct Layer {
+  soo::Spirograph spirograph_;
+  ofVec3f previous_brush_position_{0, 0, 0};
+  std::function<void(const Layer&)> draw_;
+
+  Layer() {
+    draw_ = [](const Layer&) { std::cout << "Not implemented\n"; };
+  }
+
+  void draw() const { draw_(*this); }
+};
+
 class ofApp : public ofBaseApp {
  public:
   void setup();
@@ -23,21 +35,5 @@ class ofApp : public ofBaseApp {
   void gotMessage(ofMessage msg);
 
  private:
-  soo::Spirograph spirograph_;
-  ofVec3f previous_brush_position_;
-
-  // GUI
-  bool hide_gui_;
-  ofxPanel gui_;
-
-  ofxIntSlider frame_rate_;
-
-  ofxFloatSlider radius_1_;
-  ofxFloatSlider radius_2_;
-
-  ofxFloatSlider angle_0_;
-  ofxFloatSlider angle_1_;
-
-  ofxFloatSlider stroke_width_;
-  ofxColorSlider color_;
+  std::vector<Layer> layers_;
 };
