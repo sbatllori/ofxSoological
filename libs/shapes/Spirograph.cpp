@@ -16,8 +16,16 @@ SpirographNode::SpirographNode(const ofVec3f& position, const float rotate_deg,
 
 bool SpirographNode::IsCicleStart() const {
   const float angle = node_.getOrientationEulerDeg().z;
-  const float epsilon = 0.001f;
-  return abs(angle) < epsilon;
+  return 2.f * rotate_deg_ < angle && angle < 4.f * rotate_deg_;
+}
+
+bool Spirograph::IsCicleStart() const {
+  bool is_cicle_start = true;
+  std::for_each(nodes_.begin(), --nodes_.end(),
+                [&is_cicle_start](const auto& node) {
+                  is_cicle_start = is_cicle_start && node->IsCicleStart();
+                });
+  return is_cicle_start;
 }
 
 void Spirograph::AddNode(const ofVec3f& position, const float rotate_deg,

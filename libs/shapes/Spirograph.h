@@ -28,8 +28,9 @@ class Spirograph {
   Spirograph() = default;
 
   auto& nodes_mutable() { return nodes_; }
+  const auto& nodes() const { return nodes_; }
   auto brush_position() const { return nodes_.back()->global_position(); }
-  bool IsClosed() const { return nodes_.front()->IsCicleStart(); }
+  bool IsCicleStart() const;
 
   void AddNode(const ofVec3f& position, const float rotate_deg,
                const bool is_child = false);
