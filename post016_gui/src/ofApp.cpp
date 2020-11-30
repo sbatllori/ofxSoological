@@ -4,18 +4,17 @@
 //--------------------------------------------------------------
 void ofApp::setup() {
   gui_.setup();
-  gui_.add(frame_rate_.setup("fps", 60, 0, 2000));
+  gui_.add(frame_rate_.setup("fps", 2000, 0, 2000));
   gui_.add(radius_1_.setup("radius 1", 200, 0, 500));
   gui_.add(radius_2_.setup("radius 2", 200, 0, 500));
-  gui_.add(angle_0_.setup("angle 0", 1.01f, 0, 2));
-  gui_.add(angle_1_.setup("angle 1", 1, 0, 5));
+  gui_.add(angle_0_.setup("angle 0", 1, 1, 360));
+  gui_.add(angle_1_.setup("angle 1", 252.3, 1, 360));
   gui_.add(width_.setup("width", 2, 1, 8));
-  gui_.add(transparency_.setup("transparency", 255, 0, 255));
+  gui_.add(transparency_.setup("transparency", 10, 0, 255));
 
   ofSetBackgroundAuto(false);
   ofBackground(255);
 
-  spirograph_.nodes_mutable().clear();
   spirograph_.AddNode({0, 0, 0}, angle_0_);
   spirograph_.AddNode({radius_1_, 0, 0}, angle_1_, true);
   spirograph_.AddNode({radius_2_, 0, 0}, 0, true);
@@ -60,33 +59,3 @@ void ofApp::keyPressed(int key) {
     soo::SaveFrame();
   }
 }
-
-//--------------------------------------------------------------
-void ofApp::keyReleased(int key) {}
-
-//--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y) {}
-
-//--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button) {}
-
-//--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button) {}
-
-//--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button) {}
-
-//--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y) {}
-
-//--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y) {}
-
-//--------------------------------------------------------------
-void ofApp::windowResized(int w, int h) {}
-
-//--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg) {}
-
-//--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo) {}

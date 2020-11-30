@@ -18,7 +18,7 @@ SpirographNode::SpirographNode(const ofVec3f& position, const float rotate_deg,
 
 bool SpirographNode::IsCicleStart() const {
   const float epsilon = 0.001f;
-  const float distance = origin_.distanceSquared(node_.getGlobalPosition());
+  const float distance = origin_.squareDistance(node_.getGlobalPosition());
   return distance < epsilon;
 }
 
