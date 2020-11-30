@@ -11,6 +11,7 @@ This is a personal project to learn how to code art with [openFrameworks (OF)](h
 
 | Post | Preview | Title | Category | Keywords|
 |:----:|:-------:|:-----:|:--------:|:-------:|
+|16|<img src="post016/doc/016_output.png" width="80px">|[Mandala out of Spirographs](post016/README.md)<br>|2D geometric shapes|`2D` `ofNode` `noise` `polymorphic function`
 |15|<img src="post010/doc/output_dark.png" width="80px">|[GPU Dancing Dots](post010/README.md)<br>(same as 10)|Fragment shader art|`shaders` `fragment shader` `2D texture` `uniform circular motion`
 |14|<img src="post014/doc/3.png" width="80px">|[Dandelion Generator](post014/README.md)|2D geometric shapes|`2D` `grid` `circle` `ellipse` `rectangle` `line` `arrow` `noise`
 |13|<img src="post013/doc/output.png" width="80px">|[Background & Font Animation](post013/README.md)|Basic color changes|`2D` `ofFont` `ofColor` `rotation` `animated background`
