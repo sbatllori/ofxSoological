@@ -19,7 +19,9 @@ void ofApp::setup() {
 }
 
 //--------------------------------------------------------------
-void ofApp::update() {}
+void ofApp::update() {
+  // soo::SaveFrame(ofGetFrameNum());
+}
 
 //--------------------------------------------------------------
 void ofApp::draw() {

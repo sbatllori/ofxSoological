@@ -54,11 +54,13 @@ There are different categories of libraries:
     <td><img src="../doc/Dandelion.png" width="150px"></td>
     <td><img src="../doc/DeformedLayeredCircle.png" width="150px"></td>
     <td><img src="../doc/Triangle.png" width="150px"></td>
+    <td><img src="../doc/Spirograph.png" width="150px"></td>
   </tr>
     <tr>
     <td>Dandelion</td>
     <td>DeformedLayeredCircle</td>
     <td>Triangle</td>
+    <td>Spirograph</td>
   </tr>
 </table>
 

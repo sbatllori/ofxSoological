@@ -1,5 +1,5 @@
 #include "ofApp.h"
-
+#include "soo_export.h"
 namespace {
 std::vector<float> GenerateExternalRadii(const float min_external_radius,
                                          const float max_external_radius,
@@ -113,6 +113,8 @@ void ofApp::setup() {
 
 //--------------------------------------------------------------
 void ofApp::update() {
+  //  soo::SaveFrame(ofGetFrameNum());
+
   // Define the fire rock with changing radii to generate the fire animation
   // - geometry
   std::vector<float> external_radii = GenerateExternalRadii(15, 18, 8);

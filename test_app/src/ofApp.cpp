@@ -330,20 +330,17 @@ void ofApp::draw_Intersection_Horizontal_ClosedPolyline(bool run) {
 
       for (int y{-20}; y < 250; y += 17) {
         ofSetLineWidth(1);
-        ofSetColor(0, 0, 255);
         ofDrawLine(-500, y, 500, y);
 
         const std::vector<ofVec2f>& intersection_points =
             soo::intersection::HorizontalAxis_ClosedPolyline(y, poly_line, 1.f);
 
-        ofSetColor(255, 0, 0);
         for (const auto& p : intersection_points) {
           ofDrawCircle(p, 5);
         }
       }
 
       ofSetLineWidth(2);
-      ofSetColor(0);
       poly_line.draw();
     }
     ofPopMatrix();
@@ -399,6 +396,37 @@ void ofApp::draw_Noise_Rectagle(bool run) {
                         .color(ofColor::black));
 
     screen_noise.draw();
+  }
+
+  soo_run(run, unit_test);
+}
+
+//--------------------------------------------------------------
+// Spirograph
+//--------------------------------------------------------------
+void ofApp::setup_Spirograph() {
+  spirograph.AddNode({0, 0, 0}, 1.5f);
+  spirograph.AddNode({100, 0, 0}, 7, true);
+  spirograph.AddNode({100, 0, 0}, 0, true);
+}
+
+void ofApp::draw_Spirograph(bool run) {
+  std::string unit_test = "draw_Spirograph";
+
+  if (run) {
+    ofPushMatrix();
+    {
+      ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);
+      ofVec3f previous{spirograph.brush_position()};
+      std::for_each(spirograph.nodes_mutable().begin(),
+                    --spirograph.nodes_mutable().end(),
+                    [](auto& node) { node->RotateZ(); });
+      ofVec3f current{spirograph.brush_position()};
+
+      ofColor(0);
+      ofDrawLine(previous, current);
+    }
+    ofPopMatrix();
   }
 
   soo_run(run, unit_test);

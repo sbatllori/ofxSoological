@@ -1,4 +1,5 @@
 #include "ofApp.h"
+#include "soo_export.h"
 #include "soo_motion.h"
 #include "soo_vectors.h"
 
@@ -16,7 +17,10 @@ void ofApp::setup() {
 }
 
 //--------------------------------------------------------------
-void ofApp::update() { render_kid_line_ ? update_kid_line() : update_lines(); }
+void ofApp::update() {
+  //  soo::SaveFrame(ofGetFrameNum());
+  render_kid_line_ ? update_kid_line() : update_lines();
+}
 
 //--------------------------------------------------------------
 void ofApp::draw() {

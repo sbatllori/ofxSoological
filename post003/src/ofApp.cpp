@@ -1,4 +1,5 @@
 #include "ofApp.h"
+#include "soo_export.h"
 
 namespace {
 ofColor GetRandomColor(const std::vector<ofColor>& colors) {
@@ -69,6 +70,8 @@ void ofApp::setup() {
 
 //--------------------------------------------------------------
 void ofApp::update() {
+  //  soo::SaveFrame(ofGetFrameNum());
+
   // Update the color of all the cells
   for (auto& cell : cells_) {
     if (ofGetFrameNum() % 3 == 0) {
