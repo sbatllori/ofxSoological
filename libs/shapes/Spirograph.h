@@ -16,6 +16,7 @@ class SpirographNode {
   bool IsCicleStart() const;
 
  private:
+  ofVec3f origin_;
   ofNode node_;
   float rotate_deg_;
 };

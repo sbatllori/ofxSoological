@@ -5,6 +5,7 @@ namespace soo {
 SpirographNode::SpirographNode(const ofVec3f& position, const float rotate_deg)
     : rotate_deg_(rotate_deg) {
   node_.setGlobalPosition(position);
+  origin_ = node_.getGlobalPosition();
 }
 
 SpirographNode::SpirographNode(const ofVec3f& position, const float rotate_deg,
@@ -12,21 +13,16 @@ SpirographNode::SpirographNode(const ofVec3f& position, const float rotate_deg,
     : rotate_deg_(rotate_deg) {
   node_.setParent(parent->node_);
   node_.setPosition(position);
+  origin_ = node_.getGlobalPosition();
 }
 
 bool SpirographNode::IsCicleStart() const {
-  const float angle = node_.getOrientationEulerDeg().z;
-  return 2.f * rotate_deg_ < angle && angle < 4.f * rotate_deg_;
+  const float epsilon = 0.001f;
+  const float distance = origin_.distanceSquared(node_.getGlobalPosition());
+  return distance < epsilon;
 }
 
-bool Spirograph::IsCicleStart() const {
-  bool is_cicle_start = true;
-  std::for_each(nodes_.begin(), --nodes_.end(),
-                [&is_cicle_start](const auto& node) {
-                  is_cicle_start = is_cicle_start && node->IsCicleStart();
-                });
-  return is_cicle_start;
-}
+bool Spirograph::IsCicleStart() const { return nodes_.back()->IsCicleStart(); }
 
 void Spirograph::AddNode(const ofVec3f& position, const float rotate_deg,
                          const bool is_child) {
