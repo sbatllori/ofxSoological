@@ -3,12 +3,36 @@
 
 //--------------------------------------------------------------
 void ofApp::setup() {
+  // Setup the canvas
   ofSetBackgroundAuto(false);
   ofSetFrameRate(3000);
-  ofBackground(255);
+  ofSetCircleResolution(72);
+  ofColor bg_color(245, 242, 235);
+  ofBackground(bg_color);
 
-  // The following layers define the spirographs that compose the mandala from
-  // the exterior to the interior.
+  // Define noise covering the whole screen
+  const ofRectangle screen = ofRectangle(0, 0, ofGetWidth(), ofGetHeight());
+
+  soo::GenerateNoiseParams noise_params;
+  noise_params.min_radius(.01f).max_radius(.5f).min_alpha(10).max_alpha(50);
+
+  screen_noise_.push_back(soo::noise::Rectangle(
+      screen,
+      noise_params.color(ofColor::black).amount(ofGetWidth() * ofGetHeight())));
+
+  screen_noise_.push_back(soo::noise::Rectangle(
+      screen,
+      noise_params.color(bg_color).amount(2 * ofGetWidth() * ofGetHeight())));
+
+  noise_params.min_radius(.1f).max_radius(5.f).min_alpha(10).max_alpha(150);
+  screen_noise_.push_back(soo::noise::Rectangle(
+      screen, noise_params.color(ofColor::black).amount(50)));
+
+  screen_noise_.push_back(
+      soo::noise::Rectangle(screen, noise_params.color(bg_color).amount(1000)));
+
+  // Define the spirograph layers to compose a mandala. The layers are defined
+  // bellow in the following order: from the external one to the internal one.
 
   // Triangles pointing out
   {
@@ -26,7 +50,7 @@ void ofApp::setup() {
     };
   }
 
-  // Outer spiral
+  // External dense spirograph
   {
     Layer layer;
     layer.spirograph_.AddNode({0, 0, 0}, 0.55f);
@@ -36,7 +60,7 @@ void ofApp::setup() {
 
     layers_.back().draw_ = [](const Layer& layer) {
       ofSetColor(0);
-      ofSetLineWidth(2);
+      ofSetLineWidth(1);
       ofDrawLine(layer.previous_brush_position_,
                  layer.spirograph_.brush_position());
     };
@@ -52,7 +76,7 @@ void ofApp::setup() {
 
     layers_.back().draw_ = [](const Layer& layer) {
       ofSetColor(0);
-      ofSetLineWidth(3);
+      ofSetLineWidth(4);
       ofDrawLine(layer.previous_brush_position_,
                  layer.spirograph_.brush_position());
     };
@@ -90,29 +114,65 @@ void ofApp::setup() {
     };
   }
 
-  // Circles
+  // Large circles
   {
     Layer layer;
     layer.spirograph_.AddNode({0, 0, 0}, 360.f / 5.f);
-    layer.spirograph_.AddNode({295, 0, 0}, 0, true);
+    layer.spirograph_.AddNode({305, 0, 0}, 0, true);
     layers_.push_back(layer);
 
     layers_.back().draw_ = [](const Layer& layer) {
       ofPushMatrix();
       ofRotateZDeg(18.f);
       {
+        ofSetColor(0);
         ofSetLineWidth(2);
 
-        ofSetColor(255);
-        ofFill();
-        ofDrawCircle(layer.spirograph_.brush_position(), 20.f);
-
-        ofSetColor(0);
         ofNoFill();
         ofDrawCircle(layer.spirograph_.brush_position(), 20.f);
 
         ofFill();
         ofDrawCircle(layer.spirograph_.brush_position(), 10.f);
+      }
+      ofPopMatrix();
+    };
+  }
+
+  // Middle circles
+  {
+    Layer layer;
+    layer.spirograph_.AddNode({0, 0, 0}, 360.f / 5.f);
+    layer.spirograph_.AddNode({272, 0, 0}, 0, true);
+    layers_.push_back(layer);
+
+    layers_.back().draw_ = [](const Layer& layer) {
+      ofPushMatrix();
+      ofRotateZDeg(18.f);
+      {
+        ofSetColor(0);
+        ofSetLineWidth(2);
+        ofNoFill();
+        ofDrawCircle(layer.spirograph_.brush_position(), 5.f);
+      }
+      ofPopMatrix();
+    };
+  }
+
+  // Small circles
+  {
+    Layer layer;
+    layer.spirograph_.AddNode({0, 0, 0}, 360.f / 5.f);
+    layer.spirograph_.AddNode({257, 0, 0}, 0, true);
+    layers_.push_back(layer);
+
+    layers_.back().draw_ = [](const Layer& layer) {
+      ofPushMatrix();
+      ofRotateZDeg(18.f);
+      {
+        ofSetColor(0);
+        ofSetLineWidth(2);
+        ofNoFill();
+        ofDrawCircle(layer.spirograph_.brush_position(), 3.f);
       }
       ofPopMatrix();
     };
@@ -255,21 +315,6 @@ void ofApp::setup() {
                  layer.spirograph_.brush_position());
     };
   }
-
-  // Small flower center
-  {
-    Layer layer;
-    layer.spirograph_.AddNode({0, 0, 0}, 1.f);
-    layer.spirograph_.AddNode({5, 0, 0}, 0, true);
-    layers_.push_back(layer);
-
-    layers_.back().draw_ = [](const Layer& layer) {
-      ofSetColor(0);
-      ofSetLineWidth(2);
-      ofDrawLine(layer.previous_brush_position_,
-                 layer.spirograph_.brush_position());
-    };
-  }
 }
 
 //--------------------------------------------------------------
@@ -296,11 +341,33 @@ void ofApp::draw() {
   ofPushMatrix();
   ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);
   {
+    ofSetColor(0);
+
+    // Outer circle
+    ofNoFill();
+    ofSetLineWidth(4);
+    ofDrawCircle({0, 0}, 450);
+
+    // Flower Center
+    ofNoFill();
+    ofSetLineWidth(2);
+    ofDrawCircle({0, 0}, 7);
+
+    ofFill();
+    ofDrawCircle({0, 0}, 4);
+
     for (const auto& layer : layers_) {
       layer.draw();
     }
   }
   ofPopMatrix();
+
+  if (layers_.empty() && !is_noise_drawn_) {
+    for (const auto& noise : screen_noise_) {
+      noise.draw();
+    }
+    is_noise_drawn_ = true;
+  }
 }
 
 //--------------------------------------------------------------

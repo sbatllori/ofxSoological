@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "ofxGui.h"
 #include "shapes/Spirograph.h"
+#include "soo_noise.h"
 
 struct Layer {
   soo::Spirograph spirograph_;
@@ -36,4 +37,7 @@ class ofApp : public ofBaseApp {
 
  private:
   std::vector<Layer> layers_;
+
+  bool is_noise_drawn_ = false;
+  std::vector<soo::Noise> screen_noise_;
 };
