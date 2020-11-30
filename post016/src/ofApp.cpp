@@ -5,9 +5,9 @@
 void ofApp::setup() {
   // Setup the canvas
   ofSetBackgroundAuto(false);
-  ofSetFrameRate(600);
+  ofSetFrameRate(1200);
   ofSetCircleResolution(72);
-  ofColor bg_color(245, 242, 235);
+  const ofColor bg_color(245, 242, 235);
   ofBackground(bg_color);
 
   // Define noise covering the whole screen
@@ -32,9 +32,9 @@ void ofApp::setup() {
       soo::noise::Rectangle(screen, noise_params.color(bg_color).amount(1000)));
 
   // Define the spirograph layers to compose a mandala. The layers are defined
-  // bellow in the following order: from the external one to the internal one.
+  // bellow in the following order: from the outer one to the inner one.
 
-  // Triangles pointing out
+  // Outer triangles pointing out
   {
     Layer layer;
     layer.spirograph_.AddNode({0, 0, 0}, 1.f);
@@ -50,7 +50,7 @@ void ofApp::setup() {
     };
   }
 
-  // External circle
+  // Circle between the outer triangles and the larger dense spirograph
   {
     Layer layer;
     layer.spirograph_.AddNode({0, 0, 0}, 1.f);
@@ -65,7 +65,7 @@ void ofApp::setup() {
     };
   }
 
-  // External dense spirograph
+  // Larger dense spirograph
   {
     Layer layer;
     layer.spirograph_.AddNode({0, 0, 0}, 0.55f);
@@ -81,7 +81,7 @@ void ofApp::setup() {
     };
   }
 
-  // External large flower layer
+  // Outer layer of the large flower
   {
     Layer layer;
     layer.spirograph_.AddNode({0, 0, 0}, 1.2f);
@@ -97,7 +97,7 @@ void ofApp::setup() {
     };
   }
 
-  // Middle large flower layer
+  // Middle layer of the large flower
   {
     Layer layer;
     layer.spirograph_.AddNode({0, 0, 0}, 1.2f);
@@ -113,7 +113,7 @@ void ofApp::setup() {
     };
   }
 
-  // Internal large flower layer
+  // Inner layer of the large flower
   {
     Layer layer;
     layer.spirograph_.AddNode({0, 0, 0}, 1.2f);
@@ -153,7 +153,7 @@ void ofApp::setup() {
     };
   }
 
-  // Middle circles
+  // Medium circles
   {
     Layer layer;
     layer.spirograph_.AddNode({0, 0, 0}, 360.f / 5.f);
@@ -193,7 +193,7 @@ void ofApp::setup() {
     };
   }
 
-  // External layer of the center flower
+  // Outer layer of the medium flower
   {
     Layer layer;
     layer.spirograph_.AddNode({0, 0, 0}, 1.f);
@@ -209,7 +209,7 @@ void ofApp::setup() {
     };
   }
 
-  // Middle layer of the center flower
+  // Middle layer of the medium flower
   {
     Layer layer;
     layer.spirograph_.AddNode({0, 0, 0}, 1.2f);
@@ -225,7 +225,7 @@ void ofApp::setup() {
     };
   }
 
-  // Interal layer of the center flower 4
+  // Inner layer of the medium flower, level 4
   {
     Layer layer;
     layer.spirograph_.AddNode({0, 0, 0}, 1.f);
@@ -241,7 +241,7 @@ void ofApp::setup() {
     };
   }
 
-  // Interal layer of the center flower 3
+  // Inner layer of the medium flower, level 3
   {
     Layer layer;
     layer.spirograph_.AddNode({0, 0, 0}, 1.f);
@@ -262,7 +262,7 @@ void ofApp::setup() {
     };
   }
 
-  // Interal layer of the center flower 2
+  // Inner layer of the medium flower, level 2
   {
     Layer layer;
     layer.spirograph_.AddNode({0, 0, 0}, 1.f);
@@ -278,7 +278,7 @@ void ofApp::setup() {
     };
   }
 
-  // Interal layer of the center flower 1
+  // Inner layer of the medium flower, level 1
   {
     Layer layer;
     layer.spirograph_.AddNode({0, 0, 0}, 1.f);
@@ -299,7 +299,7 @@ void ofApp::setup() {
     };
   }
 
-  // Internal dense spirograph
+  // Smaller dense spirograph
   {
     Layer layer;
     layer.spirograph_.AddNode({0, 0, 0}, 1.1f);
@@ -315,7 +315,7 @@ void ofApp::setup() {
     };
   }
 
-  // Small flower
+  // Small flower in the center of the mandala
   {
     Layer layer;
     layer.spirograph_.AddNode({0, 0, 0}, 1.f);
@@ -331,7 +331,7 @@ void ofApp::setup() {
     };
   }
 
-  // Center of the small flower
+  // Center of the small flower in the center of the mandala
   {
     Layer layer;
     layer.spirograph_.AddNode({0, 0, 0}, 300.f);
@@ -353,6 +353,8 @@ void ofApp::setup() {
 
 //--------------------------------------------------------------
 void ofApp::update() {
+  //  soo::SaveFrame(ofGetFrameNum());
+
   // Process the layers in order, from the inner to the outer one
   // - If the current layer is already closed, remove it from the list
   // - Then, rotate the spirograph nodes accordingly
@@ -368,23 +370,21 @@ void ofApp::update() {
   if (!layers_.empty()) {
     auto& layer = layers_.back();
     layer.previous_brush_position_ = layer.spirograph_.brush_position();
-    layer.spirograph_.nodes_mutable()[0]->RotateZ();
-    layer.spirograph_.nodes_mutable()[1]->RotateZ();
-  }
 
-  soo::SaveFrame(ofGetFrameNum());
+    auto& nodes = layer.spirograph_.nodes_mutable();
+    std::for_each(nodes.begin(), --nodes.end(),
+                  [](auto& node) { node->RotateZ(); });
+  }
 }
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-  ofPushMatrix();
-  ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);
-  {
-    if (!layers_.empty()) {
-      layers_.back().draw();
-    }
+  if (!layers_.empty()) {
+    ofPushMatrix();
+    ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);
+    layers_.back().draw();
+    ofPopMatrix();
   }
-  ofPopMatrix();
 
   if (layers_.empty() && !is_noise_drawn_) {
     for (const auto& noise : screen_noise_) {
@@ -400,33 +400,3 @@ void ofApp::keyPressed(int key) {
     soo::SaveFrame();
   }
 }
-
-//--------------------------------------------------------------
-void ofApp::keyReleased(int key) {}
-
-//--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y) {}
-
-//--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button) {}
-
-//--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button) {}
-
-//--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button) {}
-
-//--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y) {}
-
-//--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y) {}
-
-//--------------------------------------------------------------
-void ofApp::windowResized(int w, int h) {}
-
-//--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg) {}
-
-//--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo) {}

@@ -17,9 +17,7 @@ Project{
             'src/ofApp.h',
         ]
 
-        of.addons: [
-            'ofxGui',
-        ]
+        of.addons: []
 
         // additional flags for the project. the of module sets some
         // flags by default to add the core libraries, search paths...
