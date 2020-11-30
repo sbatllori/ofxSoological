@@ -36,6 +36,7 @@ class ofApp : public ofBaseApp {
   void gotMessage(ofMessage msg);
 
  private:
+  bool init_cicle_ = true;
   std::vector<Layer> layers_;
 
   bool is_noise_drawn_ = false;

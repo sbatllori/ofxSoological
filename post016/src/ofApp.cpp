@@ -5,7 +5,7 @@
 void ofApp::setup() {
   // Setup the canvas
   ofSetBackgroundAuto(false);
-  ofSetFrameRate(3000);
+  ofSetFrameRate(600);
   ofSetCircleResolution(72);
   ofColor bg_color(245, 242, 235);
   ofBackground(bg_color);
@@ -45,6 +45,21 @@ void ofApp::setup() {
     layers_.back().draw_ = [](const Layer& layer) {
       ofSetColor(0);
       ofSetLineWidth(2);
+      ofDrawLine(layer.previous_brush_position_,
+                 layer.spirograph_.brush_position());
+    };
+  }
+
+  // External circle
+  {
+    Layer layer;
+    layer.spirograph_.AddNode({0, 0, 0}, 1.f);
+    layer.spirograph_.AddNode({450, 0, 0}, 0, true);
+    layers_.push_back(layer);
+
+    layers_.back().draw_ = [](const Layer& layer) {
+      ofSetColor(0);
+      ofSetLineWidth(4);
       ofDrawLine(layer.previous_brush_position_,
                  layer.spirograph_.brush_position());
     };
@@ -315,25 +330,49 @@ void ofApp::setup() {
                  layer.spirograph_.brush_position());
     };
   }
+
+  // Center of the small flower
+  {
+    Layer layer;
+    layer.spirograph_.AddNode({0, 0, 0}, 300.f);
+    layer.spirograph_.AddNode({2, 0, 0}, 0, true);
+    layers_.push_back(layer);
+
+    layers_.back().draw_ = [](const Layer& layer) {
+      ofSetColor(0);
+      ofSetLineWidth(2);
+
+      ofNoFill();
+      ofDrawCircle({0, 0}, 7);
+
+      ofFill();
+      ofDrawCircle({0, 0}, 4);
+    };
+  }
 }
 
 //--------------------------------------------------------------
 void ofApp::update() {
-  if (ofGetFrameNum() > 10) {
-    //  Remove the closed spirographs
-    layers_.erase(std::remove_if(layers_.begin(), layers_.end(),
-                                 [](const Layer& layer) {
-                                   return layer.spirograph_.IsCicleStart();
-                                 }),
-                  layers_.end());
+  // Process the layers in order, from the inner to the outer one
+  // - If the current layer is already closed, remove it from the list
+  // - Then, rotate the spirograph nodes accordingly
+  if (!layers_.empty()) {
+    if (layers_.back().spirograph_.IsCicleStart() && !init_cicle_) {
+      layers_.pop_back();
+      init_cicle_ = true;
+    } else {
+      init_cicle_ = false;
+    }
   }
 
-  // Rotate the spirograph brushes
-  for (auto& layer : layers_) {
+  if (!layers_.empty()) {
+    auto& layer = layers_.back();
     layer.previous_brush_position_ = layer.spirograph_.brush_position();
     layer.spirograph_.nodes_mutable()[0]->RotateZ();
     layer.spirograph_.nodes_mutable()[1]->RotateZ();
   }
+
+  soo::SaveFrame(ofGetFrameNum());
 }
 
 //--------------------------------------------------------------
@@ -341,23 +380,8 @@ void ofApp::draw() {
   ofPushMatrix();
   ofTranslate(ofGetWidth() / 2, ofGetHeight() / 2);
   {
-    ofSetColor(0);
-
-    // Outer circle
-    ofNoFill();
-    ofSetLineWidth(4);
-    ofDrawCircle({0, 0}, 450);
-
-    // Flower Center
-    ofNoFill();
-    ofSetLineWidth(2);
-    ofDrawCircle({0, 0}, 7);
-
-    ofFill();
-    ofDrawCircle({0, 0}, 4);
-
-    for (const auto& layer : layers_) {
-      layer.draw();
+    if (!layers_.empty()) {
+      layers_.back().draw();
     }
   }
   ofPopMatrix();
@@ -374,9 +398,6 @@ void ofApp::draw() {
 void ofApp::keyPressed(int key) {
   if (key == 's') {
     soo::SaveFrame();
-  }
-  if (key == 'r') {
-    layers_.clear();
   }
 }
 
