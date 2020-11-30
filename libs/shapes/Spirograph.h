@@ -12,9 +12,6 @@ class SpirographNode {
                  SpirographNode* parent);
 
   auto global_position() const { return node_.getGlobalPosition(); }
-  void set_position(const ofVec3f& position) { node_.setPosition(position); }
-  void set_rotate_deg(const float rotate_deg) { rotate_deg_ = rotate_deg; }
-
   void RotateZ() { node_.rotateDeg(rotate_deg_, {0, 0, 1}); }
   bool IsCicleStart() const;
 
@@ -28,7 +25,6 @@ class Spirograph {
   Spirograph() = default;
 
   auto& nodes_mutable() { return nodes_; }
-  const auto& nodes() const { return nodes_; }
   auto brush_position() const { return nodes_.back()->global_position(); }
   bool IsCicleStart() const;
 
