@@ -12,7 +12,7 @@ class ofApp : public ofBaseApp {
  private:
   const int kWidth_ = 960;
   const int kHeight_ = 540;
-  ofVideoGrabber camera_;
+  ofVideoGrabber video_grabber_;
 
   ofShader shader_;
 };
