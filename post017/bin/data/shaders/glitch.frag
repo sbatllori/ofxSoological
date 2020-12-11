@@ -12,10 +12,10 @@ void main()
     vec2 uv = vposition.xy;
     vec3 webcam_color = texture(webcam, uv).rgb;
 
-    vec3 value = webcam_color;
-    value = value * ceil(100 + 0.05 * uv.y);
-    value = sin(0.5 * value);
+    vec3 glitch = webcam_color;
+    glitch = glitch * ceil(100 + 0.05 * uv.y);
+    glitch = sin(0.5 * glitch);
 
-    vec3 color = smoothstep(0.0, 0.5, value);
+    vec3 color = smoothstep(0.0, 0.5, glitch);
     fcolor = vec4(color, 1.0);
 }

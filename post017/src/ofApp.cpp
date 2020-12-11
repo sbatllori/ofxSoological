@@ -55,9 +55,18 @@ void ofApp::setup() {
           closest1.distance({x, y}) <= 20 || closest7.distance({x, y}) <= 20;
 
       if (inside || close_enough) {
+        // Define the stroke of the hole
         std::vector<float> radii =
-            GenerateRadii(20, 30, static_cast<unsigned long>(ofRandom(7, 10)));
-        holes_.emplace_back(ofVec2f{x, y}, 1, 0, radii);
+            GenerateRadii(25, 35, static_cast<unsigned long>(ofRandom(7, 10)));
+        strokes_.emplace_back(ofVec2f{x, y}, 1, 0, radii);
+
+        // Define the holes while decreasing the stroke radii
+        std::vector<float> decreased_radii;
+
+        std::transform(radii.begin(), radii.end(),
+                       std::back_inserter(decreased_radii),
+                       [](const float radius) { return radius - 3; });
+        holes_.emplace_back(ofVec2f{x, y}, 1, 0, decreased_radii);
       }
     }
   }
@@ -67,15 +76,16 @@ void ofApp::setup() {
   video_grabber_.setup(kWidth_, kHeight_);
 
   // Load the shaders
-  shader_glitch_.load("shaders/shader_glitch");
-  shader_holes_.load("shaders/shader_holes");
+  shader_glitch_.load("shaders/glitch");
+  shader_stroke_.load("shaders/stroke");
+  shader_holes_.load("shaders/holes");
 }
 
 //--------------------------------------------------------------
 void ofApp::update() {
   video_grabber_.update();
 
-  //  if (ofGetFrameNum() > 5) soo::SaveFrame(ofGetFrameNum() - 5);
+  //  if (ofGetFrameNum() >= 10) soo::SaveFrame(ofGetFrameNum() - 10);
 }
 
 //--------------------------------------------------------------
@@ -85,9 +95,23 @@ void ofApp::draw() {
     shader_glitch_.setUniformTexture("webcam", video_grabber_.getTexture(), 0);
     shader_glitch_.setUniform2i("resolution", kWidth_, kHeight_);
     shader_glitch_.setUniform1f("time", ofGetElapsedTimef());
+
     video_grabber_.draw(0, 0);
   }
   shader_glitch_.end();
+
+  shader_stroke_.begin();
+  {
+    shader_stroke_.setUniformTexture("webcam", video_grabber_.getTexture(), 0);
+
+    for (auto& hole : strokes_) {
+      for (auto& layer : hole.layers_mutable()) {
+        layer.setFilled(true);
+        layer.draw();
+      }
+    }
+  }
+  shader_stroke_.end();
 
   shader_holes_.begin();
   {
@@ -95,19 +119,12 @@ void ofApp::draw() {
 
     for (auto& hole : holes_) {
       for (auto& layer : hole.layers_mutable()) {
-        layer.setFilled(true);  // Set the hole layer(s) to be filled
+        layer.setFilled(true);
         layer.draw();
       }
     }
   }
   shader_holes_.end();
-
-  //  shape_1_.setStrokeColor(ofColor::red);
-  //  shape_1_.setStrokeWidth(2);
-  //  shape_7_.setStrokeColor(ofColor::red);
-  //  shape_7_.setStrokeWidth(2);
-  //  shape_1_.draw();
-  //  shape_7_.draw();
 }
 
 //--------------------------------------------------------------

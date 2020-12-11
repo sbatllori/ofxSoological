@@ -17,8 +17,10 @@ class ofApp : public ofBaseApp {
 
   ofPath shape_1_;
   ofPath shape_7_;
+  std::vector<soo::DeformedLayeredCircle> strokes_;
   std::vector<soo::DeformedLayeredCircle> holes_;
 
   ofShader shader_glitch_;
+  ofShader shader_stroke_;
   ofShader shader_holes_;
 };
