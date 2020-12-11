@@ -30,43 +30,37 @@ void ofApp::setup() {
 
   // Load the text
   ofTrueTypeFont font;
-  font.load("FreeSans.ttf", 400, true, true, true);
+  font.load("Lato-Bold.ttf", 470, true, true, true);
   shape_1_ = font.getCharacterAsPoints('1', true, false);
   shape_7_ = font.getCharacterAsPoints('7', true, false);
 
   // Translate the shapes to define a 17 centered on the canvas
-  CenterPath(shape_1_, -150, 0);
-  CenterPath(shape_7_, +150, 0);
+  CenterPath(shape_1_, -200, 0);
+  CenterPath(shape_7_, +200, 0);
 
-  // Define the holes inside the 17
-  const auto num_holes = 50l;
-  holes_.reserve(num_holes);
+  // Define the holes
+  // They are uniformly distributed inside the 17, so that they do not intersect
+  const auto& outline1 = shape_1_.getOutline()[0].getResampledBySpacing(1);
+  const auto& outline7 = shape_7_.getOutline()[0].getResampledBySpacing(1);
+  const auto& bbox1 = outline1.getBoundingBox();
+  const auto& bbox7 = outline7.getBoundingBox();
 
-  std::generate_n(std::back_inserter(holes_), num_holes, [this]() {
-    // Define the center of the holes to be either inside the 1 or inside the 7
-    float x, y;
-    const auto& outline1 = shape_1_.getOutline()[0];
-    const auto& outline7 = shape_7_.getOutline()[0];
-    const auto& bbox1 = outline1.getBoundingBox();
-    const auto& bbox7 = outline7.getBoundingBox();
-    do {
-      x = ofRandom(bbox1.x, bbox7.x + bbox7.width);
-      y = ofRandom(bbox1.y, bbox7.y + bbox7.height);
-    } while (!outline1.inside(x, y) && !outline7.inside(x, y));
+  for (float x = bbox1.x; x < bbox7.x + bbox7.width; x += ofRandom(50, 60)) {
+    for (float y = bbox1.y; y < bbox7.y + bbox7.height; y += ofRandom(50, 60)) {
+      const bool inside = outline1.inside(x, y) || outline7.inside(x, y);
 
-    // Define the radii of the holes
-    std::vector<float> radii =
-        GenerateRadii(30, 40, static_cast<unsigned long>(ofRandom(7, 10)));
+      const ofVec2f closest1 = outline1.getClosestPoint({x, y, 0});
+      const ofVec2f closest7 = outline7.getClosestPoint({x, y, 0});
+      const bool close_enough =
+          closest1.distance({x, y}) <= 20 || closest7.distance({x, y}) <= 20;
 
-    soo::DeformedLayeredCircle hole({x, y}, 1, 0, radii);
-
-    // Set the holes to be filled
-    for (auto& layer : hole.layers_mutable()) {
-      layer.setFilled(true);
+      if (inside || close_enough) {
+        std::vector<float> radii =
+            GenerateRadii(20, 30, static_cast<unsigned long>(ofRandom(7, 10)));
+        holes_.emplace_back(ofVec2f{x, y}, 1, 0, radii);
+      }
     }
-
-    return hole;
-  });
+  }
 
   // Setup the video grabber
   video_grabber_.setDeviceID(1);
@@ -98,15 +92,22 @@ void ofApp::draw() {
   shader_holes_.begin();
   {
     shader_holes_.setUniformTexture("webcam", video_grabber_.getTexture(), 0);
-    //    shape_1_.draw();
-    //    shape_7_.draw();
-    for (const auto& hole : holes_) {
-      for (const auto& layer : hole.layers()) {
+
+    for (auto& hole : holes_) {
+      for (auto& layer : hole.layers_mutable()) {
+        layer.setFilled(true);  // Set the hole layer(s) to be filled
         layer.draw();
       }
     }
   }
   shader_holes_.end();
+
+  //  shape_1_.setStrokeColor(ofColor::red);
+  //  shape_1_.setStrokeWidth(2);
+  //  shape_7_.setStrokeColor(ofColor::red);
+  //  shape_7_.setStrokeWidth(2);
+  //  shape_1_.draw();
+  //  shape_7_.draw();
 }
 
 //--------------------------------------------------------------
