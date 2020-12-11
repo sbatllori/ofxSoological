@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+#include "shapes/DeformedLayeredCircle.h"
 
 class ofApp : public ofBaseApp {
  public:
@@ -14,5 +15,10 @@ class ofApp : public ofBaseApp {
   const int kHeight_ = 540;
   ofVideoGrabber video_grabber_;
 
-  ofShader shader_;
+  ofPath shape_1_;
+  ofPath shape_7_;
+  std::vector<soo::DeformedLayeredCircle> holes_;
+
+  ofShader shader_glitch_;
+  ofShader shader_holes_;
 };
