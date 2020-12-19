@@ -82,7 +82,7 @@ void ofApp::setup() {
         const ofVec2f center{x, y};
         constexpr int num_layers{1};
         constexpr float layers_spacing{0};
-        unsigned long resolution = static_cast<unsigned long>(ofRandom(7, 10));
+        const auto resolution = static_cast<unsigned long>(ofRandom(7, 10));
 
         // Define the radii of the stroke
         std::vector<float> stroke_radii;
