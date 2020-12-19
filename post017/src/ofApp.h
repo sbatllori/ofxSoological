@@ -20,7 +20,7 @@ class ofApp : public ofBaseApp {
   std::vector<soo::DeformedLayeredCircle> strokes_;
   std::vector<soo::DeformedLayeredCircle> holes_;
 
-  ofShader shader_glitch_;
-  ofShader shader_stroke_;
-  ofShader shader_holes_;
+  ofShader glitch_shader_;
+  ofShader stroke_shader_;
+  ofShader hole_shader_;
 };

@@ -10,25 +10,24 @@ void CenterPath(ofPath& path, const float x_offset, const float y_offset) {
   path.translate({x + x_offset, y + y_offset});
 }
 
-std::vector<float> GenerateRadii(const float min_radius, const float max_radius,
-                                 const unsigned long resolution) {
-  std::vector<float> radii;
-  radii.reserve(resolution);
-
-  std::generate_n(
-      std::back_inserter(radii), resolution,
-      [min_radius, max_radius]() { return ofRandom(min_radius, max_radius); });
-
-  return radii;
-}
 }  // namespace
 
 //--------------------------------------------------------------
 void ofApp::setup() {
-  ofSetFrameRate(30);
+  // Setup canvas
   ofSetWindowShape(kWidth_, kHeight_);
+  ofSetFrameRate(30);
 
-  // Load the text
+  // Setup the video grabber
+  video_grabber_.setDeviceID(1);
+  video_grabber_.setup(kWidth_, kHeight_);
+
+  // Load the shaders
+  glitch_shader_.load("shaders/glitch");
+  stroke_shader_.load("shaders/stroke");
+  hole_shader_.load("shaders/holes");
+
+  // Load the text, i.e. the 1 and the 7 to define a 17
   ofTrueTypeFont font;
   font.load("Lato-Bold.ttf", 470, true, true, true);
   shape_1_ = font.getCharacterAsPoints('1', true, false);
@@ -38,47 +37,75 @@ void ofApp::setup() {
   CenterPath(shape_1_, -200, 0);
   CenterPath(shape_7_, +200, 0);
 
-  // Define the holes
-  // They are uniformly distributed inside the 17, so that they do not intersect
+  // Define the holes:
+  // - They are uniformly distributed inside the rectangle defined by the 1's
+  // bounding box top-left corner, and the 7's bounding box bottom-right corner
+  // - They do not intersect, and the horizontal and vertical distance between
+  // them slighly varies randomly
+  // - They are placed inside the outline of either the 1 or the 7, or close
+  // enough to them
+  // - They are defined through a deformed circle representing the hole stroke,
+  // and a similar smaller deformed circle representing the hole itself
   const auto& outline1 = shape_1_.getOutline()[0].getResampledBySpacing(1);
   const auto& outline7 = shape_7_.getOutline()[0].getResampledBySpacing(1);
+
   const auto& bbox1 = outline1.getBoundingBox();
   const auto& bbox7 = outline7.getBoundingBox();
 
-  for (float x = bbox1.x; x < bbox7.x + bbox7.width; x += ofRandom(50, 60)) {
-    for (float y = bbox1.y; y < bbox7.y + bbox7.height; y += ofRandom(50, 60)) {
-      const bool inside = outline1.inside(x, y) || outline7.inside(x, y);
+  const ofVec2f top_left{bbox1.x, bbox1.y};
+  const ofVec2f bottom_right{bbox7.x + bbox7.width, bbox7.y + bbox7.height};
+
+  constexpr int min_dist_between_holes{50};
+  constexpr int max_dist_between_holes{60};
+  constexpr int max_dist_to_outline{20};
+
+  constexpr float stroke_min_radius{25};
+  constexpr float stroke_max_radius{35};
+  constexpr float stroke_width{3};
+
+  for (float x{top_left.x}; x < bottom_right.x;
+       x += ofRandom(min_dist_between_holes, max_dist_between_holes)) {
+    for (float y{top_left.y}; y < bottom_right.y;
+         y += ofRandom(min_dist_between_holes, max_dist_between_holes)) {
+      // Check if the point (x, y) is inside the 17 or close enough to it
+      const bool inside_outline =
+          outline1.inside(x, y) || outline7.inside(x, y);
 
       const ofVec2f closest1 = outline1.getClosestPoint({x, y, 0});
       const ofVec2f closest7 = outline7.getClosestPoint({x, y, 0});
-      const bool close_enough =
-          closest1.distance({x, y}) <= 20 || closest7.distance({x, y}) <= 20;
+      const bool close_enough_to_outline =
+          closest1.distance({x, y}) <= max_dist_to_outline ||
+          closest7.distance({x, y}) <= max_dist_to_outline;
 
-      if (inside || close_enough) {
-        // Define the stroke of the hole
-        std::vector<float> radii =
-            GenerateRadii(25, 35, static_cast<unsigned long>(ofRandom(7, 10)));
-        strokes_.emplace_back(ofVec2f{x, y}, 1, 0, radii);
+      if (inside_outline || close_enough_to_outline) {
+        // Define the hole parameters
+        const ofVec2f center{x, y};
+        constexpr int num_layers{1};
+        constexpr float layers_spacing{0};
+        unsigned long resolution = static_cast<unsigned long>(ofRandom(7, 10));
 
-        // Define the holes while decreasing the stroke radii
-        std::vector<float> decreased_radii;
+        // Define the radii of the stroke
+        std::vector<float> stroke_radii;
+        stroke_radii.reserve(resolution);
+        std::generate_n(std::back_inserter(stroke_radii), resolution,
+                        [stroke_min_radius, stroke_max_radius]() {
+                          return ofRandom(stroke_min_radius, stroke_max_radius);
+                        });
 
-        std::transform(radii.begin(), radii.end(),
-                       std::back_inserter(decreased_radii),
-                       [](const float radius) { return radius - 3; });
-        holes_.emplace_back(ofVec2f{x, y}, 1, 0, decreased_radii);
+        // Define the radii of the hole
+        std::vector<float> hole_radii;
+        hole_radii.reserve(resolution);
+        std::transform(stroke_radii.begin(), stroke_radii.end(),
+                       std::back_inserter(hole_radii), [](const float radius) {
+                         return radius - stroke_width;
+                       });
+
+        // Add the stroke and the hole to the lists
+        strokes_.emplace_back(center, num_layers, layers_spacing, stroke_radii);
+        holes_.emplace_back(center, num_layers, layers_spacing, hole_radii);
       }
     }
   }
-
-  // Setup the video grabber
-  video_grabber_.setDeviceID(1);
-  video_grabber_.setup(kWidth_, kHeight_);
-
-  // Load the shaders
-  shader_glitch_.load("shaders/glitch");
-  shader_stroke_.load("shaders/stroke");
-  shader_holes_.load("shaders/holes");
 }
 
 //--------------------------------------------------------------
@@ -90,41 +117,33 @@ void ofApp::update() {
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-  shader_glitch_.begin();
-  {
-    shader_glitch_.setUniformTexture("webcam", video_grabber_.getTexture(), 0);
-    shader_glitch_.setUniform2i("resolution", kWidth_, kHeight_);
-    shader_glitch_.setUniform1f("time", ofGetElapsedTimef());
+  // Apply the glitch shader to the video grabber
+  glitch_shader_.begin();
+  glitch_shader_.setUniformTexture("webcam", video_grabber_.getTexture(), 0);
+  video_grabber_.draw(0, 0);
+  glitch_shader_.end();
 
-    video_grabber_.draw(0, 0);
-  }
-  shader_glitch_.end();
-
-  shader_stroke_.begin();
-  {
-    shader_stroke_.setUniformTexture("webcam", video_grabber_.getTexture(), 0);
-
-    for (auto& hole : strokes_) {
-      for (auto& layer : hole.layers_mutable()) {
-        layer.setFilled(true);
-        layer.draw();
-      }
+  // Apply the stroke shader to each hole stroke
+  stroke_shader_.begin();
+  stroke_shader_.setUniformTexture("webcam", video_grabber_.getTexture(), 0);
+  for (auto& stroke : strokes_) {
+    for (auto& layer : stroke.layers_mutable()) {
+      layer.setFilled(true);
+      layer.draw();
     }
   }
-  shader_stroke_.end();
+  stroke_shader_.end();
 
-  shader_holes_.begin();
-  {
-    shader_holes_.setUniformTexture("webcam", video_grabber_.getTexture(), 0);
-
-    for (auto& hole : holes_) {
-      for (auto& layer : hole.layers_mutable()) {
-        layer.setFilled(true);
-        layer.draw();
-      }
+  // Apply the hole shader to each hole
+  hole_shader_.begin();
+  hole_shader_.setUniformTexture("webcam", video_grabber_.getTexture(), 0);
+  for (auto& hole : holes_) {
+    for (auto& layer : hole.layers_mutable()) {
+      layer.setFilled(true);
+      layer.draw();
     }
   }
-  shader_holes_.end();
+  hole_shader_.end();
 }
 
 //--------------------------------------------------------------

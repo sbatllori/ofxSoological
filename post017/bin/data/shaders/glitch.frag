@@ -4,8 +4,6 @@ in vec4 vposition;
 out vec4 fcolor;
 
 uniform sampler2DRect webcam;
-uniform vec2 resolution;
-uniform float time;
 
 void main()
 {
