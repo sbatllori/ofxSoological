@@ -4,10 +4,6 @@
 //========================================================================
 int main() {
   constexpr int kDim = 1080;
-
-  ofGLWindowSettings settings;
-  settings.setSize(kDim, kDim);
-  settings.setGLVersion(3, 2);
-  ofCreateWindow(settings);
+  ofSetupOpenGL(kDim, kDim, OF_WINDOW);
   ofRunApp(new ofApp());
 }

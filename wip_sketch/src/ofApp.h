@@ -10,5 +10,5 @@ class ofApp : public ofBaseApp {
   void keyPressed(int key);
 
  private:
-  ofShader shader_;
+  std::vector<int> particles_;
 };
