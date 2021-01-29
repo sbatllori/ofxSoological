@@ -31,7 +31,7 @@ void ofApp::draw() {
 
   for (const auto& t : values_) {
     // Function to be represented
-    const float wave_frequency = 5.f;
+    const float wave_frequency = 1.5f;
     const float wave_length = 200.f;
 
     const float f = sin(wave_frequency * ofDegToRad(t));  // y = sin(x)
@@ -41,11 +41,19 @@ void ofApp::draw() {
     const float x = t;
     const float y = ofMap(f, f_min, f_max, 0, wave_length);
 
+    // Color
+    const int palette_size = soo::colors::no_green.size();
+    const float color_idx =
+        ofMap(x, -kRadius_, ofGetWidth() + kRadius_, 0, 2 * palette_size);
+    float integral_f;
+    const float fractional = modf(color_idx, &integral_f);
+    const int integral = integral_f;
+
     ofColor color;
-    const float hue = ofMap(x, -kRadius_, ofGetWidth() + kRadius_, 0, 255);
-    float const sat = 255;
-    const float bri = 255;
-    color.setHsb(hue, sat, bri, 50);
+    ofColor next_color;
+    color.setHex(soo::colors::no_green[integral % palette_size]);
+    next_color.setHex(soo::colors::no_green[(integral + 1) % palette_size]);
+    color.lerp(next_color, fractional);
 
     ofSetColor(color);
     ofFill();
