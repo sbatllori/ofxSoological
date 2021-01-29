@@ -10,5 +10,7 @@ class ofApp : public ofBaseApp {
   void keyPressed(int key);
 
  private:
-  std::vector<int> particles_;
+  const int kRadius_{5};
+  const int kNumValues{1000};
+  std::vector<int> values_;
 };
