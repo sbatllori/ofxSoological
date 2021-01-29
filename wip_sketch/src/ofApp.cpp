@@ -1,6 +1,47 @@
 #include "ofApp.h"
-#include "soo_color_palettes.h"
 #include "soo_export.h"
+
+namespace {
+ofVec2f f_sin(const float t, const float wave_frequency,
+              const float wave_length) {
+  const float f = sin(wave_frequency * ofDegToRad(t));
+  const float f_min = -1;
+  const float f_max = 1;
+
+  const float x = t;
+  const float y = ofMap(f, f_min, f_max, 0, wave_length);
+
+  return ofVec2f{x, y};
+}
+}  // namespace
+
+ofColor ofApp::GetBlendedColor(const float t, const int palette_loops) {
+  const int size = color_palette.size();
+
+  // Get the continuous color index corresponding to the given value
+  // - Use its integral part to determine the current base color of the palette
+  // - Use its fractional part to determine the amount of blending between the
+  // current base color of the palette and the next one
+  const float idx = ofMap(t, -kRadius_, ofGetWidth() + kRadius_, 0,
+                          palette_loops * (size - 1));
+
+  float integral_f;
+  const float fractional = modf(idx, &integral_f);
+  const int integral = integral_f;
+
+  // Get the color corresponding to the current position
+  ofColor color;
+  color.setHex(color_palette[integral % size]);
+
+  // Get the color corresponding to the next position
+  ofColor next_color;
+  next_color.setHex(color_palette[(integral + 1) % size]);
+
+  // Mix the colors with the corresponding amount
+  color.lerp(next_color, fractional);
+
+  return color;
+}
 
 //--------------------------------------------------------------
 void ofApp::setup() {
@@ -9,8 +50,8 @@ void ofApp::setup() {
   ofSetCircleResolution(72);
 
   // Define random values along the canvas width
-  values_.reserve(kNumValues);
-  std::generate_n(std::back_inserter(values_), kNumValues, [this]() {
+  values_.reserve(kNumValues_);
+  std::generate_n(std::back_inserter(values_), kNumValues_, [this]() {
     return static_cast<int>(ofRandom(-kRadius_, ofGetWidth() + kRadius_));
   });
 }
@@ -27,37 +68,28 @@ void ofApp::update() {
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-  ofBackground(0);
+  ofBackground(237, 211, 178);
+  ofFill();
 
   for (const auto& t : values_) {
-    // Function to be represented
-    const float wave_frequency = 1.5f;
-    const float wave_length = 200.f;
+    for (int i{0}; i < 10; i++) {
+      // Function to be represented
+      const ofVec2f p = f_sin(t, -0.5f * (i + 1), 50.f);
+      const float x = p.x;
+      const float y = p.y + 150 + i * 90;
 
-    const float f = sin(wave_frequency * ofDegToRad(t));  // y = sin(x)
-    const float f_min = -1;
-    const float f_max = 1;
+      // Color
+      const ofColor color = GetBlendedColor(t, i % 4 + 2);
 
-    const float x = t;
-    const float y = ofMap(f, f_min, f_max, 0, wave_length);
+      // Draw
+      ofSetColor(color.r, color.g, color.b, 100);
+      ofDrawCircle(x, y, kRadius_);
 
-    // Color
-    const int palette_size = soo::colors::no_green.size();
-    const float color_idx =
-        ofMap(x, -kRadius_, ofGetWidth() + kRadius_, 0, 2 * palette_size);
-    float integral_f;
-    const float fractional = modf(color_idx, &integral_f);
-    const int integral = integral_f;
-
-    ofColor color;
-    ofColor next_color;
-    color.setHex(soo::colors::no_green[integral % palette_size]);
-    next_color.setHex(soo::colors::no_green[(integral + 1) % palette_size]);
-    color.lerp(next_color, fractional);
-
-    ofSetColor(color);
-    ofFill();
-    ofDrawCircle(x, y, kRadius_);
+      ofSetColor(color.r, color.g, color.b, 5);
+      ofDrawCircle(x, y, 1.25f * kRadius_);
+      ofDrawCircle(x, y, 1.5f * kRadius_);
+      ofDrawCircle(x, y, 2.5f * kRadius_);
+    }
   }
 }
 
