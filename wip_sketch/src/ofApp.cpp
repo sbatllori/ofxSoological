@@ -16,7 +16,7 @@ ofVec2f f_sin(const float t, const float wave_frequency,
 }  // namespace
 
 ofColor ofApp::GetBlendedColor(const float t, const int palette_loops) {
-  const int size = color_palette.size();
+  const int size = color_palette_.size();
 
   // Get the continuous color index corresponding to the given value
   // - Use its integral part to determine the current base color of the palette
@@ -31,11 +31,11 @@ ofColor ofApp::GetBlendedColor(const float t, const int palette_loops) {
 
   // Get the color corresponding to the current position
   ofColor color;
-  color.setHex(color_palette[integral % size]);
+  color.setHex(color_palette_[integral % size]);
 
   // Get the color corresponding to the next position
   ofColor next_color;
-  next_color.setHex(color_palette[(integral + 1) % size]);
+  next_color.setHex(color_palette_[(integral + 1) % size]);
 
   // Mix the colors with the corresponding amount
   color.lerp(next_color, fractional);
@@ -46,6 +46,7 @@ ofColor ofApp::GetBlendedColor(const float t, const int palette_loops) {
 //--------------------------------------------------------------
 void ofApp::setup() {
   // Setup canvas
+  bg_color_.setHex(BG);
   ofSetFrameRate(30);
   ofSetCircleResolution(72);
 
@@ -54,10 +55,18 @@ void ofApp::setup() {
   std::generate_n(std::back_inserter(values_), kNumValues_, [this]() {
     return static_cast<int>(ofRandom(-kRadius_, ofGetWidth() + kRadius_));
   });
+
+  // Temp gui
+  gui_.setup();
+  gui_.add(background_color_slider.setup("background", bg_color_, ofColor(0),
+                                         ofColor(255)));
 }
 
 //--------------------------------------------------------------
 void ofApp::update() {
+  //  if (0 < ofGetFrameNum() && ofGetFrameNum() <= 200)
+  //    soo::SaveFrame(ofGetFrameNum());
+
   // Increase the values in a loop inside the canvas
   for (auto& t : values_) {
     t++;
@@ -68,11 +77,12 @@ void ofApp::update() {
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-  ofBackground(237, 211, 178);
+  ofBackground(background_color_slider);
+
   ofFill();
 
   for (const auto& t : values_) {
-    for (int i{0}; i < 10; i++) {
+    for (int i{0}; i < 9; i++) {
       // Function to be represented
       const ofVec2f p = f_sin(t, -0.5f * (i + 1), 50.f);
       const float x = p.x;
@@ -82,15 +92,21 @@ void ofApp::draw() {
       const ofColor color = GetBlendedColor(t, i % 4 + 2);
 
       // Draw
-      ofSetColor(color.r, color.g, color.b, 100);
+      ofSetColor(color.r, color.g, color.b, 255);
+      ofDrawCircle(x, y, .75f * kRadius_);
+
+      ofSetColor(color.r, color.g, color.b, 150);
       ofDrawCircle(x, y, kRadius_);
 
+      // Draw transparency
       ofSetColor(color.r, color.g, color.b, 5);
       ofDrawCircle(x, y, 1.25f * kRadius_);
       ofDrawCircle(x, y, 1.5f * kRadius_);
-      ofDrawCircle(x, y, 2.5f * kRadius_);
+      ofDrawCircle(x, y, 2.f * kRadius_);
     }
   }
+
+  //  gui_.draw();
 }
 
 //--------------------------------------------------------------
