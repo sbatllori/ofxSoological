@@ -26,5 +26,31 @@ const Palette hot_with_cold{0xE23201, 0xFD9415, 0xFEB938,
 const Palette blues_of_the_sea{0x25b4d9, 0xf9fdfd, 0xd7eefc, 0xadd6e9,
                                0x7fb9d4};
 
+// source: https://www.schemecolor.com/teal-monochromatic.php
+const Palette teal_monochromatic{0x99E6B3, 0x73CDA7, 0x4DB39C, 0x269A90,
+                                 0x008083};
+
+// source: https://www.schemecolor.com/warm-yellow-monochromatic.php
+const Palette warm_yellow_monochromatic{0xFFF0C5, 0xFCE7AA, 0xFBDF8D, 0xF8DA77,
+                                        0xF3D265};
+
+// source: https://www.schemecolor.com/pinkest-of-roses.php
+const Palette pinkest_of_roses{0xfbf3f1, 0xf9dfdb, 0xfdcec7, 0xfec3bb,
+                               0xfdb5af};
+
+// source: https://www.schemecolor.com/pearly-whites.php
+const Palette pearly_whites{0xEAF2FB, 0xF5F6FF, 0xFFFFFF, 0xFFFAEF, 0xfff4ef};
+
+// source: https://www.schemecolor.com/shiny-black-gradient.php
+const Palette shiny_black_gradient{0x000000, 0x1A1A1B, 0x353437, 0x4F4E52,
+                                   0x69686D};
+
+// source: https://www.schemecolor.com/comfortably-numb.php
+const Palette confortably_numb{0xC56676, 0xEB9577, 0xFCDEA4, 0x9EA2C1,
+                               0xB1D4C4};
+
+// source: https://www.schemecolor.com/muted-prints.php
+const Palette muted_prints{0xD17373, 0xEDB380, 0xF8EDC9, 0x18BADA, 0x6B6D8C};
+
 }  // namespace colors
 }  // namespace soo
