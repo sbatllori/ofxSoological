@@ -1,11 +1,38 @@
 #pragma once
 
-#include <vector>
+#include "ofMain.h"
 
 namespace soo {
 namespace colors {
 
 using Palette = std::vector<int>;
+
+inline ofColor GetBlendedColor(const float t, const float t_min,
+                               const float t_max, const Palette& palette,
+                               const float loops = 1.f) {
+  // Get a floating index indicating the corresponding position to the given
+  // value in the color palette (understanding the color palette as a continuous
+  // range). That way:
+  // - The integral part of the index defines the index of the current color
+  // - The integral part of the index + 1 defines the index of the next color
+  // - The fractional part of the index defines the amount of blending required
+  // between the current color and the next color
+
+  const float idx = ofMap(t, t_min, t_max, 0, loops * (palette.size() - 1));
+
+  float integral;
+  const float fractional = modf(idx, &integral);
+
+  ofColor color;
+  ofColor next_color;
+
+  color.setHex(palette[static_cast<int>(integral) % palette.size()]);
+  next_color.setHex(palette[(static_cast<int>(integral) + 1) % palette.size()]);
+
+  color.lerp(next_color, fractional);
+
+  return color;
+}
 
 const Palette procreate_flourish{
     0x8DF4A4, 0x67E4AA, 0x72D6BF, 0x7EC6CC, 0x86B3D3, 0x849DD6,
