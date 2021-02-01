@@ -1,8 +1,6 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxGui.h"
-#include "soo_noise.h"
 
 class ofApp : public ofBaseApp {
  public:
@@ -13,6 +11,6 @@ class ofApp : public ofBaseApp {
 
  private:
   const int kHMargin_{-100};
-  std::vector<int> values_;
-  std::vector<int> init_values_;
+  std::vector<int> t0_values_;
+  std::vector<int> t_values_;
 };
