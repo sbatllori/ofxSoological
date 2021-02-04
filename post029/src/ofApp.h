@@ -12,4 +12,9 @@ class ofApp : public ofBaseApp {
  private:
   ofTrueTypeFont font_;
   ofPolyline top_outline_29_;
+  std::vector<ofVec3f> box_sizes_;
+  std::vector<ofLight> lights_;
+
+ private:
+  void GenerateRandomBoxeSizes();
 };
