@@ -3,11 +3,33 @@
 #include "ofMain.h"
 #include "soo_color_palettes.h"
 
-#define SOO_BLACK 0x000000
+#define SOO_BLACK 0x111111
 #define SOO_WHITE 0xffffff
 #define SOO_RED 0xc71010
 #define SOO_YELLOW 0xffd500
 #define SOO_GREEN 0x07704b
+
+using vec2 = glm::vec2;
+using vec3 = glm::vec3;
+
+struct Params {
+  // Colors
+  static constexpr int kBlack{45};
+  static constexpr int kWhite{45};
+  static constexpr int kRed{5};
+  static constexpr int kYellow{3};
+  static constexpr int kGreen{2};
+
+  // 2D background
+  static constexpr unsigned long kRectangles{2000};
+  static constexpr vec2 kMinRectangleSize{10, 10};
+  static constexpr vec2 kMaxRectangleSize{60, 60};
+
+  // 3D scene
+  static constexpr int kOutlineSpacing{10};
+  static constexpr vec3 kMinBoxSize{20, 20, 20};
+  static constexpr vec3 kMaxBoxSize{50, 100, 50};
+};
 
 class ofApp : public ofBaseApp {
  public:
@@ -17,20 +39,19 @@ class ofApp : public ofBaseApp {
   void keyPressed(int key);
 
  private:
-  // Numbers
-  ofTrueTypeFont font_;
-  ofPolyline top_outline_29_;
-
-  // 3D
-  std::vector<ofVec3f> box_sizes_;
-  std::vector<ofLight> lights_;
-
-  // 2D
-  std::vector<ofRectangle> background_rectangles_;
-
   // Colors
   soo::colors::Palette color_palette_;
 
+  // 2D background
+  std::vector<ofRectangle> rectangles_;
+
+  // 3D scene
+  ofTrueTypeFont font_;
+  ofPolyline top_outline_29_;
+  std::vector<ofVec3f> boxes_;
+  std::vector<ofLight> lights_;
+
  private:
-  void GenerateRandomBoxeSizes();
+  void ResetRandomRectangles();
+  void ResetRandomBoxes();
 };
