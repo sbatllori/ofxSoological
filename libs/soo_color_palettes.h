@@ -79,5 +79,12 @@ const Palette confortably_numb{0xC56676, 0xEB9577, 0xFCDEA4, 0x9EA2C1,
 // source: https://www.schemecolor.com/muted-prints.php
 const Palette muted_prints{0xD17373, 0xEDB380, 0xF8EDC9, 0x18BADA, 0x6B6D8C};
 
+// source: https://www.schemecolor.com/retro-blues-and-reds.php
+const Palette retro_blues_and_reds{0x723239, 0xB35454, 0xA45E56,
+                                   0x92C2C2, 0x73A9C2, 0x4C5676};
+
+// source: https://www.schemecolor.com/80s-retro.php
+const Palette retro_80s{0x270245, 0x871A85, 0xFF2941,
+                        0xFEFF38, 0xFE18D3, 0x4206F1};
 }  // namespace colors
 }  // namespace soo
