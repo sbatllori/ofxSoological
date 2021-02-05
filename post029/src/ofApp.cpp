@@ -86,21 +86,37 @@ void ofApp::setup() {
   // Define the lights for the 3D scene
   {
     ofLight light;
-    light.setPosition({ofGetWidth(), 0, -80});
-    light.lookAt({ofGetWidth(), ofGetHeight(), 0}, {0, 1, 0});
+    light.setDiffuseColor(ofColor{200});
+    light.setPosition({0, 0, -200});
     light.setPointLight();
     lights_.push_back(light);
   }
   {
     ofLight light;
-    light.setOrientation({0, 200, 50});
-    light.setDirectional();
+    light.setDiffuseColor(ofColor{200});
+    light.setPosition({.8f * ofGetWidth(), 0, -100});
+    light.setPointLight();
     lights_.push_back(light);
   }
   {
     ofLight light;
-    light.setOrientation({100, -200, 50});
-    light.setDirectional();
+    light.setDiffuseColor(ofColor{90});
+    light.setPosition({.5f * ofGetWidth(), ofGetHeight(), -100});
+    light.setPointLight();
+    lights_.push_back(light);
+  }
+  {
+    ofLight light;
+    light.setDiffuseColor(ofColor{200});
+    light.setPosition({1.5 * ofGetWidth(), .35f * ofGetHeight(), -100});
+    light.setPointLight();
+    lights_.push_back(light);
+  }
+  {
+    ofLight light;
+    light.setDiffuseColor(ofColor{100});
+    light.setPosition({0, .25f * ofGetHeight(), -50});
+    light.setPointLight();
     lights_.push_back(light);
   }
 }
@@ -110,8 +126,11 @@ void ofApp::update() {}
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-  // Enable the lights
-  for (auto& light : lights_) light.enable();
+  // Independent light for the background
+  ofLight screen_light;
+  screen_light.setOrientation({0, 180, 0});
+  screen_light.setDirectional();
+  screen_light.enable();
 
   // Draw the background: predefined random rectangles
   // - Draw the rectangles filling with a different color
@@ -140,8 +159,13 @@ void ofApp::draw() {
 
   // Draw a translucent layer to lower the intensity of the background
   ofFill();
-  ofSetColor(255, 120);
+  ofSetColor(255, Params::kAlpha);
   ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
+
+  screen_light.disable();
+
+  // Enable the lights
+  for (auto& light : lights_) light.enable();
 
   // Draw the foreground: boxes along the top outline of the 29
   // - Center the 29 on the screen
