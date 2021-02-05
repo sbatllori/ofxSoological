@@ -1,5 +1,4 @@
 #include "ofApp.h"
-#include "soo_color_palettes.h"
 #include "soo_export.h"
 
 void ofApp::GenerateRandomBoxeSizes() {
@@ -18,8 +17,6 @@ void ofApp::setup() {
   // Setup canvas
   ofSetFrameRate(30);
   ofSetCircleResolution(72);
-  //  ofBackground(237);
-  ofBackground(255);
 
   // Define the top outline of the 29
   // - Load the font and the number outlines
@@ -52,34 +49,49 @@ void ofApp::setup() {
   // Lights
   {
     ofLight light;
-    light.setPosition({500, -100, -100});
-    light.setDiffuseColor(ofColor::blanchedAlmond);
+    light.setPosition({ofGetWidth(), 0, -80});
+    light.lookAt({ofGetWidth(), ofGetHeight(), 0}, {0, 1, 0});
+    light.setPointLight();
     lights_.push_back(light);
   }
+
   {
     ofLight light;
-    light.setPosition({-500, ofGetHeight() / 2, -150});
-    light.setDiffuseColor(ofColor::blanchedAlmond);
+    light.setOrientation({0, 200, 50});
+    light.setDirectional();
     lights_.push_back(light);
   }
+
   {
     ofLight light;
-    light.setPosition({ofGetWidth(), -200, -100});
-    light.setDiffuseColor(ofColor::blanchedAlmond);
+    light.setOrientation({100, -200, 50});
+    light.setDirectional();
     lights_.push_back(light);
   }
-  {
-    ofLight light;
-    light.setPosition({0.6f * ofGetWidth(), ofGetHeight(), -150});
-    light.setDiffuseColor(ofColor::blanchedAlmond);
-    lights_.push_back(light);
-  }
-  {
-    ofLight light;
-    light.setPosition({ofGetWidth() + 500, ofGetHeight() / 2, -100});
-    light.setDiffuseColor(ofColor::blanchedAlmond);
-    lights_.push_back(light);
-  }
+
+  // Background rectangles
+  const int num_rectangles = 3000;
+  background_rectangles_.reserve(num_rectangles);
+  std::generate_n(std::back_inserter(background_rectangles_), num_rectangles,
+                  []() {
+                    return ofRectangle(ofRandom(-60, ofGetWidth()),
+                                       ofRandom(-60, ofGetHeight()),
+                                       ofRandom(10, 60), ofRandom(10, 60));
+                  });
+
+  // Color palette
+  std::generate_n(std::back_inserter(color_palette_), 45,
+                  []() { return SOO_BLACK; });
+  std::generate_n(std::back_inserter(color_palette_), 45,
+                  []() { return SOO_WHITE; });
+  std::generate_n(std::back_inserter(color_palette_), 5,
+                  []() { return SOO_RED; });
+  std::generate_n(std::back_inserter(color_palette_), 3,
+                  []() { return SOO_YELLOW; });
+  std::generate_n(std::back_inserter(color_palette_), 2,
+                  []() { return SOO_GREEN; });
+
+  std::random_shuffle(color_palette_.begin(), color_palette_.end());
 }
 
 //--------------------------------------------------------------
@@ -87,11 +99,38 @@ void ofApp::update() {}
 
 //--------------------------------------------------------------
 void ofApp::draw() {
+  ofBackgroundHex(SOO_WHITE);
+
   if (ofGetMousePressed(OF_MOUSE_BUTTON_LEFT)) {
     GenerateRandomBoxeSizes();
   }
 
   for (auto& light : lights_) light.enable();
+
+  ofSetLineWidth(2);
+  for (const auto& rectangle : background_rectangles_) {
+    ofFill();
+
+    float integral;
+    const float fractional =
+        modf(rectangle.width * rectangle.height, &integral);
+
+    ofSetHexColor(SOO_WHITE);
+    if (fractional < 0.05) ofSetHexColor(SOO_BLACK);
+    if (fractional < 0.005) ofSetHexColor(SOO_YELLOW);
+    if (fractional < 0.002)
+      static_cast<int>(integral) % 2 == 0 ? ofSetHexColor(SOO_RED)
+                                          : ofSetHexColor(SOO_GREEN);
+    ofDrawRectangle(rectangle);
+
+    ofNoFill();
+    ofSetHexColor(SOO_BLACK);
+    ofDrawRectangle(rectangle);
+  }
+
+  ofFill();
+  ofSetColor(255, 150);
+  ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
 
   const ofRectangle bbox = top_outline_29_.getBoundingBox();
   const float x = ofGetWidth() / 2 - (bbox.x + bbox.width / 2) - 10;
@@ -100,17 +139,15 @@ void ofApp::draw() {
   ofPushMatrix();
   ofTranslate(x, y);
   {
-    soo::colors::Palette palette{soo::colors::procreate_flourish};
-    ofColor color;
-
     for (int i{0}; i < box_sizes_.size(); i++) {
       auto v = top_outline_29_.getVertices()[i];
       const float w = box_sizes_[i].x;
       const float h = box_sizes_[i].y;
       const float d = box_sizes_[i].z;
 
-      color.setHex(palette[static_cast<int>(h) % palette.size()]);
-      ofSetColor(color);
+      ofSetHexColor(
+          color_palette_[static_cast<int>(h) % color_palette_.size()]);
+      ofFill();
       v.y += .5f * h;
       ofDrawBox(v, w, h, d);
     }
