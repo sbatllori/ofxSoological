@@ -8,10 +8,10 @@ This is a personal project to learn how to code art with [openFrameworks (OF)](h
 - [Installation](#installation)
 
 ## Available Posts
-
 | Post | Preview | Title | Category | Keywords|
 |:----:|:-------:|:-----:|:--------:|:-------:|
-|28|<img src="post028/doc/output.png" width="80px">|[Sinus Representation & Color Palettes](post028/README.md)|2D function representation|`sinus` `circle` `color palette`  `blending`
+|29|<img src="post029/doc/output.png" width="80px">|[Outline out of Boxes](post029/README.md)|3D geometric shapes|`box` `ofLight` `rectangle` `weighted color palette` `ofFont` `ofPolyline`
+|28|<img src="post028/doc/output.png" width="80px">|[Sinus Representation & Color Palettes](post028/README.md)|2D function representation|`sinus` `circle` `color palette` `blending`
 |17|<img src="post017/doc/output.png" width="80px">|[Glitch & Toon Holes Filter](post017/README.md)|Fragment shader art,<br>Computer Vision|`shaders` `fragment shader` `2D texture` `ofVideoGrabber` `glitch` `toon shading`
 |16|<img src="post016/doc/016_output.png" width="80px">|[Mandala out of Spirographs](post016/README.md)<br>|2D geometric shapes|`2D` `ofNode` `noise` `polymorphic function`
 |15|<img src="post010/doc/output_dark.png" width="80px">|[GPU Dancing Dots](post010/README.md)<br>(same as 10)|Fragment shader art|`shaders` `fragment shader` `2D texture` `uniform circular motion`
