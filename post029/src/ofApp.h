@@ -14,17 +14,17 @@ using vec3 = glm::vec3;
 
 struct Params {
   // Colors
-  static constexpr int kBlack{45};
-  static constexpr int kWhite{48};
+  static constexpr int kBlack{40};
+  static constexpr int kWhite{50};
   static constexpr int kRed{5};
-  static constexpr int kYellow{2};
-  static constexpr int kGreen{1};
+  static constexpr int kYellow{3};
+  static constexpr int kGreen{2};
 
   // 2D background
   static constexpr unsigned long kRectangles{2000};
   static constexpr vec2 kMinRectangleSize{10, 10};
-  static constexpr vec2 kMaxRectangleSize{70, 70};
-  static constexpr int kAlpha{100};
+  static constexpr vec2 kMaxRectangleSize{90, 90};
+  static constexpr int kAlpha{150};
 
   // 3D scene
   static constexpr int kOutlineSpacing{10};
